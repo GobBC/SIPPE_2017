@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptOficialReprogramacion" language="groovy" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="726f9fb9-5a1d-474f-a3d8-e2b398b35109">
+	<property name="ireport.zoom" value="1.4641000000000006"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\ugarcia\\Documents\\Ulisses\\Reportes POA\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<parameter name="NOTA_V" class="java.lang.String"/>
+	<parameter name="VISIBLE" class="java.lang.String"/>
+	<parameter name="RPT_DIR" class="java.lang.String"/>
+	<parameter name="IMG_DIR" class="java.lang.String"/>
+	<parameter name="COSTO" class="java.lang.String"/>
+	<parameter name="FIRMA" class="java.lang.String"/>
+	<parameter name="OFICIO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT RP.RAMO, RP.PRG, P.SECRETARIA, P.GOBIERNO FROM
+(
+    SELECT RAMO,PRG FROM POA.MOVOFICIOS_META WHERE OFICIO = $P{OFICIO}
+    UNION ALL
+    SELECT RAMO,'' AS PRG FROM POA.MOVOFICIOS_ESTIMACION WHERE OFICIO = $P{OFICIO}
+    UNION ALL
+    SELECT RAMO,PRG FROM POA.MOVOFICIOS_ACCION WHERE OFICIO = $P{OFICIO}
+    UNION ALL
+    SELECT RAMO,'' AS PRG FROM POA.MOVOFICIOS_ACCION_ESTIMACION WHERE OFICIO = $P{OFICIO}
+) M, POA.RAMO_PROGRAMA RP, DGI.PARAMETROS P
+WHERE RP.RAMO = M.RAMO
+AND RP.PRG = M.PRG
+
+GROUP BY RP.RAMO, RP.PRG,P.SECRETARIA, P.GOBIERNO
+
+ORDER BY RP.RAMO, RP.PRG]]>
+	</queryString>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="PRG" class="java.lang.String"/>
+	<field name="SECRETARIA" class="java.lang.String"/>
+	<field name="GOBIERNO" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="50">
+			<subreport runToBottom="false">
+				<reportElement uuid="3fd5f20d-9cde-4bd7-8542-93cf1447872d" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="0" y="0" width="752" height="50"/>
+				<subreportParameter name="VISIBLE">
+					<subreportParameterExpression><![CDATA[$P{VISIBLE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PROG">
+					<subreportParameterExpression><![CDATA[$F{PRG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMG_DIR">
+					<subreportParameterExpression><![CDATA[$P{IMG_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="FIRMA">
+					<subreportParameterExpression><![CDATA[$P{FIRMA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NOTA_V">
+					<subreportParameterExpression><![CDATA[$P{NOTA_V}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "SubRptProgramasRepro.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="51">
+			<subreport>
+				<reportElement uuid="2567a0ea-9b95-4b9a-a2bd-77430469f4e9" stretchType="RelativeToTallestObject" x="0" y="0" width="752" height="50" isRemoveLineWhenBlank="true"/>
+				<subreportParameter name="PROG">
+					<subreportParameterExpression><![CDATA[$F{PRG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMG_DIR">
+					<subreportParameterExpression><![CDATA[$P{IMG_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NOTA_V">
+					<subreportParameterExpression><![CDATA[$P{NOTA_V}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "SubRptMetasIndicadoresRepro.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="37">
+			<subreport runToBottom="false">
+				<reportElement uuid="feccda98-ec09-4c7e-b709-8d5ba49df669" stretchType="RelativeToTallestObject" x="0" y="0" width="752" height="30" isRemoveLineWhenBlank="true"/>
+				<subreportParameter name="COSTO">
+					<subreportParameterExpression><![CDATA[$P{COSTO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="OFICIO">
+					<subreportParameterExpression><![CDATA[$P{OFICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PROG">
+					<subreportParameterExpression><![CDATA[$F{PRG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="GOBIERNO">
+					<subreportParameterExpression><![CDATA[$F{GOBIERNO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMG_DIR">
+					<subreportParameterExpression><![CDATA[$P{IMG_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SECRETARIA">
+					<subreportParameterExpression><![CDATA[$F{SECRETARIA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "subRptIdentificacionSubProgramasRepro.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="20">
+			<textField evaluationTime="Report">
+				<reportElement uuid="56ae0f20-a0e5-4020-8a03-51ee080b9a23" x="712" y="0" width="40" height="20">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER} != 1]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[" " + ($V{PAGE_NUMBER}>1? ($V{PAGE_NUMBER}-1):$V{PAGE_NUMBER} )]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="fdf4cd5d-90d7-44b6-b2d1-f0d76db33e82" x="632" y="0" width="80" height="20">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER} != 1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["Página "+($V{PAGE_NUMBER}>1? ($V{PAGE_NUMBER}-1):$V{PAGE_NUMBER} )+" de"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="3b5b31bb-8e82-4328-b5bf-a2a6eb56d389" x="0" y="0" width="132" height="20">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER} != 1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[<rptOficialReprogramacion>]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy h:mm a">
+				<reportElement uuid="b1fc8219-f302-4f12-9d77-652794d845a2" x="329" y="0" width="100" height="20">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER} != 1]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

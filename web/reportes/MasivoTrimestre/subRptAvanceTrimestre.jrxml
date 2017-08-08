@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subRptAvanceTrimestre" language="groovy" pageWidth="752" pageHeight="567" orientation="Landscape" columnWidth="752" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isTitleNewPage="true" isIgnorePagination="true" uuid="98c85633-33ac-4691-ac96-9f9a300a8485">
+	<property name="ireport.zoom" value="1.1"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="RAMO" class="java.lang.String"/>
+	<parameter name="PROG" class="java.lang.String"/>
+	<parameter name="YEAR" class="java.lang.Integer"/>
+	<parameter name="RPT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\desarrollo\\repositorio_local\\POA_13042016\\trunk\\POA\\web\\reportes\\MasivoTrimestre\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PERIODO" class="java.lang.Integer"/>
+	<parameter name="IMG_DIR" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\desarrollo\\repositorio_local\\POA\\trunk\\POA\\web\\reportes\\MasivoTrimestre\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DOCVALIDO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+	DGI.RAMOS.RAMO,
+	DGI.RAMOS.DESCR AS RAMO_DES,
+	PRG.PRG,
+	PRG.DESCR  AS PRG_DES,
+	POA.RAMO_PROGRAMA.DEPTO,
+	DGI.DEPENDENCIA.DESCR AS DEP_DES,
+	DGI.PARAMETROS.GOBIERNO,
+	DGI.PARAMETROS.SECRETARIA,
+	'' AS FOLIO,
+	POA.RAMO_PROGRAMA.RESULTADO,
+	SYSDATE AS FECHA,
+	POA.PROYECTO.PROY,
+	POA.PROYECTO.TIPO_PROY,
+	DECODE(POA.PROYECTO.RFC,NULL,NULL,EM.NOMBRE||' '||EM.PATERNO||' '||EM.MATERNO) AS LIDER,
+          DGI.PARAMETROS.REPWEB_IMPFIRMA
+FROM
+	S_POA_PROGRAMA PRG,
+	POA.RAMO_PROGRAMA,
+	DGI.RAMOS ,
+	DGI.DEPENDENCIA,
+	DGI.VW_EMPLEADOS EM,
+	POA.PROYECTO,
+	DGI.PARAMETROS
+WHERE
+	(
+		( DGI.RAMOS.RAMO = $P{RAMO} ) AND
+		(  PRG.PRG = $P{PROG}) AND
+		( DGI.RAMOS.YEAR = $P{YEAR} )
+	) AND
+	( DGI.RAMOS.RAMO = POA.RAMO_PROGRAMA.RAMO ) AND
+	( DGI.RAMOS.YEAR = PRG.YEAR ) AND
+	( POA.RAMO_PROGRAMA.PRG = PRG.PRG ) AND
+	( POA.RAMO_PROGRAMA.RAMO = DGI.RAMOS.RAMO ) AND
+	( POA.RAMO_PROGRAMA.YEAR = PRG.YEAR ) AND
+	( DGI.RAMOS.RAMO = DGI.DEPENDENCIA.RAMO ) AND
+	( DGI.RAMOS.YEAR = DGI.DEPENDENCIA.YEAR ) AND
+	( LPAD(POA.RAMO_PROGRAMA.DEPTO,5,'0') =LPAD(DGI.DEPENDENCIA.DEPTO,5,'0')) AND
+	( POA.PROYECTO.YEAR = DGI.RAMOS.YEAR) AND
+	( POA.PROYECTO.RAMO = DGI.RAMOS.RAMO) AND
+	( POA.PROYECTO.PRG = PRG.PRG) AND
+	( POA.PROYECTO.RFC = EM.RFC (+)) AND
+	( POA.PROYECTO.HOMOCLAVE = EM.HOMOCLAVE (+)) AND
+          ( POA.PROYECTO.PROY||POA.PROYECTO.TIPO_PROY IN(SELECT MET.PROY||MET.TIPO_PROY
+          FROM   S_POA_META MET  WHERE
+          ( MET.RAMO = $P{RAMO} ) AND
+          ( MET.YEAR = $P{YEAR} ) AND
+          ( MET.PRG = $P{PROG} ) AND
+          ( MET.PERIODO<=$P{PERIODO} AND MET.PERIODO IS NOT NULL)))
+ORDER BY
+	POA.PROYECTO.PROY]]>
+	</queryString>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="RAMO_DES" class="java.lang.String"/>
+	<field name="PRG" class="java.lang.String"/>
+	<field name="PRG_DES" class="java.lang.String"/>
+	<field name="DEPTO" class="java.lang.String"/>
+	<field name="DEP_DES" class="java.lang.String"/>
+	<field name="GOBIERNO" class="java.lang.String"/>
+	<field name="SECRETARIA" class="java.lang.String"/>
+	<field name="FOLIO" class="java.lang.String"/>
+	<field name="RESULTADO" class="java.lang.String"/>
+	<field name="FECHA" class="java.sql.Timestamp"/>
+	<field name="PROY" class="java.math.BigDecimal"/>
+	<field name="TIPO_PROY" class="java.lang.String"/>
+	<field name="LIDER" class="java.lang.String"/>
+	<field name="REPWEB_IMPFIRMA" class="java.lang.String"/>
+	<group name="PROYECTO" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{PROY}]]></groupExpression>
+		<groupHeader>
+			<band>
+				<subreport>
+					<reportElement uuid="ad71d69b-41f6-47f0-ac6e-3e7599aa4e68" stretchType="RelativeToBandHeight" x="0" y="0" width="752" height="0" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="PROG">
+						<subreportParameterExpression><![CDATA[$P{PROG}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PROY">
+						<subreportParameterExpression><![CDATA[$F{PROY}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="YEAR">
+						<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="RAMO">
+						<subreportParameterExpression><![CDATA[$P{RAMO}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="TIPO_PROY">
+						<subreportParameterExpression><![CDATA[$F{TIPO_PROY}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{RPT_DIR} + "subRptDescrProyectoAnterior.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+	</group>
+	<pageHeader>
+		<band height="125" splitType="Stretch">
+			<image>
+				<reportElement uuid="613beab3-a663-40b6-bdc3-72ca0a4a4b86" x="214" y="2" width="349" height="59">
+					<printWhenExpression><![CDATA[$P{DOCVALIDO}.equals('N')]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{IMG_DIR} + "NOVALIDO.gif"]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="cb45f833-9ddd-4dac-a68f-76c224b5a051" x="78" y="65" width="654" height="14">
+					<printWhenExpression><![CDATA[!$F{RAMO}.isEmpty()]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RAMO}+" "+$F{RAMO_DES}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="c6303845-f01e-443e-8d07-16e4a4a7fbd9" x="0" y="65" width="78" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<text><![CDATA[RAMO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8ac36757-97ed-4836-9858-fa95370dc9cb" x="0" y="79" width="78" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<text><![CDATA[PROGRAMA:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="6ea43b41-21f8-4c22-8ecc-3e2f3839fbd2" x="78" y="79" width="654" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRG}+" "+$F{PRG_DES}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="7d6c6b65-8144-4150-85c5-eddb0de85daa" x="65" y="0" width="602" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GOBIERNO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="bd3f1072-b8e9-4d2f-963d-322ad7c1916c" x="65" y="18" width="602" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SECRETARIA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="a635f1d5-fad1-4409-bb42-7c280d46156c" x="65" y="37" width="602" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PERIODO} == -1 ? "AVANCE DE TRIMESTRES" :
+$P{PERIODO} == 1 ? "AVANCE DEL PRIMER TRIMESTRE" :
+$P{PERIODO} == 2 ? "AVANCE DEL SEGUNDO TRIMESTRE" :
+$P{PERIODO} == 3 ? "AVANCE DEL TERCER TRIMESTRE" :
+$P{PERIODO} == 4 ? "AVANCE DEL CUARTO TRIMESTRE" :
+"AVANCE DE TRIMESTRES"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="56b6358f-d550-4d63-8f67-349f3e8adb1f" x="0" y="61" width="732" height="1"/>
+			</line>
+			<line>
+				<reportElement uuid="0bcf75b0-0618-4052-a964-2a931d442bbb" x="0" y="97" width="732" height="1"/>
+			</line>
+			<line>
+				<reportElement uuid="1de42f61-1a62-462d-9212-2e495f0a5dc8" x="0" y="123" width="732" height="1"/>
+			</line>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="304decb6-6dfd-4f2c-86bc-8742f412996e" stretchType="RelativeToBandHeight" x="135" y="103" width="597" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DEPTO}+" "+$F{DEP_DES}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="db71212f-a120-424d-9ef9-48790bfa931e" x="0" y="103" width="135" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<text><![CDATA[UNIDAD RESPONSABLE:]]></text>
+			</staticText>
+			<image>
+				<reportElement uuid="0a23c8b5-3071-4060-a383-519e1a7eaa81" x="0" y="0" width="65" height="59">
+					<printWhenExpression><![CDATA[$P{DOCVALIDO}.equals('S')]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{IMG_DIR} + "EDO.gif"]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+	<detail>
+		<band>
+			<subreport>
+				<reportElement uuid="816039a9-d913-4dd9-a3e8-1eb1587b6a95" stretchType="RelativeToBandHeight" x="0" y="0" width="752" height="0" isRemoveLineWhenBlank="true"/>
+				<subreportParameter name="PROG">
+					<subreportParameterExpression><![CDATA[$P{PROG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PROY">
+					<subreportParameterExpression><![CDATA[$F{PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$P{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PERIODO">
+					<subreportParameterExpression><![CDATA[$P{PERIODO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PROY">
+					<subreportParameterExpression><![CDATA[$F{TIPO_PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "subRptAvanceMetaTrimestre.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<lastPageFooter>
+		<band height="1" splitType="Stretch">
+			<printWhenExpression><![CDATA[!($F{LIDER}.equals(null)) && ($F{REPWEB_IMPFIRMA}.equals('S'))]]></printWhenExpression>
+			<subreport>
+				<reportElement uuid="0c1d8292-27ec-412a-9c34-3acf6246e4b0" stretchType="RelativeToBandHeight" x="0" y="0" width="732" height="0" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!($F{LIDER}.equals(null)) && ($F{REPWEB_IMPFIRMA}.equals('S'))]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="LIDER">
+					<subreportParameterExpression><![CDATA[$F{LIDER}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "subRptAvanceTrimestreFirma.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</lastPageFooter>
+</jasperReport>

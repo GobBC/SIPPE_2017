@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subRptEncabezadoIndicadoresFin" language="groovy" pageWidth="727" pageHeight="18" whenNoDataType="AllSectionsNoDetail" columnWidth="727" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="24e50e99-eb24-4094-b61c-eb323237ffee">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="794"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<parameter name="RPT_DIR" class="java.lang.String"/>
+	<columnHeader>
+		<band height="18">
+			<staticText>
+				<reportElement uuid="d25800f5-99af-4519-b356-edb7b82f33b3" mode="Opaque" x="0" y="1" width="168" height="16" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INDICADOR]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="904c30f1-2d6e-49cc-848e-13e2e96d96db" mode="Opaque" x="170" y="1" width="76" height="16" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["META " + $P{YEAR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="08da4c8f-09d7-4288-84da-910af7141e3c" mode="Opaque" x="442" y="1" width="180" height="16" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[QUÉ MIDE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0bf5af46-42e1-4f50-be13-35cdc5875060" mode="Opaque" x="248" y="1" width="108" height="16" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[UNIDAD DE MEDIDA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8e6cea58-2e6b-473a-acab-582d9b2a96b5" mode="Opaque" x="358" y="1" width="82" height="16" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PERIODICIDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f9d14c66-48c6-4e66-bde2-402e0d4e52f8" mode="Opaque" x="624" y="1" width="78" height="16" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RESULTADO]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+</jasperReport>

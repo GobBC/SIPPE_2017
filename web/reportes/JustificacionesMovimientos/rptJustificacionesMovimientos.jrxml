@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptJustificacionesMovimientos" language="groovy" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="592" leftMargin="10" rightMargin="10" topMargin="10" bottomMargin="10" uuid="b7175885-fd37-4424-b6d0-29ca3b3df42a">
+	<property name="ireport.zoom" value="4.17724816941571"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="182"/>
+	<parameter name="YEAR" class="java.lang.Integer"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\desarrollo\\repositorio_local\\POA\\web\\reportes\\JustificacionesMovimientos\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IMG_DIR" class="java.lang.String"/>
+	<parameter name="OFICIO" class="java.lang.Long"/>
+	<parameter name="RPT_DIR" class="java.lang.String"/>
+	<parameter name="RAMO" class="java.lang.String"/>
+	<parameter name="ID_CARATULA" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+	*
+FROM
+	POA.JUSTIFICACION JUST
+WHERE
+	OFICIO = $P{OFICIO} AND
+	(
+		SELECT
+			LISTAGG(ROWNUM, ',') WITHIN GROUP (ORDER BY 1) AS MOVIMIENTOS
+		FROM
+			(
+				SELECT
+					MOV.ID_JUSTIFICACION
+				FROM
+					SPP.TRANSFERENCIAS MOV
+				WHERE
+					OFICIO = $P{OFICIO}
+				UNION ALL
+				SELECT
+					MOV.ID_JUSTIFICACION
+				FROM
+					SPP.TRANSFREC MOV
+				WHERE
+					OFICIO = $P{OFICIO}
+				UNION ALL
+				SELECT
+					MOV.ID_JUSTIFICACION
+				FROM
+					SPP.AMPLIACIONES MOV
+				WHERE
+					OFICIO = $P{OFICIO}
+				UNION ALL
+				SELECT
+					MOV.ID_JUSTIFICACION
+				FROM
+					POA.MOVOFICIOS_META MOV
+				WHERE
+					OFICIO = $P{OFICIO}
+				UNION ALL
+				SELECT
+					MOV.ID_JUSTIFICACION
+				FROM
+					POA.MOVOFICIOS_ACCION MOV
+				WHERE
+					MOV.OFICIO = $P{OFICIO}
+			) MOVS
+		WHERE
+			MOVS.ID_JUSTIFICACION = JUST.ID_JUSTIFICACION
+	) IS NOT NULL]]>
+	</queryString>
+	<field name="OFICIO" class="java.lang.Integer"/>
+	<field name="ID_JUSTIFICACION" class="java.lang.Integer"/>
+	<field name="JUSTIFICACION" class="java.lang.String"/>
+	<pageHeader>
+		<band height="74">
+			<subreport isUsingCache="false">
+				<reportElement uuid="21d75bfd-4a96-456d-bffc-9941498d96b2" stretchType="RelativeToBandHeight" x="0" y="0" width="592" height="74" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<subreportParameter name="ID_CARATULA">
+					<subreportParameterExpression><![CDATA[$P{ID_CARATULA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMG_DIR">
+					<subreportParameterExpression><![CDATA[$P{IMG_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$P{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "subRepEncabezado.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="34">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="6adb137a-8f37-42e1-9f0d-def5da2fb3c0" x="0" y="14" width="72" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["JUSTIFICACIÓN"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="93f6780d-e43f-4d97-a8ea-fdb63f718da6" x="0" y="0" width="134" height="10"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["FOLIO:" + $P{OFICIO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="f5c076a9-9609-4bda-ab3f-165073bcd198" x="72" y="14" width="420" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["JUSTIFICACIÓN"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="93887fec-cb7a-4a0e-a629-076bcc428799" x="492" y="14" width="100" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["MOVIMIENTOS"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="79125067-2df5-4e31-bb21-9864ae2c7234" x="0" y="24" width="72" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(NUMERO)"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="9c0ba904-6912-4eff-8a84-2216caa7de84" x="72" y="24" width="420" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(EXPLICACIÓN DE LAS CAUSAS DE LA MODIFCACIÓN)"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="33561b34-7221-4af2-8087-0ad5674c9424" x="492" y="24" width="100" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" "]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="32" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="52fc6816-d0b9-4654-956e-60456f4570d6" x="0" y="0" width="72" height="32"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID_JUSTIFICACION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="4f269706-369f-47cb-8b40-4259fbee567f" x="72" y="0" width="420" height="32"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{JUSTIFICACION}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement uuid="d3f3c2c7-3e99-4d17-beb8-d9113cee6c95" x="492" y="0" width="100" height="32"/>
+				<subreportParameter name="OFICIO">
+					<subreportParameterExpression><![CDATA[$F{OFICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ID_JUSTIFICACION">
+					<subreportParameterExpression><![CDATA[$F{ID_JUSTIFICACION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "subRptMovimientosFolio.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="11" splitType="Stretch">
+			<line>
+				<reportElement uuid="8f3086f4-326e-4acd-9aa2-a78411f2665e" x="0" y="0" width="592" height="1"/>
+			</line>
+			<textField>
+				<reportElement uuid="fc025135-1d00-4ec9-ae09-1fdc28db3973" x="484" y="1" width="108" height="10"/>
+				<textElement textAlignment="Right">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="03c7d105-fd71-48bc-8682-281f7f419a4e" x="0" y="1" width="109" height="10"/>
+				<textElement markup="none">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[<rptJustificacionesMovimientos>]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+</jasperReport>

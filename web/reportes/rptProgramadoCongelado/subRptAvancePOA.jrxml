@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subRptAvancePOA" language="groovy" pageWidth="752" pageHeight="44" orientation="Landscape" columnWidth="752" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="0c25c64b-bb6b-42cc-af11-e24866130342">
+	<property name="ireport.zoom" value="1.8150000000000022"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<parameter name="PROG" class="java.lang.String"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<parameter name="TIPO" class="java.lang.String"/>
+	<parameter name="PROY" class="java.lang.String"/>
+	<parameter name="RPT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\AplicacionesJava\\POA\\web\\reportes\\rptProgramadoCongelado\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RAMO" class="java.lang.String"/>
+	<parameter name="COSTO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT M.META,
+	    M.RAMO,
+	    M.YEAR,
+		 M.LINEA,
+	    DECODE(DGI.F_POA_TRAE_PRESUP_META(M.META,M.RAMO,M.YEAR,M.PRG),null,0,DGI.F_POA_TRAE_PRESUP_META(M.META,M.RAMO,M.YEAR,M.PRG)) AS IMPT_PRESUP_META,
+        M.DESCR,
+       MED.DESCR AS UNIDAD_DESC,
+	POA.F_META_DE_PLANTILLA( $P{YEAR},$P{RAMO}, M.META) AS META_PLANTILLA
+FROM   S_POA_META_AUTORIZADO M,
+       S_POA_MEDIDA_META MED
+WHERE  M.RAMO = $P{RAMO}
+       AND M.PRG = $P{PROG}
+       AND M.TIPO_PROY = $P{TIPO}
+       AND M.PROY = $P{PROY}
+       AND M.YEAR = $P{YEAR}
+       AND MED.MEDIDA = M.CVE_MEDIDA
+       and MED.YEAR = M.YEAR
+
+ORDER BY M.META]]>
+	</queryString>
+	<field name="META" class="java.math.BigDecimal"/>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="YEAR" class="java.lang.String"/>
+	<field name="LINEA" class="java.lang.String"/>
+	<field name="IMPT_PRESUP_META" class="java.math.BigDecimal"/>
+	<field name="DESCR" class="java.lang.String"/>
+	<field name="UNIDAD_DESC" class="java.lang.String"/>
+	<field name="META_PLANTILLA" class="java.math.BigDecimal"/>
+	<pageHeader>
+		<band height="10" splitType="Prevent">
+			<staticText>
+				<reportElement uuid="d6527c6f-54a2-4f29-81ca-736f327ca5c2" x="0" y="0" width="370" height="10"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[META]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2c0812fa-6b0d-481d-a8a9-a410552e2816" x="370" y="0" width="97" height="10"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[UNIDAD DE MEDIDA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="25217d00-6817-4b89-92cf-79d61881fb4d" x="467" y="0" width="61" height="10"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[CANTIDAD PROG.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="afce182b-5c7b-47eb-92f4-3297e0770268" x="528" y="0" width="165" height="10"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[METAS ESPERADAS POR TRIMESTRE]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="10" splitType="Immediate">
+			<textField isStretchWithOverflow="true" pattern="¤ #,##0.00">
+				<reportElement uuid="32e14f89-ad62-42e6-96da-d9f0792773c5" stretchType="RelativeToBandHeight" x="693" y="0" width="59" height="10" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="6" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{COSTO} == '1' ? $F{IMPT_PRESUP_META} : ' ']]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="b0c709da-88e1-472f-a68c-503d0799dede" stretchType="RelativeToBandHeight" x="0" y="0" width="370" height="10" isRemoveLineWhenBlank="true"/>
+				<textElement>
+					<font size="7" isBold="true" isPdfEmbedded="false"/>
+					<paragraph rightIndent="5" tabStopWidth="40"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="f39c3d46-04a1-4bac-a3fc-f05f19683092" stretchType="RelativeToBandHeight" x="370" y="0" width="97" height="10" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true" isPdfEmbedded="false"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNIDAD_DESC}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement uuid="ff53f2e0-da0b-4e51-ab14-f5ea88100e03" stretchType="RelativeToBandHeight" x="467" y="0" width="226" height="10" isRemoveLineWhenBlank="true"/>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="META">
+					<subreportParameterExpression><![CDATA[$F{META}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "subRptEvaluacion.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="10" splitType="Prevent">
+			<printWhenExpression><![CDATA[$F{META_PLANTILLA} > 0 && $P{COSTO} == '1']]></printWhenExpression>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="24cc3cf4-f50f-4541-a3cd-d318c6dabc0e" stretchType="RelativeToBandHeight" x="0" y="0" width="752" height="10" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Top" markup="none">
+					<font size="7" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Incluye el costo de plantilla"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="10">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="63664ddc-94a8-4a17-a0b8-fc7d12c1899e" stretchType="RelativeToBandHeight" x="0" y="0" width="92" height="10" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Top" markup="none">
+					<font size="7" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LINEA} == "-1" ? "" : "Línea estratégica"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="c594d7b7-5283-4102-9cc5-7f5f900f4fd0" stretchType="RelativeToBandHeight" x="92" y="0" width="100" height="10" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Top">
+					<font size="7" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LINEA} == "-1" ? "" : $F{LINEA} + "\n"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

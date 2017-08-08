@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subRptMIRLineasPND" language="groovy" pageWidth="752" pageHeight="802" columnWidth="752" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d73f9c31-535c-42f5-b5e5-dd3c33ce4bdc">
+	<property name="ireport.zoom" value="5.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="YEAR" class="java.lang.Integer"/>
+	<parameter name="RAMO" class="java.lang.String"/>
+	<parameter name="PRG" class="java.lang.String">
+		<defaultValueExpression><![CDATA[017]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    LM.META_NACIONAL||' - '||LM.DESCR AS META,
+    LO.OBJETIVO||' - '||LO.DESCR AS OBJETIVO,
+    LE.ESTRATEGIA||' - '||LE.DESCR AS ESTRATEGIA,
+    LA.LINEA_ACCION||' - '||LA.DESCR AS LINEAPND
+FROM
+    POA.RAMO_PRG_LINEA_PND LN,
+    POA.PND_LINEA_ACCION LA,
+    POA.PND_ESTRATEGIA LE,
+    POA.PND_OBJETIVO LO,
+    POA.PND_META_NACIONAL LM
+WHERE
+    LN.YEAR = $P{YEAR} AND
+    LN.RAMO = $P{RAMO} AND
+    LN.PRG = $P{PRG} AND
+    LN.YEAR = LA.YEAR AND
+    LN.LINEA_PND = LA.LINEA_ACCION AND
+    LA.YEAR = LE.YEAR AND
+    LA.ESTRATEGIA = LE.ESTRATEGIA AND
+    LA.YEAR = LO.YEAR AND
+    LA.OBJETIVO = LO.OBJETIVO AND
+    LA.YEAR = LM.YEAR AND
+    LA.META_NACIONAL = LM.META_NACIONAL]]>
+	</queryString>
+	<field name="META" class="java.lang.String"/>
+	<field name="OBJETIVO" class="java.lang.String"/>
+	<field name="ESTRATEGIA" class="java.lang.String"/>
+	<field name="LINEAPND" class="java.lang.String"/>
+	<group name="META">
+		<groupExpression><![CDATA[$F{META}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="8da6b3b9-6de1-4a16-9f6a-98b1a70b511c" x="0" y="0" width="752" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+					<textElement>
+						<font size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{META}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="OBJETIVO">
+		<groupExpression><![CDATA[$F{OBJETIVO}]]></groupExpression>
+		<groupHeader>
+			<band height="12">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="e44dd95e-dcf8-447e-a588-9a0c3746c797" x="50" y="0" width="702" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{OBJETIVO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="bac8bd95-637b-458c-b492-ea07d1462f71" x="0" y="0" width="50" height="12"/>
+					<textElement>
+						<font size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[OBJETIVO:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="ESTRATEGIA">
+		<groupExpression><![CDATA[$F{ESTRATEGIA}]]></groupExpression>
+		<groupHeader>
+			<band height="30">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="97a212c2-c6c7-4f89-91d2-80646808b012" x="73" y="0" width="679" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ESTRATEGIA}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="ea1ce867-bc2b-49af-a3e7-63ed6a988df3" x="12" y="0" width="61" height="15"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[ESTRATEGIA:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="ba794c8c-842f-405f-8c09-28d8c490c8ac" positionType="FixRelativeToBottom" x="24" y="15" width="84" height="15"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[LINEAS DE ACCIÓN:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<pageHeader>
+		<band height="16">
+			<staticText>
+				<reportElement uuid="f589c23b-3d01-418d-beda-eb529f3e4d7c" mode="Opaque" x="0" y="0" width="752" height="15" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ALINEACIÓN AL PLAN NACIONAL DE DESARROLLO (META NACIONAL, OBJETIVO, ESTRATEGIA Y LINEAS DE ACCION)]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="8619ed5e-3ce8-4c1a-839a-e2096be58594" x="36" y="0" width="716" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LINEAPND}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

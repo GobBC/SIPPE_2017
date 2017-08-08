@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptRecalendarizacionFormatoRevisionCalAccModAut" language="groovy" pageWidth="82" pageHeight="30" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="82" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d08c2163-aa59-4226-a299-145bee118e5f">
+	<property name="ireport.zoom" value="5.6962475037486655"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<subDataset name="New Dataset 1" uuid="00758d1d-b59c-4887-b00f-260cf4170944">
+		<queryString language="SQL">
+			<![CDATA[SELECT
+	DECODE('A','A',IMPACT1,IMPHIST1) IMPENE,
+	DECODE('A','A',IMPACT2,IMPHIST2) IMPFEB,
+	DECODE('A','A',IMPACT3,IMPHIST3) IMPMAR,
+	DECODE('A','A',IMPACT4,IMPHIST4) IMPABR,
+	DECODE('A','A',IMPACT5,IMPHIST5) IMPMAY,
+	DECODE('A','A',IMPACT6,IMPHIST6) IMPJUN,
+	DECODE('A','A',IMPACT7,IMPHIST7) IMPJUL,
+	DECODE('A','A',IMPACT8,IMPHIST8) IMPAGO,
+	DECODE('A','A',IMPACT9,IMPHIST9) IMPSEP,
+	DECODE('A','A',IMPACT10,IMPHIST10) IMPOCT,
+	DECODE('A','A',IMPACT11,IMPHIST11) IMPNOV,
+	DECODE('A','A',IMPACT12,IMPHIST12) IMPDIC,
+	DECODE('A','A',TOTALACT,TOTALHIST) TOTALIMP,
+	PPTO.ENE,
+	PPTO.FEB,
+	PPTO.MAR,
+	PPTO.ABR,
+	PPTO.MAY,
+	PPTO.JUN,
+	PPTO.JUL,
+	PPTO.AGO,
+	PPTO.SEP,
+	PPTO.OCT,
+	PPTO.NOV,
+	PPTO.DIC,
+	(
+		PPTO.ENE+
+		PPTO.FEB+
+		PPTO.MAR+
+		PPTO.ABR+
+		PPTO.MAY+
+		PPTO.JUN+
+		PPTO.JUL+
+		PPTO.AGO+
+		PPTO.SEP+
+		PPTO.OCT+
+		PPTO.NOV+
+		PPTO.DIC
+	) TOTALANUAL
+
+FROM
+	SPP.VW_PRESUP_ASIG_MEN  PPTO,
+	(
+		SELECT
+			ACCREQ.YEAR,
+			ACCREQ.RAMO,
+			ACCREQ.PRG,
+			ACCREQ.DEPTO,
+			MET.TIPO_PROY,
+			MET.PROY,
+			ACCREQ.META,
+			ACCREQ.ACCION,
+			ACCREQ.PARTIDA,
+			ACCREQ.FUENTE,
+			ACCREQ.FONDO,
+			ACCREQ.RECURSO,
+			ACCREQ.ENE*ACCREQ.COSTO_UNITARIO IMPACT1,
+			ACCREQ.FEB*ACCREQ.COSTO_UNITARIO IMPACT2,
+			ACCREQ.MAR*ACCREQ.COSTO_UNITARIO IMPACT3,
+			ACCREQ.ABR*ACCREQ.COSTO_UNITARIO IMPACT4,
+			ACCREQ.MAY*ACCREQ.COSTO_UNITARIO IMPACT5,
+			ACCREQ.JUN*ACCREQ.COSTO_UNITARIO IMPACT6,
+			ACCREQ.JUL*ACCREQ.COSTO_UNITARIO IMPACT7,
+			ACCREQ.AGO*ACCREQ.COSTO_UNITARIO IMPACT8,
+			ACCREQ.SEP*ACCREQ.COSTO_UNITARIO IMPACT9,
+			ACCREQ.OCT*ACCREQ.COSTO_UNITARIO IMPACT10,
+			ACCREQ.NOV*ACCREQ.COSTO_UNITARIO IMPACT11,
+			ACCREQ.DIC*ACCREQ.COSTO_UNITARIO IMPACT12,
+			(
+					ACCREQ.ENE*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.FEB*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.MAR*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.ABR*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.MAY*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.JUN*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.JUL*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.AGO*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.SEP*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.OCT*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.NOV*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.DIC*ACCREQ.COSTO_UNITARIO
+			) TOTALACT
+		FROM
+			POA.ACCION_REQ ACCREQ,
+			S_POA_META MET
+		WHERE
+			ACCREQ.YEAR = 2016 AND
+			ACCREQ.RAMO = '02' AND
+			ACCREQ.PRG = '156' AND
+			ACCREQ.DEPTO = 333 AND
+			MET.TIPO_PROY = 'A' AND
+			MET.PROY = 495 AND
+			ACCREQ.META = 20 AND
+			ACCREQ.ACCION = 2 AND
+			ACCREQ.PARTIDA = '33101' AND
+			ACCREQ.FUENTE = '1' AND
+			ACCREQ.FONDO = '01' AND
+			ACCREQ.RECURSO = '16' AND
+			ACCREQ.REQUERIMIENTO = 2 AND
+			MET.YEAR = ACCREQ.YEAR AND
+			MET.RAMO = ACCREQ.RAMO AND
+			MET.PRG = ACCREQ.PRG AND
+			MET.META = ACCREQ.META
+	) ACCREQ,
+	(
+		SELECT
+			HISTACCREQ.YEAR,
+			HISTACCREQ.RAMO,
+			HISTACCREQ.PRG,
+			HISTACCREQ.DEPTO,
+			MET.TIPO_PROY,
+			MET.PROY,
+			HISTACCREQ.META,
+			HISTACCREQ.ACCION,
+			HISTACCREQ.PARTIDA,
+			HISTACCREQ.FUENTE,
+			HISTACCREQ.FONDO,
+			HISTACCREQ.RECURSO,
+			HISTACCREQ.ENE*HISTACCREQ.COSTO_UNITARIO IMPHIST1,
+			HISTACCREQ.FEB*HISTACCREQ.COSTO_UNITARIO IMPHIST2,
+			HISTACCREQ.MAR*HISTACCREQ.COSTO_UNITARIO IMPHIST3,
+			HISTACCREQ.ABR*HISTACCREQ.COSTO_UNITARIO IMPHIST4,
+			HISTACCREQ.MAY*HISTACCREQ.COSTO_UNITARIO IMPHIST5,
+			HISTACCREQ.JUN*HISTACCREQ.COSTO_UNITARIO IMPHIST6,
+			HISTACCREQ.JUL*HISTACCREQ.COSTO_UNITARIO IMPHIST7,
+			HISTACCREQ.AGO*HISTACCREQ.COSTO_UNITARIO IMPHIST8,
+			HISTACCREQ.SEP*HISTACCREQ.COSTO_UNITARIO IMPHIST9,
+			HISTACCREQ.OCT*HISTACCREQ.COSTO_UNITARIO IMPHIST10,
+			HISTACCREQ.NOV*HISTACCREQ.COSTO_UNITARIO IMPHIST11,
+			HISTACCREQ.DIC*HISTACCREQ.COSTO_UNITARIO IMPHIST12,
+			(
+					HISTACCREQ.ENE*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.FEB*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.MAR*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.ABR*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.MAY*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.JUN*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.JUL*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.AGO*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.SEP*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.OCT*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.NOV*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.DIC*HISTACCREQ.COSTO_UNITARIO
+			) TOTALHIST
+		FROM
+			POA.HIST_ACCION_REQ HISTACCREQ,
+			S_POA_META MET
+		WHERE
+			HISTACCREQ.YEAR = 2016 AND
+			HISTACCREQ.RAMO = '02' AND
+			HISTACCREQ.PRG = '156' AND
+			HISTACCREQ.DEPTO = 333 AND
+			MET.TIPO_PROY = 'A' AND
+			MET.PROY = 495 AND
+			HISTACCREQ.META = 20 AND
+			HISTACCREQ.ACCION = 2 AND
+			HISTACCREQ.PARTIDA = '33101' AND
+			HISTACCREQ.FUENTE = '1' AND
+			HISTACCREQ.FONDO = '01' AND
+			HISTACCREQ.RECURSO = '16' AND
+			HISTACCREQ.REQUERIMIENTO = 2 AND
+			MET.YEAR = HISTACCREQ.YEAR AND
+			MET.RAMO = HISTACCREQ.RAMO AND
+			MET.PRG = HISTACCREQ.PRG AND
+			MET.META = HISTACCREQ.META
+	) HISTACCREQ
+WHERE
+	PPTO.YEAR = 2016 AND
+	PPTO.RAMO = '02' AND
+	PPTO.PRG = '156' AND
+	PPTO.DEPTO = 333 AND
+	PPTO.TIPO_PROY = 'A' AND
+	PPTO.PROYECTO = 495 AND
+	PPTO.META = 20 AND
+	PPTO.ACCION = 2 AND
+	PPTO.PARTIDA = '33101' AND
+	PPTO.FUENTE = '1' AND
+	PPTO.FONDO = '01' AND
+	PPTO.RECURSO = '16' AND
+	ACCREQ.YEAR = PPTO.YEAR AND
+	ACCREQ.RAMO = PPTO.RAMO AND
+	ACCREQ.PRG = PPTO.PRG AND
+	ACCREQ.DEPTO = PPTO.DEPTO AND
+	ACCREQ.TIPO_PROY = PPTO.TIPO_PROY AND
+	ACCREQ.PROY = PPTO.PROYECTO AND
+	ACCREQ.META = PPTO.META AND
+	ACCREQ.ACCION = PPTO.ACCION AND
+	ACCREQ.PARTIDA = PPTO.PARTIDA AND
+	ACCREQ.FUENTE = PPTO.FUENTE AND
+	ACCREQ.FONDO = PPTO.FONDO AND
+	ACCREQ.RECURSO = PPTO.RECURSO AND
+	HISTACCREQ.YEAR = PPTO.YEAR AND
+	HISTACCREQ.RAMO = PPTO.RAMO AND
+	HISTACCREQ.PRG = PPTO.PRG AND
+	HISTACCREQ.DEPTO = PPTO.DEPTO AND
+	HISTACCREQ.TIPO_PROY = PPTO.TIPO_PROY AND
+	HISTACCREQ.PROY = PPTO.PROYECTO AND
+	HISTACCREQ.META = PPTO.META AND
+	HISTACCREQ.ACCION = PPTO.ACCION AND
+	HISTACCREQ.PARTIDA = PPTO.PARTIDA AND
+	HISTACCREQ.FUENTE = PPTO.FUENTE AND
+	HISTACCREQ.FONDO = PPTO.FONDO AND
+	HISTACCREQ.RECURSO = PPTO.RECURSO AND
+	HISTACCREQ.YEAR = ACCREQ.YEAR AND
+	HISTACCREQ.RAMO = ACCREQ.RAMO AND
+	HISTACCREQ.PRG = ACCREQ.PRG AND
+	HISTACCREQ.DEPTO = ACCREQ.DEPTO AND
+	HISTACCREQ.TIPO_PROY = ACCREQ.TIPO_PROY AND
+	HISTACCREQ.PROY = ACCREQ.PROY AND
+	HISTACCREQ.META = ACCREQ.META AND
+	HISTACCREQ.ACCION = ACCREQ.ACCION AND
+	HISTACCREQ.PARTIDA = ACCREQ.PARTIDA AND
+	HISTACCREQ.FUENTE = ACCREQ.FUENTE AND
+	HISTACCREQ.FONDO = ACCREQ.FONDO AND
+	HISTACCREQ.RECURSO = ACCREQ.RECURSO]]>
+		</queryString>
+		<field name="IMPENE" class="java.math.BigDecimal"/>
+		<field name="IMPFEB" class="java.math.BigDecimal"/>
+		<field name="IMPMAR" class="java.math.BigDecimal"/>
+		<field name="IMPABR" class="java.math.BigDecimal"/>
+		<field name="IMPMAY" class="java.math.BigDecimal"/>
+		<field name="IMPJUN" class="java.math.BigDecimal"/>
+		<field name="IMPJUL" class="java.math.BigDecimal"/>
+		<field name="IMPAGO" class="java.math.BigDecimal"/>
+		<field name="IMPSEP" class="java.math.BigDecimal"/>
+		<field name="IMPOCT" class="java.math.BigDecimal"/>
+		<field name="IMPNOV" class="java.math.BigDecimal"/>
+		<field name="IMPDIC" class="java.math.BigDecimal"/>
+		<field name="TOTALIMP" class="java.math.BigDecimal"/>
+		<field name="ENE" class="java.math.BigDecimal"/>
+		<field name="FEB" class="java.math.BigDecimal"/>
+		<field name="MAR" class="java.math.BigDecimal"/>
+		<field name="ABR" class="java.math.BigDecimal"/>
+		<field name="MAY" class="java.math.BigDecimal"/>
+		<field name="JUN" class="java.math.BigDecimal"/>
+		<field name="JUL" class="java.math.BigDecimal"/>
+		<field name="AGO" class="java.math.BigDecimal"/>
+		<field name="SEP" class="java.math.BigDecimal"/>
+		<field name="OCT" class="java.math.BigDecimal"/>
+		<field name="NOV" class="java.math.BigDecimal"/>
+		<field name="DIC" class="java.math.BigDecimal"/>
+		<field name="TOTALANUAL" class="java.math.BigDecimal"/>
+		<group name="IMPENE">
+			<groupExpression><![CDATA[$F{IMPENE}]]></groupExpression>
+		</group>
+		<group name="ENE">
+			<groupExpression><![CDATA[$F{ENE}]]></groupExpression>
+		</group>
+	</subDataset>
+	<parameter name="IMG_DIR" class="java.lang.String"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<parameter name="RAMO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="META" class="java.math.BigDecimal"/>
+	<parameter name="PRG" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DEPTO" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TIPO_PROY" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PROY" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ACCION" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+	nvl(count(ROWNUM),0) MODIFICACIONES_AUTORIZADAS
+FROM
+	(
+		SELECT
+			RECAL.OFICIO
+		FROM
+			POA.MOVOFICIOS_ACCION_ESTIMACION RECAL,
+			S_POA_META META,
+			S_POA_ACCION ACCION,
+			POA.MOVOFICIOS MOVS
+		WHERE
+			RECAL.YEAR = $P{YEAR} AND
+			RECAL.RAMO = $P{RAMO} AND
+			RECAL.META = $P{META} AND
+			RECAL.ACCION = $P{ACCION} AND
+			META.PRG = $P{PRG} AND
+			META.DEPTO = $P{DEPTO} AND
+			META.TIPO_PROY = $P{TIPO_PROY} AND
+			META.PROY = $P{PROY} AND
+			META.YEAR = RECAL.YEAR AND
+			META.RAMO = RECAL.RAMO AND
+			META.META = RECAL.META AND
+			ACCION.YEAR = RECAL.YEAR AND
+			ACCION.RAMO = RECAL.RAMO AND
+			ACCION.META = RECAL.META AND
+			ACCION.ACCION = RECAL.ACCION AND
+			ACCION.YEAR = META.YEAR AND
+			ACCION.RAMO = META.RAMO AND
+			ACCION.PRG = META.PRG AND
+			ACCION.META = META.META AND
+			MOVS.OFICIO = RECAL.OFICIO AND
+			EXTRACT(YEAR FROM MOVS.FECHAELAB) = RECAL.YEAR AND
+			MOVS.STATUS = 'A'
+
+		GROUP BY
+			RECAL.OFICIO,
+			RECAL.RAMO,
+			META.PRG,
+			META.DEPTO,
+			META.TIPO_PROY,
+			META.PROY,
+			RECAL.META
+
+		ORDER BY
+			RECAL.OFICIO,
+			RECAL.RAMO,
+			META.PRG,
+			META.DEPTO,
+			META.TIPO_PROY,
+			META.PROY,
+			RECAL.META
+	) MOVSOF]]>
+	</queryString>
+	<field name="MODIFICACIONES_AUTORIZADAS" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="30">
+			<staticText>
+				<reportElement uuid="bbe71d88-f0ff-45be-a973-bdee1d502f38" mode="Transparent" x="0" y="0" width="47" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Número de]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="a4ec25dd-88b3-429c-ab65-084a948ce29d" x="47" y="10" width="33" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MODIFICACIONES_AUTORIZADAS}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="7d92930c-cee9-450d-9f76-a40501df51ee" mode="Transparent" x="0" y="20" width="47" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[autorizadas:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f23d3649-8aa9-4f77-9486-51230dcfeda3" mode="Transparent" x="0" y="10" width="47" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[modificaciones]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

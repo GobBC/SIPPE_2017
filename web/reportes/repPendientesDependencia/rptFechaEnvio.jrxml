@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptFechaEnvio" language="groovy" pageWidth="100" pageHeight="13" columnWidth="100" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="9f184ef6-2064-4b51-bbb5-c827e649fd7d">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="OFICIO" class="java.math.BigDecimal"/>
+	<queryString>
+		<![CDATA[SELECT NVL(TO_CHAR(MIN(FECHAAUT),'DD/MM/YYYY'),'S/E') AS FECHAAUT
+FROM POA.BITMOVTOS
+WHERE OFICIO=$P{OFICIO}]]>
+	</queryString>
+	<field name="FECHAAUT" class="java.lang.String"/>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField>
+				<reportElement uuid="2c214a26-4fbb-41ec-aa54-e77146c7fec3" x="0" y="0" width="100" height="12"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHAAUT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

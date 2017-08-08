@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subRptIdentificacionSubProgramasRepro" language="groovy" pageWidth="752" pageHeight="490" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="752" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isTitleNewPage="true" uuid="b2539b67-1a48-4c29-8d31-9567c251e5c3">
+	<property name="ireport.zoom" value="1.6105100000000039"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="82"/>
+	<parameter name="RAMO" class="java.lang.String"/>
+	<parameter name="PROG" class="java.lang.String"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<parameter name="RPT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IMG_DIR" class="java.lang.String"/>
+	<parameter name="COSTO" class="java.lang.String"/>
+	<parameter name="OFICIO" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\SIMG\\Desarrollo\\Web\\Java\\repositorio_local\\Aplicaciones Web\\POA\\web\\reportes\\reprogramado\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SECRETARIA" class="java.lang.String"/>
+	<parameter name="GOBIERNO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+	DGI.RAMOS.RAMO,
+	POA.RAMO_PROGRAMA.DEPTO,
+	DGI.RAMOS.DESCR AS RAMO_DESC,
+	POA.RAMO_PROGRAMA.PRG,
+	PRG.DESCR AS PROG_DESC,
+	PROY.PROY,
+	PROY.TIPO_PROY,
+	DGI.DEPENDENCIA.DESCR AS DEPEN_DESC,
+	DGI.PARAMETROS.GOBIERNO,
+	DGI.PARAMETROS.SECRETARIA,
+	'' AS FOLIO,
+	L.NOMBRE ||' '||L.PATERNO ||' '|| L.MATERNO AS LIDER,
+	sysdate as fecha,
+	MV.STATUS, MM.META
+FROM
+	S_POA_PROGRAMA PRG,
+	POA.RAMO_PROGRAMA,
+	DGI.RAMOS ,
+	DGI.DEPENDENCIA,
+	DGI.PARAMETROS,
+	POA.PROYECTO PROY,
+	DGI.VW_EMPLEADOS L,
+	POA.MOVOFICIOS MV,
+    POA.MOVOFICIOS_META MM
+WHERE
+	MV.OFICIO = $P{OFICIO} AND
+    MM.OFICIO = MV.OFICIO AND
+    MM.RAMO = $P{RAMO} AND
+    MM.PRG = $P{PROG} AND
+	POA.RAMO_PROGRAMA.YEAR = MM.YEAR AND
+	POA.RAMO_PROGRAMA.RAMO = MM.RAMO AND
+	POA.RAMO_PROGRAMA.PRG = MM.PRG AND
+	DGI.RAMOS.YEAR = MM.YEAR AND
+	DGI.RAMOS.RAMO = MM.RAMO AND
+	PRG.YEAR = MM.YEAR AND
+	PRG.PRG = MM.PRG AND
+	DGI.DEPENDENCIA.DEPTO (+) = POA.RAMO_PROGRAMA.DEPTO  AND
+	DGI.DEPENDENCIA.YEAR (+) = POA.RAMO_PROGRAMA.YEAR AND
+	DGI.DEPENDENCIA.RAMO (+) = POA.RAMO_PROGRAMA.RAMO AND
+	PROY.YEAR = POA.RAMO_PROGRAMA.YEAR AND
+	PROY.RAMO = POA.RAMO_PROGRAMA.RAMO AND
+	PROY.PRG = POA.RAMO_PROGRAMA.PRG AND
+    PROY.TIPO_PROY = MM.TIPO_PROY AND
+    PROY.PROY = MM.PROY AND
+	L.RFC (+)= PROY.RFC AND
+	L.HOMOCLAVE (+)= PROY.HOMOCLAVE]]>
+	</queryString>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="DEPTO" class="java.lang.String"/>
+	<field name="RAMO_DESC" class="java.lang.String"/>
+	<field name="PRG" class="java.lang.String"/>
+	<field name="PROG_DESC" class="java.lang.String"/>
+	<field name="PROY" class="java.math.BigDecimal"/>
+	<field name="TIPO_PROY" class="java.lang.String"/>
+	<field name="DEPEN_DESC" class="java.lang.String"/>
+	<field name="GOBIERNO" class="java.lang.String"/>
+	<field name="SECRETARIA" class="java.lang.String"/>
+	<field name="FOLIO" class="java.lang.String"/>
+	<field name="LIDER" class="java.lang.String"/>
+	<field name="FECHA" class="java.sql.Timestamp"/>
+	<field name="STATUS" class="java.lang.String"/>
+	<field name="META" class="java.math.BigDecimal"/>
+	<group name="RAMO">
+		<groupExpression><![CDATA[$F{RAMO}]]></groupExpression>
+	</group>
+	<group name="PRG">
+		<groupExpression><![CDATA[$F{PRG}]]></groupExpression>
+	</group>
+	<group name="DEPTO">
+		<groupExpression><![CDATA[$F{DEPTO}]]></groupExpression>
+	</group>
+	<group name="PROY" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{PROY}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="121" splitType="Stretch">
+			<line>
+				<reportElement uuid="dd53d879-b056-45b5-beef-65da4d27508d" x="0" y="72" width="752" height="1"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="e848909f-9c0b-482c-9cc4-37992caf94df" x="65" y="0" width="622" height="20" isRemoveLineWhenBlank="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GOBIERNO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="1094516a-d514-4984-ba1f-9bd283b4ca1d" x="48" y="73" width="704" height="12" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$F{RAMO}.isEmpty()]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RAMO}+" "+$F{RAMO_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="b2a777a3-98cd-4298-85e9-1de7875081c9" stretchType="RelativeToBandHeight" x="135" y="97" width="617" height="12" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$F{DEPTO}.isEmpty()]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DEPTO}+" "+$F{DEPEN_DESC}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="92bd71a5-3b99-4abd-affd-e528e500db35" x="0" y="109" width="752" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="6a6378c4-8526-4118-bd02-176fd5d73795" x="0" y="85" width="80" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<text><![CDATA[PROGRAMA:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="d439fd12-0c45-44fc-9402-4087b29705f5" x="65" y="26" width="622" height="20" isRemoveLineWhenBlank="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SECRETARIA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="4023760d-3288-4a1d-80f1-806f2f0e3fe1" x="0" y="97" width="135" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<text><![CDATA[UNIDAD RESPONSABLE:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="ef7c18b0-7801-41c6-b19a-1512c6d755ac" x="80" y="85" width="672" height="12" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$F{PRG}.isEmpty()]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRG}+" "+$F{PROG_DESC}+" "+$F{STATUS}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a64c2c61-b2f3-4c7a-9d4c-2d20255c0c0a" x="0" y="73" width="48" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<text><![CDATA[RAMO:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="95646951-bfd0-42dd-82bf-8a4da43bf8a4" x="65" y="52" width="622" height="20" isRemoveLineWhenBlank="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["IDENTIFICACIÓN DE PROGRAMAS PARA EL EJERCICIO FISCAL " + $P{YEAR}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement uuid="bb136e2c-c367-48b4-a81e-748ad3285fe6" x="0" y="0" width="65" height="70"/>
+				<imageExpression><![CDATA[$P{IMG_DIR}+"EDO.gif"]]></imageExpression>
+			</image>
+			<subreport isUsingCache="true">
+				<reportElement uuid="923e71a4-0c37-4c38-a755-613cc39297d0" x="0" y="110" width="752" height="11" isRemoveLineWhenBlank="true"/>
+				<subreportParameter name="PROG">
+					<subreportParameterExpression><![CDATA[$P{PROG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO">
+					<subreportParameterExpression><![CDATA[$F{TIPO_PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PROY">
+					<subreportParameterExpression><![CDATA[$F{PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "SubRptActEstrRepro.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="10">
+			<staticText>
+				<reportElement uuid="93ec641d-2a9c-4934-9d15-f198c0b062ed" x="467" y="0" width="61" height="10" isPrintInFirstWholeBand="true">
+					<printWhenExpression><![CDATA[$V{COLUMN_COUNT} < 2]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[CANTIDAD PROG.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="96b2605c-8b3d-4a3c-8779-6e56fa6f497a" x="370" y="0" width="97" height="10" isPrintInFirstWholeBand="true">
+					<printWhenExpression><![CDATA[$V{COLUMN_COUNT} < 2]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[UNIDAD DE MEDIDA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="de5629ed-e2c7-42a6-8d2c-11e1a475d56a" x="528" y="0" width="165" height="10" isPrintInFirstWholeBand="true">
+					<printWhenExpression><![CDATA[$V{COLUMN_COUNT} < 2]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[METAS ESPERADAS POR TRIMESTRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9b692a2d-ef0b-4fce-9517-13a8c1c5b241" x="0" y="0" width="370" height="10" isPrintInFirstWholeBand="true">
+					<printWhenExpression><![CDATA[$V{COLUMN_COUNT} < 2]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[META AUTORIZADA]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="28" splitType="Stretch">
+			<subreport>
+				<reportElement uuid="45ec7d27-85dd-4e1d-994b-89b3195e635b" x="0" y="0" width="752" height="13" isRemoveLineWhenBlank="true"/>
+				<subreportParameter name="COSTO">
+					<subreportParameterExpression><![CDATA[$P{COSTO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="OFICIO">
+					<subreportParameterExpression><![CDATA[$P{OFICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PROG">
+					<subreportParameterExpression><![CDATA[$P{PROG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO">
+					<subreportParameterExpression><![CDATA[$F{TIPO_PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PROY">
+					<subreportParameterExpression><![CDATA[$F{PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="META">
+					<subreportParameterExpression><![CDATA[$F{META}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$P{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "subRptAvancePOAHistRepro.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement uuid="0a9fd00d-231b-492b-a560-87f0eef1b047" x="0" y="13" width="752" height="15"/>
+				<subreportParameter name="PROG">
+					<subreportParameterExpression><![CDATA[$P{PROG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO">
+					<subreportParameterExpression><![CDATA[$F{TIPO_PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PROY">
+					<subreportParameterExpression><![CDATA[$F{PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$P{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="COSTO">
+					<subreportParameterExpression><![CDATA[$P{COSTO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR}  + "subRptAvancePOAOriginalRepro.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="21">
+			<subreport>
+				<reportElement uuid="7563bce3-5f8b-4ba2-8050-2b3b3a631360" x="0" y="10" width="752" height="11" isRemoveLineWhenBlank="true"/>
+				<subreportParameter name="COSTO">
+					<subreportParameterExpression><![CDATA[$P{COSTO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="APR_CON">
+					<subreportParameterExpression><![CDATA["-1"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PROG">
+					<subreportParameterExpression><![CDATA[$P{PROG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO">
+					<subreportParameterExpression><![CDATA[$F{TIPO_PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CONVENIO">
+					<subreportParameterExpression><![CDATA["N"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PROY">
+					<subreportParameterExpression><![CDATA[$F{PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="META">
+					<subreportParameterExpression><![CDATA[$F{META}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$P{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "subRptAvancePOARepro.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement uuid="dd5b3c1e-5541-4ec5-97d2-44c283af0b72" x="467" y="0" width="61" height="10" isPrintInFirstWholeBand="true">
+					<printWhenExpression><![CDATA[$V{COLUMN_COUNT} < 2]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[CANTIDAD PROG.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a7941e52-8d50-4138-9628-ffbcd126d686" x="0" y="0" width="370" height="10" isPrintInFirstWholeBand="true">
+					<printWhenExpression><![CDATA[$V{COLUMN_COUNT} < 2]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[META PROPUESTA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="38bfd971-cdef-4716-8732-ac6f28aeaff0" x="370" y="0" width="97" height="10" isPrintInFirstWholeBand="true">
+					<printWhenExpression><![CDATA[$V{COLUMN_COUNT} < 2]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[UNIDAD DE MEDIDA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="fc7c6b8f-5307-458e-913f-505213399d77" x="528" y="0" width="165" height="10" isPrintInFirstWholeBand="true">
+					<printWhenExpression><![CDATA[$V{COLUMN_COUNT} < 2]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[METAS ESPERADAS POR TRIMESTRE]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<noData>
+		<band height="102">
+			<break>
+				<reportElement uuid="cd32b20a-722d-4572-8456-37b10d1f863d" x="0" y="0" width="100" height="1"/>
+			</break>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c81b0111-f97a-4f01-8d2a-cb908a1a9b1f" x="65" y="52" width="622" height="20" isRemoveLineWhenBlank="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["IDENTIFICACIÓN DE PROGRAMAS PARA EL EJERCICIO FISCAL " + $P{YEAR}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement uuid="c501f8e7-e795-463f-bf99-bd514d48230b" x="0" y="3" width="65" height="70"/>
+				<imageExpression><![CDATA[$P{IMG_DIR}+"EDO.gif"]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="b52bfc64-3afa-4542-951d-9eee6271a506" x="65" y="3" width="622" height="20" isRemoveLineWhenBlank="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{GOBIERNO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="ec451af9-46d8-412a-9f73-ea2160142446" x="65" y="26" width="622" height="20" isRemoveLineWhenBlank="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{SECRETARIA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="b80f8e2b-fb1a-412f-b2a3-c788f0dbe6fc" x="0" y="82" width="752" height="20" isRemoveLineWhenBlank="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NO HAY METAS REPROGRAMADAS PARA MOSTRAR]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="14c6466d-32f8-4677-87d4-49ef3d891d7e" x="0" y="75" width="752" height="1"/>
+			</line>
+		</band>
+	</noData>
+</jasperReport>

@@ -1,0 +1,795 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptRecalendarizacionFormatoRevisionListReq" language="groovy" pageWidth="751" pageHeight="325" orientation="Landscape" columnWidth="751" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d08c2163-aa59-4226-a299-145bee118e5f">
+	<property name="ireport.zoom" value="1.3636363636364022"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMG_DIR" class="java.lang.String"/>
+	<parameter name="OFICIO" class="java.lang.Long"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<parameter name="RAMO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="STATUS" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\desarrollo\\repositorio_local\\POA\\web\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RPT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\desarrollo\\repositorio_local\\POA\\web\\reportes\\RecalendarizacionFormatoRevision\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+	ROWNUM,
+	MOVACCREQ.RAMO,
+	MOVACCREQ.PRG,
+	MOVACCREQ.DEPTO,
+	MET.TIPO_PROY,
+	MET.PROY,
+	MOVACCREQ.META,
+	MET.DESCR META_DESCR,
+	MOVACCREQ.ACCION,
+	ACC.DESCR ACCION_DESCR,
+	MOVACCREQ.PARTIDA,
+	MOVACCREQ.FUENTE,
+	MOVACCREQ.FONDO,
+	MOVACCREQ.RECURSO,
+	MOVACCREQ.REQUERIMIENTO,
+	ACCREQ.DESCR REQUERIMIENTO_DESCR,
+	(
+		SELECT
+			nvl(count(ROWNUM),0)
+		FROM
+			POA.MOVOFICIOS_ACCION_REQ RECAL,
+			S_POA_META META
+		WHERE
+			RECAL.YEAR = $P{YEAR} AND
+			RECAL.RAMO = MOVACCREQ.RAMO AND
+			RECAL.PRG = MOVACCREQ.PRG AND
+			RECAL.DEPTO = MOVACCREQ.DEPTO AND
+			META.TIPO_PROY = MET.TIPO_PROY AND
+			META.PROY = MET.PROY AND
+			RECAL.META = MOVACCREQ.META AND
+			RECAL.ACCION = MOVACCREQ.ACCION AND
+			RECAL.PARTIDA = MOVACCREQ.PARTIDA AND
+			RECAL.FUENTE = MOVACCREQ.FUENTE AND
+			RECAL.FONDO = MOVACCREQ.FONDO AND
+			RECAL.RECURSO = MOVACCREQ.RECURSO AND
+			META.YEAR = RECAL.YEAR AND
+			META.RAMO = RECAL.RAMO AND
+			META.PRG = RECAL.PRG AND
+			META.META = RECAL.META
+	) REGISTROS,
+	(
+		SELECT
+			(
+				SUM(PPTO.ENE)+
+				SUM(PPTO.FEB)+
+				SUM(PPTO.MAR)+
+				SUM(PPTO.ABR)+
+				SUM(PPTO.MAY)+
+				SUM(PPTO.JUN)+
+				SUM(PPTO.JUL)+
+				SUM(PPTO.AGO)+
+				SUM(PPTO.SEP)+
+				SUM(PPTO.OCT)+
+				SUM(PPTO.NOV)+
+				SUM(PPTO.DIC)
+
+			) COSTO_TOTAL_META
+		FROM
+			SPP.VW_PRESUP_ASIG_MEN  PPTO
+		WHERE
+			PPTO.YEAR = $P{YEAR} AND
+			PPTO.RAMO = MOVACCREQ.RAMO AND
+			PPTO.PRG = MOVACCREQ.PRG AND
+			PPTO.DEPTO = MOVACCREQ.DEPTO AND
+			PPTO.TIPO_PROY = MET.TIPO_PROY AND
+			PPTO.PROYECTO = MET.PROY AND
+			PPTO.META = MOVACCREQ.META
+	) COSTO_TOTAL_META,
+	(
+		SELECT
+			(
+				(
+					MOVACCREQC.ENE+
+					MOVACCREQC.FEB+
+					MOVACCREQC.MAR+
+					MOVACCREQC.ABR+
+					MOVACCREQC.MAY+
+					MOVACCREQC.JUN+
+					MOVACCREQC.JUL+
+					MOVACCREQC.AGO+
+					MOVACCREQC.SEP+
+					MOVACCREQC.OCT+
+					MOVACCREQC.NOV+
+					MOVACCREQC.DIC
+				)*MOVACCREQC.COSTO_UNITARIO
+			) MONTO_RECALENDARIZAR
+		FROM
+			POA.MOVOFICIOS_ACCION_REQ MOVACCREQC,
+			S_POA_META META
+		WHERE
+			MOVACCREQC.OFICIO = $P{OFICIO} AND
+			MOVACCREQC.YEAR = $P{YEAR} AND
+			MOVACCREQC.RAMO = MOVACCREQ.RAMO AND
+			MOVACCREQC.PRG = MOVACCREQ.PRG AND
+			MOVACCREQC.DEPTO = MOVACCREQ.DEPTO AND
+			META.TIPO_PROY = MET.TIPO_PROY AND
+			META.PROY = MET.PROY AND
+			MOVACCREQC.META = MOVACCREQ.META AND
+			MOVACCREQC.ACCION = MOVACCREQ.ACCION AND
+			MOVACCREQC.PARTIDA = MOVACCREQ.PARTIDA AND
+			MOVACCREQC.FUENTE = MOVACCREQ.FUENTE AND
+			MOVACCREQC.FONDO = MOVACCREQ.FONDO AND
+			MOVACCREQC.RECURSO = MOVACCREQ.RECURSO AND
+			MOVACCREQC.REQUERIMIENTO = MOVACCREQ.REQUERIMIENTO AND
+			META.YEAR = MOVACCREQC.YEAR AND
+			META.RAMO = MOVACCREQC.RAMO AND
+			META.PRG = MOVACCREQC.PRG AND
+			META.META = MOVACCREQC.META
+	) MONTO_RECALENDARIZAR
+
+FROM
+	POA.MOVOFICIOS_ACCION_REQ MOVACCREQ,
+	S_POA_META MET,
+	S_POA_ACCION ACC,
+	S_POA_ACCION_REQ ACCREQ
+WHERE
+	MOVACCREQ.YEAR = $P{YEAR} AND
+	MOVACCREQ.OFICIO = $P{OFICIO} AND
+	MOVACCREQ.RAMO = $P{RAMO} AND
+	MET.YEAR = MOVACCREQ.YEAR AND
+	MET.RAMO = MOVACCREQ.RAMO AND
+	MET.PRG = MOVACCREQ.PRG AND
+	MET.META = MOVACCREQ.META AND
+	ACC.YEAR = MOVACCREQ.YEAR AND
+	ACC.RAMO = MOVACCREQ.RAMO AND
+	ACC.PRG = MOVACCREQ.PRG AND
+	ACC.META = MOVACCREQ.META AND
+	ACC.ACCION = MOVACCREQ.ACCION AND
+	ACCREQ.YEAR = MOVACCREQ.YEAR AND
+	ACCREQ.RAMO = MOVACCREQ.RAMO AND
+	ACCREQ.PRG = MOVACCREQ.PRG AND
+	ACCREQ.META = MOVACCREQ.META AND
+	ACCREQ.ACCION = MOVACCREQ.ACCION AND
+	ACCREQ.REQUERIMIENTO = MOVACCREQ.REQUERIMIENTO]]>
+	</queryString>
+	<field name="ROWNUM" class="java.math.BigDecimal"/>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="PRG" class="java.lang.String"/>
+	<field name="DEPTO" class="java.math.BigDecimal"/>
+	<field name="TIPO_PROY" class="java.lang.String"/>
+	<field name="PROY" class="java.math.BigDecimal"/>
+	<field name="META" class="java.math.BigDecimal"/>
+	<field name="META_DESCR" class="java.lang.String"/>
+	<field name="ACCION" class="java.math.BigDecimal"/>
+	<field name="ACCION_DESCR" class="java.lang.String"/>
+	<field name="PARTIDA" class="java.lang.String"/>
+	<field name="FUENTE" class="java.lang.String"/>
+	<field name="FONDO" class="java.lang.String"/>
+	<field name="RECURSO" class="java.lang.String"/>
+	<field name="REQUERIMIENTO" class="java.math.BigDecimal"/>
+	<field name="REQUERIMIENTO_DESCR" class="java.lang.String"/>
+	<field name="REGISTROS" class="java.math.BigDecimal"/>
+	<field name="COSTO_TOTAL_META" class="java.math.BigDecimal"/>
+	<field name="MONTO_RECALENDARIZAR" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="325">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c3deca4d-2d3e-4d87-a202-7c531eb0a1f2" x="256" y="10" width="33" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="6" isBold="true" isUnderline="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REGISTROS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="2ffc5c8b-0056-4cbf-94bf-a3dbfa62b567" mode="Opaque" x="0" y="0" width="44" height="10" isRemoveLineWhenBlank="true" backcolor="#CCCCCC"/>
+				<textElement>
+					<font fontName="SansSerif" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA["REGISTRO " + $F{ROWNUM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="169e3df2-81d1-4032-b763-5c4c86699fa7" x="137" y="0" width="114" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RAMO}+"-"+$F{PRG}+"-"+$F{DEPTO}+"-"+$F{TIPO_PROY}+$F{PROY}+"-"+$F{META}+"-"+$F{ACCION}+"-"+$F{PARTIDA}+" "+$F{FUENTE}+"."+$F{FONDO}+"."+$F{RECURSO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="13f21fe4-5c6e-4149-8521-016e15478ed6" x="46" y="0" width="83" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CÓDIGO PRESUPUESTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="28172c90-8b80-46d3-9be6-06ddc522bf86" x="0" y="10" width="256" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NÚMERO DE RECALENDARIZACIONES REALIZADAS A ESTE CÓDIGO PRESUPUESTAL:]]></text>
+			</staticText>
+			<subreport>
+				<reportElement uuid="02d4d3cd-fdd0-4b10-9f14-817aaae749e3" x="108" y="31" width="211" height="161"/>
+				<subreportParameter name="FUENTE">
+					<subreportParameterExpression><![CDATA[$F{FUENTE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARTIDA">
+					<subreportParameterExpression><![CDATA[$F{PARTIDA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ACCION">
+					<subreportParameterExpression><![CDATA[$F{ACCION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMG_DIR">
+					<subreportParameterExpression><![CDATA[$P{IMG_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="FONDO">
+					<subreportParameterExpression><![CDATA[$F{FONDO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="STATUS">
+					<subreportParameterExpression><![CDATA[$P{STATUS}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="OFICIO">
+					<subreportParameterExpression><![CDATA[$P{OFICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PRG">
+					<subreportParameterExpression><![CDATA[$F{PRG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DEPTO">
+					<subreportParameterExpression><![CDATA[$F{DEPTO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="REQUERIMIENTO">
+					<subreportParameterExpression><![CDATA[$F{REQUERIMIENTO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PROY">
+					<subreportParameterExpression><![CDATA[$F{PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="META">
+					<subreportParameterExpression><![CDATA[$F{META}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RECURSO">
+					<subreportParameterExpression><![CDATA[$F{RECURSO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PROY">
+					<subreportParameterExpression><![CDATA[$F{TIPO_PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "rptRecalendarizacionFormatoRevisionCalCodAct.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement uuid="e6025016-d5c7-46b9-bb71-3cac4e0d82c2" x="433" y="31" width="211" height="161"/>
+				<subreportParameter name="FUENTE">
+					<subreportParameterExpression><![CDATA[$F{FUENTE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARTIDA">
+					<subreportParameterExpression><![CDATA[$F{PARTIDA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ACCION">
+					<subreportParameterExpression><![CDATA[$F{ACCION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMG_DIR">
+					<subreportParameterExpression><![CDATA[$P{IMG_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="FONDO">
+					<subreportParameterExpression><![CDATA[$F{FONDO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="STATUS">
+					<subreportParameterExpression><![CDATA[$P{STATUS}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="OFICIO">
+					<subreportParameterExpression><![CDATA[$P{OFICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PRG">
+					<subreportParameterExpression><![CDATA[$F{PRG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DEPTO">
+					<subreportParameterExpression><![CDATA[$F{DEPTO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="REQUERIMIENTO">
+					<subreportParameterExpression><![CDATA[$F{REQUERIMIENTO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PROY">
+					<subreportParameterExpression><![CDATA[$F{PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="META">
+					<subreportParameterExpression><![CDATA[$F{META}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RECURSO">
+					<subreportParameterExpression><![CDATA[$F{RECURSO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PROY">
+					<subreportParameterExpression><![CDATA[$F{TIPO_PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "rptRecalendarizacionFormatoRevisionCalSol.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement uuid="dcaf439a-10b6-4c6a-b4b7-4ba6cb899a35" mode="Opaque" x="0" y="203" width="25" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NO. META ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="853db942-8e79-41ce-826e-11cee23ddcfc" mode="Opaque" x="25" y="203" width="55" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCIÓN META]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4f715778-ccb1-46f0-9d40-4c3eeabfc80f" mode="Opaque" x="80" y="203" width="29" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NO. ACCION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="12f34327-192f-4674-9a62-2fe45ead64b3" mode="Opaque" x="109" y="203" width="57" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCIÓN ACCIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e96db5bc-1ae4-4e9b-987e-114d3ab76221" mode="Opaque" x="166" y="203" width="53" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REQUERIMIENTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5d36e772-2c65-48f2-b8cf-cceaa0b998f1" mode="Opaque" x="219" y="203" width="52" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FUENTE DE ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ba6faed9-1563-4acc-b6fd-9e5ad8b50fa6" mode="Opaque" x="219" y="213" width="52" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FINANCIAMIENTO]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="2072c993-17ae-44f4-8b7e-637f4aee13e7" x="0" y="223" width="25" height="70"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="4" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{META}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="a88eff85-b1ca-47af-a676-55eee1dc8b54" stretchType="RelativeToBandHeight" x="25" y="223" width="55" height="70"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="4" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{META_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c03d70f1-e613-407d-beb5-f12fc3e17da5" x="80" y="223" width="29" height="70"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="4" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ACCION}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="2966e34a-ade9-43a4-9ced-9e8a796f9c61" stretchType="RelativeToBandHeight" x="109" y="223" width="57" height="70"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="4" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ACCION_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="ddf41c80-a955-4e8b-8f2f-db3bef5566fd" x="166" y="223" width="53" height="70"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="4" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REQUERIMIENTO_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="46bfc1f3-d70b-472b-91bf-d4482e80e82c" x="219" y="223" width="52" height="70"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="4" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FUENTE}+"."+$F{FONDO}+"."+$F{RECURSO}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement uuid="5243b800-9961-435b-b69f-315bcc931e6c" x="271" y="203" width="480" height="30"/>
+				<subreportParameter name="FUENTE">
+					<subreportParameterExpression><![CDATA[$F{FUENTE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARTIDA">
+					<subreportParameterExpression><![CDATA[$F{PARTIDA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ACCION">
+					<subreportParameterExpression><![CDATA[$F{ACCION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMG_DIR">
+					<subreportParameterExpression><![CDATA[$P{IMG_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="FONDO">
+					<subreportParameterExpression><![CDATA[$F{FONDO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="STATUS">
+					<subreportParameterExpression><![CDATA[$P{STATUS}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="OFICIO">
+					<subreportParameterExpression><![CDATA[$P{OFICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PRG">
+					<subreportParameterExpression><![CDATA[$F{PRG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DEPTO">
+					<subreportParameterExpression><![CDATA[$F{DEPTO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="REQUERIMIENTO">
+					<subreportParameterExpression><![CDATA[$F{REQUERIMIENTO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PROY">
+					<subreportParameterExpression><![CDATA[$F{PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="META">
+					<subreportParameterExpression><![CDATA[$F{META}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RECURSO">
+					<subreportParameterExpression><![CDATA[$F{RECURSO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PROY">
+					<subreportParameterExpression><![CDATA[$F{TIPO_PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "rptRecalendarizacionFormatoRevisionCalReqIni.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement uuid="92a8f18e-f054-4c72-b358-231f2db7291d" x="271" y="233" width="480" height="30"/>
+				<subreportParameter name="FUENTE">
+					<subreportParameterExpression><![CDATA[$F{FUENTE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARTIDA">
+					<subreportParameterExpression><![CDATA[$F{PARTIDA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ACCION">
+					<subreportParameterExpression><![CDATA[$F{ACCION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMG_DIR">
+					<subreportParameterExpression><![CDATA[$P{IMG_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="FONDO">
+					<subreportParameterExpression><![CDATA[$F{FONDO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="STATUS">
+					<subreportParameterExpression><![CDATA[$P{STATUS}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="OFICIO">
+					<subreportParameterExpression><![CDATA[$P{OFICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PRG">
+					<subreportParameterExpression><![CDATA[$F{PRG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DEPTO">
+					<subreportParameterExpression><![CDATA[$F{DEPTO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="REQUERIMIENTO">
+					<subreportParameterExpression><![CDATA[$F{REQUERIMIENTO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PROY">
+					<subreportParameterExpression><![CDATA[$F{PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="META">
+					<subreportParameterExpression><![CDATA[$F{META}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RECURSO">
+					<subreportParameterExpression><![CDATA[$F{RECURSO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PROY">
+					<subreportParameterExpression><![CDATA[$F{TIPO_PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "rptRecalendarizacionFormatoRevisionCalActReq.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement uuid="b6f4d1b7-94db-4abb-b524-4e366965d0e3" x="271" y="263" width="480" height="30"/>
+				<subreportParameter name="FUENTE">
+					<subreportParameterExpression><![CDATA[$F{FUENTE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARTIDA">
+					<subreportParameterExpression><![CDATA[$F{PARTIDA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ACCION">
+					<subreportParameterExpression><![CDATA[$F{ACCION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMG_DIR">
+					<subreportParameterExpression><![CDATA[$P{IMG_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="FONDO">
+					<subreportParameterExpression><![CDATA[$F{FONDO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="STATUS">
+					<subreportParameterExpression><![CDATA[$P{STATUS}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="OFICIO">
+					<subreportParameterExpression><![CDATA[$P{OFICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PRG">
+					<subreportParameterExpression><![CDATA[$F{PRG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DEPTO">
+					<subreportParameterExpression><![CDATA[$F{DEPTO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="REQUERIMIENTO">
+					<subreportParameterExpression><![CDATA[$F{REQUERIMIENTO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PROY">
+					<subreportParameterExpression><![CDATA[$F{PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="META">
+					<subreportParameterExpression><![CDATA[$F{META}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RECURSO">
+					<subreportParameterExpression><![CDATA[$F{RECURSO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PROY">
+					<subreportParameterExpression><![CDATA[$F{TIPO_PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "rptRecalendarizacionFormatoRevisionCalSolReq.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement uuid="8e64b578-1001-44cf-89bd-b13b7f0a5260" x="433" y="0" width="163" height="10"/>
+				<subreportParameter name="FUENTE">
+					<subreportParameterExpression><![CDATA[$F{FUENTE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARTIDA">
+					<subreportParameterExpression><![CDATA[$F{PARTIDA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ACCION">
+					<subreportParameterExpression><![CDATA[$F{ACCION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMG_DIR">
+					<subreportParameterExpression><![CDATA[$P{IMG_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="FONDO">
+					<subreportParameterExpression><![CDATA[$F{FONDO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="STATUS">
+					<subreportParameterExpression><![CDATA[$P{STATUS}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="OFICIO">
+					<subreportParameterExpression><![CDATA[$P{OFICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PRG">
+					<subreportParameterExpression><![CDATA[$F{PRG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DEPTO">
+					<subreportParameterExpression><![CDATA[$F{DEPTO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="REQUERIMIENTO">
+					<subreportParameterExpression><![CDATA[$F{REQUERIMIENTO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PROY">
+					<subreportParameterExpression><![CDATA[$F{PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="META">
+					<subreportParameterExpression><![CDATA[$F{META}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$P{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RECURSO">
+					<subreportParameterExpression><![CDATA[$F{RECURSO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PROY">
+					<subreportParameterExpression><![CDATA[$F{TIPO_PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "rptRecalendarizacionFormatoRevisionRelImpacProg.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement uuid="6b972aca-b455-42a7-9093-b15c4b52455e" mode="Opaque" x="194" y="293" width="77" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MONTO A RECALENDARIZAR:]]></text>
+			</staticText>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="c9856db8-7d4d-4a87-91a1-bb83820124f5" x="271" y="293" width="46" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="4" isBold="true"/>
+					<paragraph rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MONTO_RECALENDARIZAR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="1ae27d2a-08c6-4e3f-b10c-3daa0ad102f0" mode="Transparent" x="0" y="293" width="55" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COSTO TOTAL DE LA]]></text>
+			</staticText>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="fe16e06b-369c-4897-a66b-92e06b3588ed" x="55" y="293" width="40" height="20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="4" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COSTO_TOTAL_META}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="9988e388-c33f-4e43-afb5-28091d682164" mode="Transparent" x="0" y="303" width="55" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[META (AUTORIZADO):]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subRptMIRFinProposito" language="groovy" pageWidth="752" pageHeight="802" columnWidth="752" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d73f9c31-535c-42f5-b5e5-dd3c33ce4bdc">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="YEAR" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[2017]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RAMO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[07]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PRG" class="java.lang.String">
+		<defaultValueExpression><![CDATA[017]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RPT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\SISTEMAS\\WEB\\repositorio_local\\POA\\web\\reportes\\MIR\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+        SUM(
+            (   SELECT COUNT(*)
+                FROM POA.RAMO_PRG_LINEA LI,
+                    S_POA_SP_LIN_ESTATAL LE
+                WHERE
+                    LI.YEAR =$P{YEAR}   AND
+                    LI.RAMO = $P{RAMO}  AND
+                    LI.PRG = $P{PRG} AND
+                    LI.LINEA = LE.LINEA AND
+                    DGI.F_OBTIENE_YEAR_ADMVO(LI.YEAR) = LE.YEAR
+             )
+            +
+            (   SELECT COUNT(*)
+                FROM POA.RAMO_PROGRAMA RP
+                WHERE
+                    RP.LINEA_SECTORIAL IS NOT NULL AND
+                    LENGTH(TRIM (RP.LINEA_SECTORIAL)) > 0 AND
+                    RP.YEAR = $P{YEAR} AND
+                    RP.RAMO = $P{RAMO}AND
+                    RP.PRG = $P{PRG}
+            )
+            +
+            (   SELECT COUNT(*)
+                FROM POA.RAMO_PRG_LINEA_PND LN
+                WHERE
+                    LN.YEAR = $P{YEAR} AND
+                    LN.RAMO = $P{RAMO} AND
+                    LN.PRG = $P{PRG}
+            )
+            +
+            (   SELECT COUNT(*)
+                FROM
+                  POA.PROYECTO_FUNCIONAL CF,
+                  POA.SUBFUNCION SF
+                WHERE
+                  CF.YEAR = SF.YEAR
+                  AND CF.FINALIDAD = SF.FINALIDAD
+                  AND CF.FUNCION = SF.FUNCION
+                  AND CF.SUBFUNCION = SF.SUBFUNCION
+                  AND CF.YEAR =$P{YEAR}
+                  AND CF.RAMO =$P{RAMO}
+                  AND CF.PRG =$P{PRG}
+            )
+        ) as RAMO
+FROM SYS.DUAL]]>
+	</queryString>
+	<field name="RAMO" class="java.math.BigDecimal"/>
+	<group name="RAMO" minHeightToStartNewPage="50">
+		<groupExpression><![CDATA[$F{RAMO}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<staticText>
+					<reportElement uuid="f6ca0245-caa1-40d0-ba14-7e15383e0506" positionType="FixRelativeToBottom" x="0" y="5" width="175" height="15" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true"/>
+					<textElement>
+						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[ALINEACIÓN A LA PLANEACIÓN:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<detail>
+		<band height="15">
+			<subreport>
+				<reportElement uuid="5b8c5884-1d76-4a7e-9c4f-ba4d4e47ae62" x="0" y="0" width="752" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<subreportParameter name="PRG">
+					<subreportParameterExpression><![CDATA[$P{PRG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$P{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR}+ "subRptMIRLineasPED.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="15">
+			<subreport>
+				<reportElement uuid="d12488fd-2314-4d2b-bc3d-ab51804dc35d" x="0" y="0" width="752" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<subreportParameter name="PRG">
+					<subreportParameterExpression><![CDATA[$P{PRG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$P{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "subRptMIRLineasPSE.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="15">
+			<subreport>
+				<reportElement uuid="335d77e8-a7f7-457d-abfd-14a8c1ed3ab0" x="0" y="0" width="752" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<subreportParameter name="PRG">
+					<subreportParameterExpression><![CDATA[$P{PRG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$P{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "subRptMIRLineasPND.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="15">
+			<subreport>
+				<reportElement uuid="b8bcc544-1cf7-4def-8cc2-611e09487f40" x="0" y="0" width="752" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$P{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PRG">
+					<subreportParameterExpression><![CDATA[$P{PRG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "subRptMIRClasifFuncional.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subRptMIRClasifFuncional" language="groovy" pageWidth="752" pageHeight="802" columnWidth="752" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d73f9c31-535c-42f5-b5e5-dd3c33ce4bdc">
+	<property name="ireport.zoom" value="5.0"/>
+	<property name="ireport.x" value="1126"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="YEAR" class="java.lang.Integer"/>
+	<parameter name="RAMO" class="java.lang.String"/>
+	<parameter name="PRG" class="java.lang.String">
+		<defaultValueExpression><![CDATA[017]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    CF.YEAR,CF.RAMO,CF.PRG,
+    SF.FINALIDAD||'.'||SF.FUNCION||'.'||SF.SUBFUNCION||'. '||SF.DESCR AS CLASIF_FUNCIONAL
+FROM
+    POA.PROYECTO_FUNCIONAL CF,
+    POA.SUBFUNCION SF
+WHERE
+    CF.YEAR = SF.YEAR
+    AND CF.FINALIDAD = SF.FINALIDAD
+    AND CF.FUNCION = SF.FUNCION
+    AND CF.SUBFUNCION = SF.SUBFUNCION
+    AND CF.YEAR = $P{YEAR}
+    AND CF.RAMO = $P{RAMO}
+    AND CF.PRG = $P{PRG}
+GROUP BY CF.YEAR,CF.RAMO,CF.PRG,SF.FINALIDAD||'.'||SF.FUNCION||'.'||SF.SUBFUNCION||'. '||SF.DESCR]]>
+	</queryString>
+	<field name="YEAR" class="java.lang.String"/>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="PRG" class="java.lang.String"/>
+	<field name="CLASIF_FUNCIONAL" class="java.lang.String"/>
+	<pageHeader>
+		<band height="16">
+			<staticText>
+				<reportElement uuid="f589c23b-3d01-418d-beda-eb529f3e4d7c" mode="Opaque" x="0" y="0" width="752" height="15" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CLASIFICACIÓN FUNCIONAL]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField>
+				<reportElement uuid="c3e33483-ea01-4b13-8667-d85cecc55d8b" x="0" y="0" width="752" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CLASIF_FUNCIONAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

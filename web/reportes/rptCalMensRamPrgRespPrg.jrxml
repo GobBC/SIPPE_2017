@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptCalMensRamPrgRespPrg" language="groovy" pageWidth="300" pageHeight="40" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="300" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d6debe3c-c455-440d-a45c-88c85b532806">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="YEAR" class="java.lang.Integer"/>
+	<parameter name="RAMO" class="java.lang.String"/>
+	<parameter name="PRG" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+	VW_EMP.NOMBRE||' '||VW_EMP.PATERNO||' '||VW_EMP.MATERNO  RESP_PRG
+	FROM
+		DGI.VW_EMPLEADOS VW_EMP,
+		POA.RAMO_PROGRAMA RAMPRG
+	WHERE
+		RAMPRG.RFC = VW_EMP.RFC AND
+		RAMPRG.HOMOCLAVE = VW_EMP.HOMOCLAVE AND
+		RAMPRG.RAMO = $P{RAMO} AND
+		RAMPRG.YEAR = $P{YEAR} AND
+		RAMPRG.PRG = $P{PRG}]]>
+	</queryString>
+	<field name="RESP_PRG" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="31" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="e2a59ac1-8c21-4e4b-b8c5-70be203b7c89" x="0" y="0" width="284" height="15"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RESP_PRG}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="4dbc0762-ff6d-4782-987a-2e2309c0e6d2" x="0" y="16" width="284" height="15"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Responsable del programa]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="657362d3-b7fa-4a92-a984-3a56d8c3cfb0" x="0" y="15" width="284" height="1"/>
+			</line>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+</jasperReport>

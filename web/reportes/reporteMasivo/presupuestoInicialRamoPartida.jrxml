@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="presupuestoInicialRamoPartida" language="groovy" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ddc0b3d8-f1e2-49c4-bf95-8ad069a0aa85">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<parameter name="RAMO_IN_LIST" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+	SPP.VW_PRESUP_ASIG_MEN.RAMO,
+	DGI.RAMOS.DESCR AS RAMOS_DESCR,
+	GPO.GRUPO,
+	GPO.DESCR,
+	SUBGPO.SUBGRUPO,
+	SUBGPO.DESCR DESSUB,
+	SUBSUBGPO.SUBSUBGRUPO,
+	SUBSUBGPO.DESCR DESSUBSUB,
+	SPP.VW_PRESUP_ASIG_MEN.PARTIDA,
+	DGI.PARTIDA.DESCR AS PARTIDA_DESCR,
+	SPP.VW_PRESUP_ASIG_MEN.YEAR,
+	sum(SPP.VW_PRESUP_ASIG_MEN.ENE) as ene,
+	sum(SPP.VW_PRESUP_ASIG_MEN.FEB) as feb,
+	sum(SPP.VW_PRESUP_ASIG_MEN.MAR) as mar,
+	sum(SPP.VW_PRESUP_ASIG_MEN.ABR) as abr,
+	sum(SPP.VW_PRESUP_ASIG_MEN.MAY) as may,
+	sum(SPP.VW_PRESUP_ASIG_MEN.JUN) as jun,
+	sum(SPP.VW_PRESUP_ASIG_MEN.JUL) as jul,
+	sum(SPP.VW_PRESUP_ASIG_MEN.AGO) as ago,
+	sum(SPP.VW_PRESUP_ASIG_MEN.SEP) as sep,
+	sum(SPP.VW_PRESUP_ASIG_MEN.OCT) as oct,
+	sum(SPP.VW_PRESUP_ASIG_MEN.NOV) as nov,
+	sum(SPP.VW_PRESUP_ASIG_MEN.DIC) as dic,
+	DGI.PARAMETROS.SECRETARIA,
+	DGI.PARAMETROS.GOBIERNO
+FROM
+	SPP.VW_PRESUP_ASIG_MEN,
+	DGI.RAMOS,
+	DGI.PARTIDA ,
+	S_DGI_GRUPOS GPO,
+	S_DGI_SUBGRUPOS SUBGPO,
+	S_DGI_SUBSUBGPO SUBSUBGPO,
+	DGI.PARAMETROS
+WHERE
+	( SPP.VW_PRESUP_ASIG_MEN.RAMO = DGI.RAMOS.RAMO ) and
+	( SPP.VW_PRESUP_ASIG_MEN.YEAR = DGI.RAMOS.YEAR ) and
+	( SPP.VW_PRESUP_ASIG_MEN.PARTIDA = DGI.PARTIDA.PARTIDA ) and
+	( SPP.VW_PRESUP_ASIG_MEN.YEAR = DGI.PARTIDA.YEAR ) and
+	( SPP.VW_PRESUP_ASIG_MEN.RAMO IN ($P!{RAMO_IN_LIST})) AND
+	( SPP.VW_PRESUP_ASIG_MEN.YEAR = $P{YEAR} )  AND
+	PARTIDA.SUBSUBGPO = SUBSUBGPO.SUBSUBGRUPO AND
+	PARTIDA.YEAR = SUBSUBGPO.YEAR AND
+	SUBSUBGPO.SUBGRUPO = SUBGPO.SUBGRUPO AND
+	SUBSUBGPO.YEAR = SUBGPO.YEAR AND
+	SUBGPO.GRUPO = GPO.GRUPO AND
+	SUBGPO.YEAR = GPO.YEAR
+GROUP BY
+	SPP.VW_PRESUP_ASIG_MEN.RAMO,
+	DGI.RAMOS.DESCR,
+	GPO.GRUPO,
+	GPO.DESCR,
+	SUBGPO.SUBGRUPO,
+	SUBGPO.DESCR,
+	SUBSUBGPO.SUBSUBGRUPO,
+	SUBSUBGPO.DESCR,
+	SPP.VW_PRESUP_ASIG_MEN.PARTIDA,
+	DGI.PARTIDA.DESCR,
+	SPP.VW_PRESUP_ASIG_MEN.YEAR,
+	DGI.PARAMETROS.SECRETARIA,
+	DGI.PARAMETROS.GOBIERNO
+ORDER BY
+	SPP.VW_PRESUP_ASIG_MEN.RAMO,
+	GPO.GRUPO,
+	SUBGPO.SUBGRUPO,
+	SUBSUBGPO.SUBSUBGRUPO,
+	SPP.VW_PRESUP_ASIG_MEN.PARTIDA]]>
+	</queryString>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="RAMOS_DESCR" class="java.lang.String"/>
+	<field name="GRUPO" class="java.lang.String"/>
+	<field name="DESCR" class="java.lang.String"/>
+	<field name="SUBGRUPO" class="java.lang.String"/>
+	<field name="DESSUB" class="java.lang.String"/>
+	<field name="SUBSUBGRUPO" class="java.lang.String"/>
+	<field name="DESSUBSUB" class="java.lang.String"/>
+	<field name="PARTIDA" class="java.lang.String"/>
+	<field name="PARTIDA_DESCR" class="java.lang.String"/>
+	<field name="YEAR" class="java.lang.String"/>
+	<field name="ENE" class="java.math.BigDecimal"/>
+	<field name="FEB" class="java.math.BigDecimal"/>
+	<field name="MAR" class="java.math.BigDecimal"/>
+	<field name="ABR" class="java.math.BigDecimal"/>
+	<field name="MAY" class="java.math.BigDecimal"/>
+	<field name="JUN" class="java.math.BigDecimal"/>
+	<field name="JUL" class="java.math.BigDecimal"/>
+	<field name="AGO" class="java.math.BigDecimal"/>
+	<field name="SEP" class="java.math.BigDecimal"/>
+	<field name="OCT" class="java.math.BigDecimal"/>
+	<field name="NOV" class="java.math.BigDecimal"/>
+	<field name="DIC" class="java.math.BigDecimal"/>
+	<field name="SECRETARIA" class="java.lang.String"/>
+	<field name="GOBIERNO" class="java.lang.String"/>
+	<group name="RAMO">
+		<groupExpression><![CDATA[$F{RAMO}]]></groupExpression>
+		<groupHeader>
+			<band height="68">
+				<staticText>
+					<reportElement uuid="0611c411-78b4-4965-916c-7162bdc8fd56" x="0" y="0" width="49" height="17"/>
+					<textElement/>
+					<text><![CDATA[RAMO:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="be065325-0c9b-4705-8c0a-85d5824df48c" x="24" y="17" width="49" height="17"/>
+					<textElement/>
+					<text><![CDATA[GRUPO:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="34973fc6-1ab4-4336-938e-49f8f3ef9bde" x="49" y="34" width="77" height="17"/>
+					<textElement/>
+					<text><![CDATA[SUBGRUPO:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="21c94a52-98fe-4c55-859f-ad6d6434d548" x="73" y="51" width="93" height="17"/>
+					<textElement/>
+					<text><![CDATA[SUBSUBGRUPO:]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="6a37ebdd-4ed3-4992-8f94-0a9fd2559f59" x="49" y="0" width="703" height="17"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{RAMO} + "-" +$F{RAMOS_DESCR}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="eba65e1a-9e5a-4618-899d-7caffdb6887b" x="73" y="17" width="679" height="17"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{GRUPO} +"-"+ $F{DESCR}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="6d343428-cc15-4577-b571-9ae42488fbe9" x="126" y="34" width="626" height="17"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{SUBGRUPO}+"-"+$F{DESSUB}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="a2bda1f5-8202-4632-be3d-6e51aa1297b5" x="166" y="51" width="586" height="17"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{SUBSUBGRUPO} +"-"+ $F{DESSUBSUB}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="PARTIDA">
+		<groupExpression><![CDATA[$F{PARTIDA}]]></groupExpression>
+		<groupHeader>
+			<band height="17">
+				<staticText>
+					<reportElement uuid="2a11e74b-3c98-42c4-9991-9a89b2ee70c8" x="107" y="0" width="59" height="17"/>
+					<textElement/>
+					<text><![CDATA[PARTIDA: ]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="2099e64f-fba3-4195-ae6e-69f892242f72" x="166" y="0" width="586" height="17"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{PARTIDA}+"-"+$F{PARTIDA_DESCR}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="90" splitType="Stretch">
+			<textField>
+				<reportElement uuid="74b0c18d-cd04-4163-b563-0f5a09dd4d76" x="0" y="0" width="752" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GOBIERNO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="4667a65a-33e8-406e-9dd0-57122d842a91" x="0" y="20" width="752" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SECRETARIA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="c4dc3a9a-c364-4379-bf02-6f8f1a037c7c" x="0" y="40" width="752" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+				<text><![CDATA[PRESUPUESTO DE GASTO Y/O COSTO]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="56776f91-0e3c-47ae-895b-e4c54d8c4e7a" x="0" y="55" width="752" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression><![CDATA["CONCENTRADO POR RAMO - PARTIDA DEL EJERCICIO" + $P{YEAR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="eed85bfe-9653-4942-a92d-f1ec631b11e7" x="0" y="70" width="752" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRESUPUESTO INICIAL]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="27" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="25" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="44ed5f7f-8dce-4338-8561-c8cbafdd7e37" x="0" y="5" width="63" height="20"/>
+				<textElement/>
+				<text><![CDATA[Ene]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="dc1abf04-326f-45b7-acc8-b474043605e1" x="63" y="5" width="63" height="20"/>
+				<textElement/>
+				<text><![CDATA[Feb]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6b51c9d3-f566-402f-bbeb-b419ec3e22c3" x="189" y="5" width="63" height="20"/>
+				<textElement/>
+				<text><![CDATA[Abr]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="54e803a7-3de9-4ac8-b746-bf509016aced" x="126" y="5" width="63" height="20"/>
+				<textElement/>
+				<text><![CDATA[Mar]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="212a2566-5dd9-4edd-86b9-8f9f9190ac52" x="441" y="5" width="63" height="20"/>
+				<textElement/>
+				<text><![CDATA[Ago]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4093c9d7-bb72-4159-a497-5f224d9987b6" x="378" y="5" width="63" height="20"/>
+				<textElement/>
+				<text><![CDATA[Jul	]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a5c0cc87-e0b6-433d-8346-d82c0e7f9422" x="315" y="5" width="63" height="20"/>
+				<textElement/>
+				<text><![CDATA[Jun]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="64e1b722-9e91-465e-80b3-cd16e0d1f2c9" x="252" y="5" width="63" height="20"/>
+				<textElement/>
+				<text><![CDATA[May]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a861bf86-10c0-4a55-aae5-fecb770b3e22" x="693" y="5" width="59" height="20"/>
+				<textElement/>
+				<text><![CDATA[Dic]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="35c2e316-c651-4c06-ad33-c5a1d8a6846e" x="630" y="5" width="63" height="20"/>
+				<textElement/>
+				<text><![CDATA[Nov]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="65e76cdb-17a6-47e9-8ebd-33884ccf7a7c" x="567" y="5" width="63" height="20"/>
+				<textElement/>
+				<text><![CDATA[Oct]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="47c960ed-f0d9-4d42-925b-c1244acf8b5f" x="504" y="5" width="63" height="20"/>
+				<textElement/>
+				<text><![CDATA[Sep]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="27" splitType="Stretch">
+			<textField>
+				<reportElement uuid="7825470d-3db3-496d-ac77-2eca6bc4f70a" x="441" y="0" width="63" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AGO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="6a5fd3ec-09c2-465f-8de9-1edc90eb7abd" x="63" y="0" width="63" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FEB}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="a83704c0-39f6-468d-ad30-c04b7c402ebe" x="378" y="0" width="63" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{JUL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="6f479c0a-b12e-4e55-8ffc-0cc6e78ff061" x="693" y="0" width="59" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DIC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="88dad647-5c13-44a2-83f8-59ff0d69dc0a" x="630" y="0" width="63" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOV}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="eafddddd-a461-4043-a67f-cca6bd01346b" x="315" y="0" width="63" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{JUN}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="5076dbfa-309b-490d-b16b-f564535092bd" x="504" y="0" width="63" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SEP}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="73ddee16-6d2c-4c8c-84ad-fd12fd5f616c" x="126" y="0" width="63" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MAR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="092247db-54ee-4f0f-87e7-cf9b82f7fd1d" x="0" y="0" width="63" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ENE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="515c50e1-fbe0-4683-9ee7-d5618dae325f" x="567" y="0" width="63" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OCT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="6947c32e-4247-46c5-9fc9-9b05c3acb086" x="252" y="0" width="63" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MAY}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="fb611e45-a2bc-4eb1-8c83-6070b6f94fd3" x="189" y="0" width="63" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ABR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

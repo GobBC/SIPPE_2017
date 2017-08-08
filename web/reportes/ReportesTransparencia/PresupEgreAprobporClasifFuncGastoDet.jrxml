@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PresupuestoEgresosAprobadoporClasificacionFuncionaldelGasto" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="da09b7de-2836-4618-b622-ed8781d01e8c">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Importe">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[( $F{ASIGNADO} ) >= 0]]></conditionExpression>
+			<style forecolor="#000000" pattern=""/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[( $F{ASIGNADO} ) < 0]]></conditionExpression>
+			<style forecolor="#FF0000" pattern=""/>
+		</conditionalStyle>
+	</style>
+	<style name="total">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[( $V{ASIGNADO_1} ) >= 0]]></conditionExpression>
+			<style forecolor="#000000" pattern=""/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[( $V{ASIGNADO_1} ) < 0]]></conditionExpression>
+			<style forecolor="#FF0000" pattern=""/>
+		</conditionalStyle>
+	</style>
+	<style name="Importe_1">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[( $V{ASIGNADO_5} ) >= 0]]></conditionExpression>
+			<style forecolor="#000000" pattern=""/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[( $V{ASIGNADO_5} ) < 0]]></conditionExpression>
+			<style forecolor="#FF0000" pattern=""/>
+		</conditionalStyle>
+	</style>
+	<style name="Importe_2">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[( $V{ASIGNADO_12} ) >= 0]]></conditionExpression>
+			<style forecolor="#000000" pattern=""/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[( $V{ASIGNADO_12} ) < 0]]></conditionExpression>
+			<style forecolor="#FF0000" pattern=""/>
+		</conditionalStyle>
+	</style>
+	<style name="Importe_3">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[( $V{ASIGNADO_13} ) >= 0]]></conditionExpression>
+			<style forecolor="#000000" pattern=""/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[( $V{ASIGNADO_13} ) < 0]]></conditionExpression>
+			<style forecolor="#FF0000" pattern=""/>
+		</conditionalStyle>
+	</style>
+	<parameter name="YEAR" class="java.lang.Integer"/>
+	<parameter name="IMG_DIR" class="java.lang.String"/>
+	<parameter name="MILESPESOS" class="java.lang.String"/>
+	<parameter name="QUERY" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+F.DESCR AS FINALIDAD_DESCR,
+F.FINALIDAD,
+FUN.DESCR AS FUNCION_DESCR,
+FUN.FUNCION,
+SUB.SUBFUNCION,
+SUB.DESCR AS SUBFUNCION_DESCR,
+DECODE($P{MILESPESOS},'S',SUM(NVL(P.ASIGNADO,0))/1000,SUM(NVL(P.ASIGNADO,0))) AS ASIGNADO,
+PARAM.GOBIERNO,
+PARAM.SECRETARIA,
+PARAM.LOGO,
+SYSDATE AS HOY
+FROM
+SPP.PPTO P,
+DGI.RAMOS R,
+S_POA_FINALIDAD F,
+S_POA_FUNCION FUN,
+S_POA_SUBFUNCION SUB,
+DGI.PARAMETROS PARAM
+WHERE
+F.YEAR=P.YEAR
+AND F.FINALIDAD=P.FINALIDAD
+AND F.YEAR=P.YEAR
+AND P.YEAR=$P{YEAR}
+AND FUN.YEAR=P.YEAR
+AND FUN.FUNCION=P.FUNCION
+AND FUN.FINALIDAD=P.FINALIDAD
+AND SUB.YEAR=P.YEAR
+AND SUB.FINALIDAD=P.FINALIDAD
+AND SUB.FUNCION=P.FUNCION
+AND SUB.SUBFUNCION=P.SUBFUNCION
+AND R.RAMO=P.RAMO
+AND R.YEAR=P.YEAR
+AND(R.TRANSITORIO IN('N') OR R.TRANSITORIO IS NULL)
+AND $P!{QUERY}
+GROUP BY
+F.DESCR,
+F.FINALIDAD,
+FUN.DESCR,
+FUN.FUNCION,
+SUB.SUBFUNCION,
+SUB.DESCR,
+PARAM.GOBIERNO,
+PARAM.SECRETARIA,
+PARAM.LOGO
+ORDER BY
+F.FINALIDAD,
+FUN.FUNCION,
+SUB.SUBFUNCION]]>
+	</queryString>
+	<field name="FINALIDAD_DESCR" class="java.lang.String"/>
+	<field name="FINALIDAD" class="java.lang.String"/>
+	<field name="FUNCION_DESCR" class="java.lang.String"/>
+	<field name="FUNCION" class="java.math.BigDecimal"/>
+	<field name="SUBFUNCION" class="java.lang.String"/>
+	<field name="SUBFUNCION_DESCR" class="java.lang.String"/>
+	<field name="ASIGNADO" class="java.math.BigDecimal"/>
+	<field name="GOBIERNO" class="java.lang.String"/>
+	<field name="SECRETARIA" class="java.lang.String"/>
+	<field name="LOGO" class="java.lang.String"/>
+	<field name="HOY" class="java.sql.Timestamp"/>
+	<variable name="ASIGNADO_1" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$F{ASIGNADO}]]></variableExpression>
+	</variable>
+	<variable name="ASIGNADO_2" class="java.math.BigDecimal" resetType="Group" resetGroup="FINALIDAD" calculation="Sum">
+		<variableExpression><![CDATA[$F{ASIGNADO}]]></variableExpression>
+	</variable>
+	<variable name="ASIGNADO_3" class="java.math.BigDecimal" resetType="Group" resetGroup="FUNCION" calculation="Sum">
+		<variableExpression><![CDATA[$F{ASIGNADO}]]></variableExpression>
+	</variable>
+	<variable name="ASIGNADO_4" class="java.math.BigDecimal" resetType="Group" resetGroup="SUBFUNCION" calculation="Sum">
+		<variableExpression><![CDATA[$F{ASIGNADO}]]></variableExpression>
+	</variable>
+	<variable name="ASIGNADO_5" class="java.math.BigDecimal" resetType="Group" resetGroup="FUNCION" calculation="Sum">
+		<variableExpression><![CDATA[$F{ASIGNADO}]]></variableExpression>
+	</variable>
+	<variable name="ASIGNADO_6" class="java.math.BigDecimal" resetType="Group" resetGroup="FINALIDAD" calculation="Sum">
+		<variableExpression><![CDATA[$F{ASIGNADO}]]></variableExpression>
+	</variable>
+	<variable name="ASIGNADO_7" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{ASIGNADO}]]></variableExpression>
+	</variable>
+	<variable name="ASIGNADO_8" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{ASIGNADO}]]></variableExpression>
+	</variable>
+	<variable name="ASIGNADO_9" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{ASIGNADO}]]></variableExpression>
+	</variable>
+	<variable name="ASIGNADO_10" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$F{ASIGNADO}]]></variableExpression>
+	</variable>
+	<variable name="ASIGNADO_11" class="java.math.BigDecimal" resetType="Group" resetGroup="SUBFUNCION" calculation="Sum">
+		<variableExpression><![CDATA[$F{ASIGNADO}]]></variableExpression>
+	</variable>
+	<variable name="ASIGNADO_12" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{ASIGNADO}]]></variableExpression>
+	</variable>
+	<variable name="ASIGNADO_13" class="java.math.BigDecimal" resetType="Group" resetGroup="FINALIDAD" calculation="Sum">
+		<variableExpression><![CDATA[$F{ASIGNADO}]]></variableExpression>
+	</variable>
+	<group name="FINALIDAD">
+		<groupExpression><![CDATA[$F{FINALIDAD}]]></groupExpression>
+		<groupHeader>
+			<band height="13">
+				<textField>
+					<reportElement uuid="3153c12b-d52e-4560-8c55-29a5b4c149db" x="3" y="1" width="388" height="12"/>
+					<textElement>
+						<font size="8" isBold="true" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FINALIDAD_DESCR}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+			<band height="13">
+				<staticText>
+					<reportElement uuid="eb8f859d-1131-4245-95d1-a66a47981c03" x="374" y="0" width="81" height="11"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total por Finalidad:]]></text>
+				</staticText>
+				<textField pattern="¤ #,##0.00;(¤ #,##0.00)">
+					<reportElement uuid="dccee927-8e80-4dfa-95f3-a93ced988424" x="455" y="0" width="100" height="12"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{ASIGNADO_13}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="FUNCION">
+		<groupExpression><![CDATA[$F{FUNCION}]]></groupExpression>
+		<groupHeader>
+			<band height="12">
+				<textField>
+					<reportElement uuid="8e437765-89cf-4ce6-9a89-72183f28dc3b" x="27" y="0" width="375" height="12"/>
+					<textElement>
+						<font size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FUNCION_DESCR}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<textField evaluationTime="Group" evaluationGroup="FUNCION" pattern="¤ #,##0.00;(¤ #,##0.00)">
+					<reportElement uuid="54a4c98b-307c-4940-91d5-957843e5f315" style="Importe_1" x="455" y="0" width="100" height="12"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{ASIGNADO_5}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="f4c9b1da-d8cb-47b8-bafc-c783b929ddf0" x="355" y="0" width="100" height="12"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total por Funcion:]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="SUBFUNCION">
+		<groupExpression><![CDATA[$F{SUBFUNCION}]]></groupExpression>
+		<groupHeader>
+			<band height="13">
+				<textField>
+					<reportElement uuid="2e7450c1-d634-4230-ad50-442349a0315c" x="42" y="1" width="400" height="12"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SUBFUNCION_DESCR}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="SUBFUNCION" pattern=" #,##0.00;( #,##0.00)">
+					<reportElement uuid="36f9817f-c58d-4ac0-ae2f-0a1b6f3ca1b9" style="Importe" x="455" y="1" width="100" height="12"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{ASIGNADO_4}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="82" splitType="Stretch">
+			<textField evaluationTime="Report" pattern="&lt;style forecolor=&quot;black&quot;&gt;¤#,##0.00&lt;/style&gt;;&lt;style forecolor=&quot;red&quot;&gt;¤(#,##0.00)&lt;/style&gt;">
+				<reportElement uuid="8faa7fdb-9c57-4c63-86a2-c2ff4b7663cc" x="455" y="66" width="100" height="11">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}.equals(1)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" markup="styled">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{ASIGNADO_12}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f5116435-4b58-46fa-95cb-b44d1c24cb6a" x="385" y="66" width="70" height="11">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}.equals(1)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total  	]]></text>
+			</staticText>
+			<textField pattern="###0">
+				<reportElement uuid="2328b7e1-c9e0-4a6e-afc3-6c2801367028" x="75" y="34" width="428" height="16"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Presupuesto de Egresos para el Ejercicio Fiscal " + $P{YEAR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="c78df82f-72dd-4590-b4c8-76a78eb34765" x="75" y="50" width="429" height="16"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Clasificación Funcional del Gasto]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="125b818c-c3a3-48b3-a8ce-14386b5d1d42" x="75" y="0" width="429" height="18"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GOBIERNO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="1d65cca7-0cc4-442b-b6b7-b80824707edb" x="75" y="18" width="429" height="16"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SECRETARIA}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement uuid="69ea99ef-da64-4ae5-90d0-8cbac6bcb485" x="3" y="0" width="66" height="59"/>
+				<imageExpression><![CDATA[$P{IMG_DIR}+"EDO.gif"]]></imageExpression>
+			</image>
+			<line>
+				<reportElement uuid="91573763-67c6-436a-8fec-1d5ded5285c2" x="3" y="65" width="552" height="1"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<pageFooter>
+		<band height="32" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="8c22814c-e966-479c-af36-543431c051b0" x="3" y="11" width="260" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[<PresupEgreAprobporClasifFunGastoDet>]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="0ae3c997-7ee4-41be-9344-1a60aa7433dc" x="263" y="11" width="91" height="12"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HOY}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="c1634bdf-f73f-444a-9c27-0c7a1c4701bf" x="3" y="10" width="552" height="1"/>
+			</line>
+			<textField>
+				<reportElement uuid="b589dd69-bde2-4df5-b9b5-8b7eda05bd0e" x="435" y="11" width="80" height="11"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement uuid="e6cd9bc0-1a81-4fdb-a2da-448a921d0860" x="515" y="11" width="40" height="11"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

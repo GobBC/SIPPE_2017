@@ -1,0 +1,510 @@
+﻿html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+html input[disabled], html input[readonly] {
+    background-color: #fafafa !important;
+    cursor: not-allowed !important;
+}
+
+button[type="button"], button[type="submit"] {
+    font-size: 15px !important;
+    font-family: Arial,sans-serif !important;
+}
+
+textarea {
+    padding: 10px !important;
+}
+
+/************* ESTILOS LAYOUT / FRAMEWORK *************/
+
+.main {
+    margin-top: 20px;
+    padding: 0 25px 25px 25px;
+}
+
+#logo {
+    background: transparent url("../../librerias/img/logo-header.png") no-repeat 0 0;
+    display: block;
+    height: 65px;
+    overflow: hidden;
+    padding: 10px 0;
+    width: 240px;
+    margin-top:3px;
+}
+
+.padding-zero { padding: 0 !important }
+
+.checkboxGbc {
+    padding-left: 10px;
+    position: inherit !important;
+}
+
+.combobox-lg { font-size: 16px }
+
+.combobox-lg .k-input {
+    height: 35px !important;
+    line-height: 2.25 !important;
+}
+.combobox-lg .k-icon { margin-top: 10px !important }
+
+.multiselect-lg { font-size: 16px }
+
+.multiselect-lg .k-input {
+    height: 35px !important;
+    line-height: 2.25 !important;
+}
+
+.leyendaDispositivo {
+    background-color: rgba(150, 14, 14, 0.75);        
+    padding:3px;
+    font-size:1em;
+    color:whitesmoke;
+    margin-bottom: 10px;
+}
+
+.backbutton{
+    font-size: 15px !important;
+    padding: 7px 12px;
+    font-family:Arial,sans-serif !important;
+}
+
+@media only screen and (orientation:landscape) 
+{
+    .leyendaDispositivo { display: none }
+}
+
+@media only screen and (orientation:portrait) and (min-device-width: 320px) and (max-device-width: 480px)
+{
+    .h3 { font-size: 15px }
+    .leyendaDispositivo { display:inline-block }
+}
+
+
+/************* FORMA VALIDACIÓN *************/
+
+.validation-summary-errors ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.field-validation-error, .validation-summary-errors {
+    color: #dd4b39;
+    display: block;
+    font-size: .9em;
+    line-height: 17px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    border: 0;
+    padding: 0;
+    background-color: transparent;
+}
+
+
+/************* TELERIK DEFAULT *************/
+
+.k-checkbox-label { font-weight:400 }
+
+.k-checkbox-label::before {
+    top:-5px;
+    left:1px;
+}
+
+.k-textbox, .k-numerictextbox, .k-datepicker, .k-dropdown, .k-combobox, .k-datetimepicker, .k-timepicker {
+    display: block !important;
+    width: 100% !important;
+    text-transform: uppercase;
+}
+
+input.k-textbox:not([type="search"]), .k-datepicker .k-picker-wrap { height: 40px !important }
+
+input.k-textbox, textarea, .k-datepicker .k-picker-wrap, .k-datepicker input {
+    border-color: #c0c0c0 #d9d9d9 #d9d9d9 !important;
+    border-radius: 0 !important;
+    color: #404040 !important;
+    font-size: 16px !important;
+}
+
+.k-datepicker input { height:34px !important }
+
+.k-select > .k-icon.k-i-calendar { margin-top:30% }
+
+.k-treeview .k-in {
+    color:#333;
+    margin-top:2px;
+    font-size: 15px;
+}
+
+.k-treeview .k-in.k-state-hover, .k-treeview .k-in.k-state-selected {
+    color: #333;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+
+/************* LOGIN *************/
+
+.logo-login {
+    margin-top: 5%;
+    margin-bottom: 3%;
+    height: 150px;
+    width: 270px;
+}
+
+#login-form {
+    background-color: #f7f7f7;
+    border-radius: 2px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+    height: 320px;
+    margin: 10px auto 20px;
+    max-width: 370px;
+    padding: 50px 25px 0;
+}
+
+
+/************* TAMAÑOS / COLORES *************/
+
+.text-default { text-transform: none !important }
+.text-wrap { word-break: break-all }
+.text-purple{ color: #622b8b }
+.text-yellow { color: #f3f37a }
+.text-orange { color: #e8c000 }
+
+.cursor-pointer { cursor:pointer }
+
+.smallest { font-size: 1.2em; vertical-align: middle; }
+.font40px { font-size: 40px }
+
+.campoReadOnly { background-color: whitesmoke !important; color:darkblue !important; }
+
+.asterisk {
+    font-size: .8em !important;
+    font-weight: normal !important;
+    vertical-align: middle;
+}
+
+
+/************* NOTIFICACIONES *************/
+
+#notification {
+    font-size: 1em;
+    opacity: 0.9;
+    position: fixed;
+    right: 10px;
+    top: 30px;
+    z-index: 10100;
+}
+
+
+/************* MODAL *************/
+
+.modal-message {
+	padding: 10px;
+	line-height: 1.35em;
+	overflow: hidden;
+}
+
+
+.modal-message > form .form-group, .modal-message .form-group {
+    box-sizing: border-box !important;
+}
+
+.modal-buttons {
+    border-top:1px solid #eee;
+    padding-top:10px;
+    margin-top:10px;
+}
+
+
+/************* SIDEBAR / MENU PRINCIPAL *************/
+
+.sidebar {
+    background-color: #f8f8f8;
+    border-right: 1px solid #e6e6e6;
+    left: 0;
+    max-height: 95%;
+    min-height: 90%;
+    position: absolute;
+}
+
+.sidebar li { border-bottom: 1px solid #e6e6e6 }
+
+.sidebar a {
+    background-color: #fff;
+    color: #71798f;
+    font-size: 1em;
+    /*padding: 0 !important;*/
+}
+
+.sidebar a .menu-icon {
+    font-size: 1.2em;
+    padding: 15px;
+    width: 50px;
+}
+.sub-menu a .menu-icon {
+    padding-left:30px;
+    width:60px;
+}
+.sidebar a .menu-child {
+    position: absolute;
+    right: 5px;
+    top: 15px;
+}
+.menu-active, .menu-active .menu-icon, .sidebar a:hover, .sidebar a:hover .menu-icon {
+    background-color: #337ab7 !important;
+    color: #fff !important;                                    
+}
+
+.labelCantMenu {
+    position: absolute;
+    top: 15px;
+    right: 10px;
+}
+
+@media only screen and (orientation:landscape) 
+{
+    .sidebar a {
+        font-size: 1em;
+    }
+}
+
+@media (max-width: 767px) {
+    .sidebar { z-index: 2; }
+}
+
+@media only screen and (min-device-width: 1200px) and (max-device-width: 1500px){
+    .sidebar a .menu-icon {
+        font-size: 1.1em;
+        padding: 15px 10px;
+        width: 40px;
+    }
+    .sub-menu a .menu-icon {
+        padding-left:25px;
+        width:60px;
+    }
+
+     .sidebar a .menu-child {
+        position: absolute;
+        right: 5px;
+        top: 17px;
+    }
+}
+
+@media only screen and (min-device-width: 851px) and (max-device-width: 1199px){
+    .sidebar a .menu-icon {
+        font-size: 1em;
+        padding: 15px 10px;
+        width: 40px;
+    }
+    .sub-menu a .menu-icon {
+        padding-left:25px;
+        width:45px;
+    }
+
+    .sidebar a .menu-child {
+        position: absolute;
+        right: 5px;
+        top: 15px;
+    }
+}
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 850px){
+    .sidebar a .menu-icon {
+        font-size: 0.8em;
+        padding: 15px 5px;
+        width: 20px;
+    }
+    .sub-menu a .menu-icon {
+        padding-left:15px;
+        width:30px;
+    }
+
+    .sidebar a .menu-child {
+        position: absolute;
+        right: 5px;
+        top: 13px;
+    }
+
+    .labelCantMenu {
+        position: absolute;
+        top: 12px;
+        right: 10px;
+    }
+}
+
+
+@media (max-width: 767px) {
+    .sidebar { z-index: 2; }
+
+    nav nav-sidebar li{
+        font-size:10px;
+    }
+
+    .sidebar li{
+        font-size:10px !important;
+    }
+}
+
+/************* GRID /*************/
+
+.grid-toolbar {
+    min-height:40px;
+    padding-top: 10px;
+}
+
+.grid-agrupar {
+    display: block;
+    font-style: italic;
+    width: 100%;
+    text-align:center;
+}
+
+.botonGrid { 
+    color: #428bca !important;
+}
+.k-state-selected .botonGrid { 
+    color: whitesmoke !important;
+}
+
+.columna-especial {
+    text-align: center;
+    display: block;
+    color:#333;
+    font-size: 1.4em !important;
+    background: none;
+    border: none;
+    border-radius: 0;
+    margin: 0;
+    min-width: 0 !important;
+    width: auto;
+    padding: 0;
+}
+
+.tituloListado{
+    margin-bottom:10px;
+}
+
+a.columna-especial:hover, a.columna-especial:focus {
+    text-decoration: none;
+    color: #333;
+    background: none;
+}
+
+@media (max-width: 767px) {
+    .k-grid{
+        font-size: 12px !important;
+    }
+
+    .k-grid .k-grid-header .k-header{
+        font-weight:bold !important;
+    }
+    .k-grid .grid-toolbar-search {
+        font-size: 10px !important;
+    }
+
+    .k-grid .form-control-feedback {
+        top: 5px !important;
+    }
+}
+
+.divFiltrosGrid{
+    border: 1px #ccc solid !important; 
+    padding-bottom:20px; 
+    padding-top:10px;
+}
+
+.k-grid-header
+{
+    padding-right: 0px !important;
+}
+
+.k-grid-content
+{
+    height: auto !important;
+    overflow-y: hidden !important;
+}
+
+.grid-modal{
+    font-size: 12px !important;
+}
+
+
+.grid-modal .k-grid-header .k-header {
+    font-weight: bold !important;
+}
+
+.grid-modal .grid-toolbar-search {
+    font-size: 10px !important;
+}
+
+.grid-modal .form-control-feedback {
+    top: 5px !important;
+}
+
+/************* LOADING /*************/
+
+#loading {
+    background-color: rgba(0, 0, 0, 0.3);
+    top: 0;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 10100;
+}
+
+#loading .loading-body {
+    top: 50%;
+    left: 50%;
+    position: fixed;
+    background-color: #fff;
+    border-radius: 7px;
+    color: #666;
+    font-size: 1.2em;
+    font-weight: 600;
+    max-width: 320px;
+    min-width: 220px;
+    min-height: 80px;
+    padding: 15px;
+    text-align: center;
+}
+
+#loading .loading-icon {
+    background: #fff url("../../Content/img/loader.gif") no-repeat 0 0;
+    display: block;
+    height: 35px;
+    margin: 0 auto;
+    width: 35px;
+}
+
+
+/************* FOOTER /*************/
+
+footer[role="contentinfo"] {
+    background-color:#fff;
+    height:45px;
+    position:absolute;
+    bottom:0;
+    width:100%;
+    color:#333 !important;
+}
+
+.logo-footer{
+    background:url("../img/escudo_pie.png") no-repeat 20px 0;
+    height: 60px;
+    display:block;
+}
+
+.fondo-colores {
+    background: url("../img/fondo-colores.jpg") repeat-x center top;
+    height: 4px;
+}
+/*.navbar-default {
+    background-color: #1c5bac!important;
+    border-color: #e7e7e7!important;
+}*/

@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptIndicadoresSectorRamo" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="828" leftMargin="7" rightMargin="7" topMargin="7" bottomMargin="7" uuid="d08c2163-aa59-4226-a299-145bee118e5f">
+	<property name="ireport.zoom" value="2.7799586567461194"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="207"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Table Dataset 1" uuid="f35a429f-5fca-46f3-9a38-51cb2470a5e1"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<parameter name="RPT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\desarrollo\\repositorio_local\\POA\\web\\reportes\\RecalendarizacionFormatoRevision\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\desarrollo\\repositorio_local\\POA\\web\\reportes\\Caratulas\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+	INDICSECRAM.YEAR,
+	INDICSECRAM.CLAVE_INDICADOR,
+	INDIC.NOMBRE_INDICADOR,
+	INDICSECRAM.RAMO,
+	RAM.DESCR RAMO_DESCR,
+    INDICSECRAM.PRG,
+    PRG.DESCR PRG_DESCR,
+	SYSDATE FECHA,
+	PARM.GOBIERNO,
+	PARM.SECRETARIA
+FROM
+	POA.INDICADORES_SECTOR_RAMOS INDICSECRAM,
+	(
+		SELECT
+			CLAVE_INDICADOR,
+			NOMBRE_INDICADOR,
+			YEAR
+		FROM
+			DGI.VW_SEI_INDIC_GRAL
+		WHERE
+			YEAR = $P{YEAR}    AND
+			DIMENSION_ID = 1
+		GROUP BY
+			CLAVE_INDICADOR,
+			NOMBRE_INDICADOR,
+			YEAR
+		ORDER BY
+			CLAVE_INDICADOR
+	) INDIC,
+	DGI.RAMOS RAM,
+    S_POA_PROGRAMA PRG,
+	DGI.PARAMETROS PARM
+WHERE
+	INDICSECRAM.YEAR = $P{YEAR} AND
+	INDIC.YEAR = INDICSECRAM.YEAR AND
+	INDIC.CLAVE_INDICADOR = INDICSECRAM.CLAVE_INDICADOR AND
+	RAM.YEAR = INDICSECRAM.YEAR AND
+	RAM.RAMO = INDICSECRAM.RAMO AND
+    PRG.YEAR = INDICSECRAM.YEAR AND
+	PRG.PRG = INDICSECRAM.PRG
+
+ORDER BY
+	INDICSECRAM.YEAR,
+	INDICSECRAM.CLAVE_INDICADOR,
+	INDICSECRAM.RAMO,
+        INDICSECRAM.PRG]]>
+	</queryString>
+	<field name="YEAR" class="java.lang.String"/>
+	<field name="CLAVE_INDICADOR" class="java.lang.String"/>
+	<field name="NOMBRE_INDICADOR" class="java.lang.String"/>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="RAMO_DESCR" class="java.lang.String"/>
+	<field name="PRG" class="java.lang.String"/>
+	<field name="PRG_DESCR" class="java.lang.String"/>
+	<field name="FECHA" class="java.sql.Timestamp"/>
+	<field name="GOBIERNO" class="java.lang.String"/>
+	<field name="SECRETARIA" class="java.lang.String"/>
+	<variable name="BALANCE_PPTO_INICIAL" class="java.math.BigDecimal"/>
+	<variable name="BALANCE_PPTO_AMP_ACUM" class="java.math.BigDecimal"/>
+	<variable name="BALANCE_PPTO_DISM_ACUM" class="java.math.BigDecimal"/>
+	<variable name="BALANCE_AMP_CARATULA" class="java.math.BigDecimal"/>
+	<variable name="BALANCE_DISM_CARATULA" class="java.math.BigDecimal"/>
+	<variable name="BALANCE_CIERRE_ANT" class="java.math.BigDecimal"/>
+	<variable name="INGRESO_PPTO_INICIAL" class="java.math.BigDecimal"/>
+	<variable name="INGRESO_PPTO_AMP_ACUM" class="java.math.BigDecimal"/>
+	<variable name="INGRESO_PPTO_DISM_ACUM" class="java.math.BigDecimal"/>
+	<variable name="INGRESO_AMP_CARATULA" class="java.math.BigDecimal"/>
+	<variable name="INGRESO_DISM_CARATULA" class="java.math.BigDecimal"/>
+	<variable name="INGRESO_CIERRE_ANT" class="java.math.BigDecimal"/>
+	<variable name="EGRESO_PPTO_INICIAL" class="java.math.BigDecimal"/>
+	<variable name="EGRESO_PPTO_AMP_ACUM" class="java.math.BigDecimal"/>
+	<variable name="EGRESO_PPTO_DISM_ACUM" class="java.math.BigDecimal"/>
+	<variable name="EGRESO_AMP_CARATULA" class="java.math.BigDecimal"/>
+	<variable name="EGRESO_DISM_CARATULA" class="java.math.BigDecimal"/>
+	<variable name="EGRESO_CIERRE_ANT" class="java.math.BigDecimal"/>
+	<variable name="BALANCE_IMPORTE" class="java.math.BigDecimal"/>
+	<variable name="BALANCE_PORCENTAJE" class="java.math.BigDecimal"/>
+	<variable name="INGRESO_IMPORTE" class="java.math.BigDecimal"/>
+	<variable name="INGRESO_PORCENTAJE" class="java.math.BigDecimal"/>
+	<variable name="EGRESO_IMPORTE" class="java.math.BigDecimal"/>
+	<variable name="EGRESO_PORCENTAJE" class="java.math.BigDecimal"/>
+	<variable name="BALANCE_PPTO_MOD_ACUM" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="BALANCE_PPTO_MOD_CARATULA" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="INGRESO_PPTO_MOD_ACUM" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="INGRSO_PPTO_MOD_CARATULA" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="EGRESO_PPTO_MOD_ACUM" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="EGRESO_PPTO_MOD_CARATULA" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<group name="INDICADOR">
+		<groupExpression><![CDATA[$F{CLAVE_INDICADOR}]]></groupExpression>
+		<groupHeader>
+			<band height="17">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="1f9dc17e-59ea-480b-8f20-5b6f67f07853" stretchType="RelativeToBandHeight" x="0" y="0" width="828" height="15" isRemoveLineWhenBlank="true"/>
+					<textElement>
+						<font fontName="SansSerif" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CLAVE_INDICADOR}+"   "+$F{NOMBRE_INDICADOR}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="6"/>
+		</groupFooter>
+	</group>
+	<group name="RAMO">
+		<groupExpression><![CDATA[$F{RAMO}]]></groupExpression>
+		<groupHeader>
+			<band height="17">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="66cd5b3b-2d72-4c5d-bf94-1eec9c0f93a1" stretchType="RelativeToBandHeight" x="10" y="0" width="818" height="15" isRemoveLineWhenBlank="true"/>
+					<textElement>
+						<font fontName="SansSerif" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{RAMO}+" - "+$F{RAMO_DESCR}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="6"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="117">
+			<textField>
+				<reportElement uuid="5e7cc2b3-4cd3-4021-9a97-b29bd0e6f76d" x="0" y="40" width="828" height="15"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA["REPORTE DE INDICADORES CON DETALLE DE RAMO SECTOR"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="db5f1360-1e82-40fb-86cf-eaf1a95508c2" x="0" y="55" width="828" height="15"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA["EJERCICIO " + $P{YEAR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="031d5913-8a9c-4e33-b370-21db09aec035" x="0" y="0" width="828" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GOBIERNO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="3ada76bf-62d9-4b5a-8643-d33315fde8de" x="0" y="20" width="828" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SECRETARIA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="e36fc3ba-70d2-45eb-a8a4-39f272666e23" x="0" y="71" width="48" height="15"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Indicador]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="58763d9d-fe8a-4424-be4b-1246aa722b57" x="10" y="86" width="48" height="15"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ramo]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="52bbd851-cad7-4847-9250-240228bd4cf6" x="0" y="70" width="828" height="1"/>
+			</line>
+			<line>
+				<reportElement uuid="61529054-8e65-4de3-bf5d-0ebb99a503c3" x="0" y="116" width="828" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="5dad0e39-1fcb-4afe-ac94-4353560f2cc4" x="20" y="101" width="48" height="15"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Programa]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="17">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="9dc5a342-6095-49cd-a93e-b4b21c1a35eb" stretchType="RelativeToBandHeight" x="20" y="0" width="808" height="15" isRemoveLineWhenBlank="true"/>
+				<textElement>
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRG}+" - "+$F{PRG_DESCR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="18" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="4f258745-17de-4116-8ef1-3a2e776adccf" x="0" y="0" width="182" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[<rptIndicadoresSectorRamo>]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy h:mm a">
+				<reportElement uuid="75db77f0-3883-4e18-a6e0-e85fe989aa3c" x="0" y="0" width="828" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement uuid="cf731adb-d148-4a65-978a-827a5fde502a" x="788" y="0" width="40" height="18"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[" " + ($V{PAGE_NUMBER}>1? ($V{PAGE_NUMBER}-1):$V{PAGE_NUMBER} )]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="0d176f26-ce36-4039-a9e7-37db26fc621d" x="708" y="0" width="80" height="18"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

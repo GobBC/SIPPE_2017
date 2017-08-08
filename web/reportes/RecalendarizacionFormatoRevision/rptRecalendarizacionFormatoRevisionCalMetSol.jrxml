@@ -1,0 +1,673 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptRecalendarizacionFormatoRevisionCalMetSol" language="groovy" pageWidth="477" pageHeight="30" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="477" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d08c2163-aa59-4226-a299-145bee118e5f">
+	<property name="ireport.zoom" value="2.6573415000000233"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<subDataset name="New Dataset 1" uuid="00758d1d-b59c-4887-b00f-260cf4170944">
+		<queryString language="SQL">
+			<![CDATA[SELECT
+	DECODE('A','A',IMPACT1,IMPHIST1) IMPENE,
+	DECODE('A','A',IMPACT2,IMPHIST2) IMPFEB,
+	DECODE('A','A',IMPACT3,IMPHIST3) IMPMAR,
+	DECODE('A','A',IMPACT4,IMPHIST4) IMPABR,
+	DECODE('A','A',IMPACT5,IMPHIST5) IMPMAY,
+	DECODE('A','A',IMPACT6,IMPHIST6) IMPJUN,
+	DECODE('A','A',IMPACT7,IMPHIST7) IMPJUL,
+	DECODE('A','A',IMPACT8,IMPHIST8) IMPAGO,
+	DECODE('A','A',IMPACT9,IMPHIST9) IMPSEP,
+	DECODE('A','A',IMPACT10,IMPHIST10) IMPOCT,
+	DECODE('A','A',IMPACT11,IMPHIST11) IMPNOV,
+	DECODE('A','A',IMPACT12,IMPHIST12) IMPDIC,
+	DECODE('A','A',TOTALACT,TOTALHIST) TOTALIMP,
+	PPTO.ENE,
+	PPTO.FEB,
+	PPTO.MAR,
+	PPTO.ABR,
+	PPTO.MAY,
+	PPTO.JUN,
+	PPTO.JUL,
+	PPTO.AGO,
+	PPTO.SEP,
+	PPTO.OCT,
+	PPTO.NOV,
+	PPTO.DIC,
+	(
+		PPTO.ENE+
+		PPTO.FEB+
+		PPTO.MAR+
+		PPTO.ABR+
+		PPTO.MAY+
+		PPTO.JUN+
+		PPTO.JUL+
+		PPTO.AGO+
+		PPTO.SEP+
+		PPTO.OCT+
+		PPTO.NOV+
+		PPTO.DIC
+	) TOTALANUAL
+
+FROM
+	SPP.VW_PRESUP_ASIG_MEN  PPTO,
+	(
+		SELECT
+			ACCREQ.YEAR,
+			ACCREQ.RAMO,
+			ACCREQ.PRG,
+			ACCREQ.DEPTO,
+			MET.TIPO_PROY,
+			MET.PROY,
+			ACCREQ.META,
+			ACCREQ.ACCION,
+			ACCREQ.PARTIDA,
+			ACCREQ.FUENTE,
+			ACCREQ.FONDO,
+			ACCREQ.RECURSO,
+			ACCREQ.ENE*ACCREQ.COSTO_UNITARIO IMPACT1,
+			ACCREQ.FEB*ACCREQ.COSTO_UNITARIO IMPACT2,
+			ACCREQ.MAR*ACCREQ.COSTO_UNITARIO IMPACT3,
+			ACCREQ.ABR*ACCREQ.COSTO_UNITARIO IMPACT4,
+			ACCREQ.MAY*ACCREQ.COSTO_UNITARIO IMPACT5,
+			ACCREQ.JUN*ACCREQ.COSTO_UNITARIO IMPACT6,
+			ACCREQ.JUL*ACCREQ.COSTO_UNITARIO IMPACT7,
+			ACCREQ.AGO*ACCREQ.COSTO_UNITARIO IMPACT8,
+			ACCREQ.SEP*ACCREQ.COSTO_UNITARIO IMPACT9,
+			ACCREQ.OCT*ACCREQ.COSTO_UNITARIO IMPACT10,
+			ACCREQ.NOV*ACCREQ.COSTO_UNITARIO IMPACT11,
+			ACCREQ.DIC*ACCREQ.COSTO_UNITARIO IMPACT12,
+			(
+					ACCREQ.ENE*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.FEB*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.MAR*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.ABR*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.MAY*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.JUN*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.JUL*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.AGO*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.SEP*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.OCT*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.NOV*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.DIC*ACCREQ.COSTO_UNITARIO
+			) TOTALACT
+		FROM
+			POA.ACCION_REQ ACCREQ,
+			S_POA_META MET
+		WHERE
+			ACCREQ.YEAR = 2016 AND
+			ACCREQ.RAMO = '02' AND
+			ACCREQ.PRG = '156' AND
+			ACCREQ.DEPTO = 333 AND
+			MET.TIPO_PROY = 'A' AND
+			MET.PROY = 495 AND
+			ACCREQ.META = 20 AND
+			ACCREQ.ACCION = 2 AND
+			ACCREQ.PARTIDA = '33101' AND
+			ACCREQ.FUENTE = '1' AND
+			ACCREQ.FONDO = '01' AND
+			ACCREQ.RECURSO = '16' AND
+			ACCREQ.REQUERIMIENTO = 2 AND
+			MET.YEAR = ACCREQ.YEAR AND
+			MET.RAMO = ACCREQ.RAMO AND
+			MET.PRG = ACCREQ.PRG AND
+			MET.META = ACCREQ.META
+	) ACCREQ,
+	(
+		SELECT
+			HISTACCREQ.YEAR,
+			HISTACCREQ.RAMO,
+			HISTACCREQ.PRG,
+			HISTACCREQ.DEPTO,
+			MET.TIPO_PROY,
+			MET.PROY,
+			HISTACCREQ.META,
+			HISTACCREQ.ACCION,
+			HISTACCREQ.PARTIDA,
+			HISTACCREQ.FUENTE,
+			HISTACCREQ.FONDO,
+			HISTACCREQ.RECURSO,
+			HISTACCREQ.ENE*HISTACCREQ.COSTO_UNITARIO IMPHIST1,
+			HISTACCREQ.FEB*HISTACCREQ.COSTO_UNITARIO IMPHIST2,
+			HISTACCREQ.MAR*HISTACCREQ.COSTO_UNITARIO IMPHIST3,
+			HISTACCREQ.ABR*HISTACCREQ.COSTO_UNITARIO IMPHIST4,
+			HISTACCREQ.MAY*HISTACCREQ.COSTO_UNITARIO IMPHIST5,
+			HISTACCREQ.JUN*HISTACCREQ.COSTO_UNITARIO IMPHIST6,
+			HISTACCREQ.JUL*HISTACCREQ.COSTO_UNITARIO IMPHIST7,
+			HISTACCREQ.AGO*HISTACCREQ.COSTO_UNITARIO IMPHIST8,
+			HISTACCREQ.SEP*HISTACCREQ.COSTO_UNITARIO IMPHIST9,
+			HISTACCREQ.OCT*HISTACCREQ.COSTO_UNITARIO IMPHIST10,
+			HISTACCREQ.NOV*HISTACCREQ.COSTO_UNITARIO IMPHIST11,
+			HISTACCREQ.DIC*HISTACCREQ.COSTO_UNITARIO IMPHIST12,
+			(
+					HISTACCREQ.ENE*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.FEB*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.MAR*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.ABR*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.MAY*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.JUN*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.JUL*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.AGO*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.SEP*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.OCT*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.NOV*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.DIC*HISTACCREQ.COSTO_UNITARIO
+			) TOTALHIST
+		FROM
+			POA.HIST_ACCION_REQ HISTACCREQ,
+			S_POA_META MET
+		WHERE
+			HISTACCREQ.YEAR = 2016 AND
+			HISTACCREQ.RAMO = '02' AND
+			HISTACCREQ.PRG = '156' AND
+			HISTACCREQ.DEPTO = 333 AND
+			MET.TIPO_PROY = 'A' AND
+			MET.PROY = 495 AND
+			HISTACCREQ.META = 20 AND
+			HISTACCREQ.ACCION = 2 AND
+			HISTACCREQ.PARTIDA = '33101' AND
+			HISTACCREQ.FUENTE = '1' AND
+			HISTACCREQ.FONDO = '01' AND
+			HISTACCREQ.RECURSO = '16' AND
+			HISTACCREQ.REQUERIMIENTO = 2 AND
+			MET.YEAR = HISTACCREQ.YEAR AND
+			MET.RAMO = HISTACCREQ.RAMO AND
+			MET.PRG = HISTACCREQ.PRG AND
+			MET.META = HISTACCREQ.META
+	) HISTACCREQ
+WHERE
+	PPTO.YEAR = 2016 AND
+	PPTO.RAMO = '02' AND
+	PPTO.PRG = '156' AND
+	PPTO.DEPTO = 333 AND
+	PPTO.TIPO_PROY = 'A' AND
+	PPTO.PROYECTO = 495 AND
+	PPTO.META = 20 AND
+	PPTO.ACCION = 2 AND
+	PPTO.PARTIDA = '33101' AND
+	PPTO.FUENTE = '1' AND
+	PPTO.FONDO = '01' AND
+	PPTO.RECURSO = '16' AND
+	ACCREQ.YEAR = PPTO.YEAR AND
+	ACCREQ.RAMO = PPTO.RAMO AND
+	ACCREQ.PRG = PPTO.PRG AND
+	ACCREQ.DEPTO = PPTO.DEPTO AND
+	ACCREQ.TIPO_PROY = PPTO.TIPO_PROY AND
+	ACCREQ.PROY = PPTO.PROYECTO AND
+	ACCREQ.META = PPTO.META AND
+	ACCREQ.ACCION = PPTO.ACCION AND
+	ACCREQ.PARTIDA = PPTO.PARTIDA AND
+	ACCREQ.FUENTE = PPTO.FUENTE AND
+	ACCREQ.FONDO = PPTO.FONDO AND
+	ACCREQ.RECURSO = PPTO.RECURSO AND
+	HISTACCREQ.YEAR = PPTO.YEAR AND
+	HISTACCREQ.RAMO = PPTO.RAMO AND
+	HISTACCREQ.PRG = PPTO.PRG AND
+	HISTACCREQ.DEPTO = PPTO.DEPTO AND
+	HISTACCREQ.TIPO_PROY = PPTO.TIPO_PROY AND
+	HISTACCREQ.PROY = PPTO.PROYECTO AND
+	HISTACCREQ.META = PPTO.META AND
+	HISTACCREQ.ACCION = PPTO.ACCION AND
+	HISTACCREQ.PARTIDA = PPTO.PARTIDA AND
+	HISTACCREQ.FUENTE = PPTO.FUENTE AND
+	HISTACCREQ.FONDO = PPTO.FONDO AND
+	HISTACCREQ.RECURSO = PPTO.RECURSO AND
+	HISTACCREQ.YEAR = ACCREQ.YEAR AND
+	HISTACCREQ.RAMO = ACCREQ.RAMO AND
+	HISTACCREQ.PRG = ACCREQ.PRG AND
+	HISTACCREQ.DEPTO = ACCREQ.DEPTO AND
+	HISTACCREQ.TIPO_PROY = ACCREQ.TIPO_PROY AND
+	HISTACCREQ.PROY = ACCREQ.PROY AND
+	HISTACCREQ.META = ACCREQ.META AND
+	HISTACCREQ.ACCION = ACCREQ.ACCION AND
+	HISTACCREQ.PARTIDA = ACCREQ.PARTIDA AND
+	HISTACCREQ.FUENTE = ACCREQ.FUENTE AND
+	HISTACCREQ.FONDO = ACCREQ.FONDO AND
+	HISTACCREQ.RECURSO = ACCREQ.RECURSO]]>
+		</queryString>
+		<field name="IMPENE" class="java.math.BigDecimal"/>
+		<field name="IMPFEB" class="java.math.BigDecimal"/>
+		<field name="IMPMAR" class="java.math.BigDecimal"/>
+		<field name="IMPABR" class="java.math.BigDecimal"/>
+		<field name="IMPMAY" class="java.math.BigDecimal"/>
+		<field name="IMPJUN" class="java.math.BigDecimal"/>
+		<field name="IMPJUL" class="java.math.BigDecimal"/>
+		<field name="IMPAGO" class="java.math.BigDecimal"/>
+		<field name="IMPSEP" class="java.math.BigDecimal"/>
+		<field name="IMPOCT" class="java.math.BigDecimal"/>
+		<field name="IMPNOV" class="java.math.BigDecimal"/>
+		<field name="IMPDIC" class="java.math.BigDecimal"/>
+		<field name="TOTALIMP" class="java.math.BigDecimal"/>
+		<field name="ENE" class="java.math.BigDecimal"/>
+		<field name="FEB" class="java.math.BigDecimal"/>
+		<field name="MAR" class="java.math.BigDecimal"/>
+		<field name="ABR" class="java.math.BigDecimal"/>
+		<field name="MAY" class="java.math.BigDecimal"/>
+		<field name="JUN" class="java.math.BigDecimal"/>
+		<field name="JUL" class="java.math.BigDecimal"/>
+		<field name="AGO" class="java.math.BigDecimal"/>
+		<field name="SEP" class="java.math.BigDecimal"/>
+		<field name="OCT" class="java.math.BigDecimal"/>
+		<field name="NOV" class="java.math.BigDecimal"/>
+		<field name="DIC" class="java.math.BigDecimal"/>
+		<field name="TOTALANUAL" class="java.math.BigDecimal"/>
+		<group name="IMPENE">
+			<groupExpression><![CDATA[$F{IMPENE}]]></groupExpression>
+		</group>
+		<group name="ENE">
+			<groupExpression><![CDATA[$F{ENE}]]></groupExpression>
+		</group>
+	</subDataset>
+	<parameter name="IMG_DIR" class="java.lang.String"/>
+	<parameter name="OFICIO" class="java.lang.Long"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<parameter name="RAMO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="META" class="java.math.BigDecimal"/>
+	<parameter name="RPT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\desarrollo\\repositorio_local\\POA\\web\\reportes\\RecalendarizacionFormatoRevision\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+	NVL(ENE,0) IMP1,
+	NVL(FEB,0) IMP2,
+	NVL(MAR,0) IMP3,
+	NVL(ABR,0) IMP4,
+	NVL(MAY,0) IMP5,
+	NVL(JUN,0) IMP6,
+	NVL(JUL,0) IMP7,
+	NVL(AGO,0) IMP8,
+	NVL(SEP,0) IMP9,
+	NVL(OCT,0) IMP10,
+	NVL(NOV,0) IMP11,
+	NVL(DIC,0) IMP12,
+	NVL(ENE+FEB+MAR+ABR+MAY+JUN+JUL+AGO+SEP+OCT+NOV+DIC,0) TOTAL
+FROM
+	(
+		SELECT
+			PERIODO,
+			VALOR
+		FROM
+			POA.MOVOFICIOS_ESTIMACION
+		WHERE
+			YEAR = $P{YEAR} AND
+			OFICIO = $P{OFICIO} AND
+			RAMO = $P{RAMO} AND
+			META = $P{META}
+	 )
+PIVOT
+	(
+		SUM(VALOR)
+		FOR PERIODO IN(1 ENE, 2 FEB, 3 MAR, 4 ABR, 5 MAY, 6 JUN, 7 JUL, 8 AGO, 9 SEP, 10 OCT, 11 NOV, 12 DIC)
+	)]]>
+	</queryString>
+	<field name="IMP1" class="java.math.BigDecimal"/>
+	<field name="IMP2" class="java.math.BigDecimal"/>
+	<field name="IMP3" class="java.math.BigDecimal"/>
+	<field name="IMP4" class="java.math.BigDecimal"/>
+	<field name="IMP5" class="java.math.BigDecimal"/>
+	<field name="IMP6" class="java.math.BigDecimal"/>
+	<field name="IMP7" class="java.math.BigDecimal"/>
+	<field name="IMP8" class="java.math.BigDecimal"/>
+	<field name="IMP9" class="java.math.BigDecimal"/>
+	<field name="IMP10" class="java.math.BigDecimal"/>
+	<field name="IMP11" class="java.math.BigDecimal"/>
+	<field name="IMP12" class="java.math.BigDecimal"/>
+	<field name="TOTAL" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="30">
+			<staticText>
+				<reportElement uuid="bbe71d88-f0ff-45be-a973-bdee1d502f38" mode="Transparent" x="0" y="0" width="477" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CALENDARIZACIÓN SOLICITADA DE LA META ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6bef05e5-f95e-456c-b4df-b5d947ca3072" mode="Opaque" x="36" y="10" width="36" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[F]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d8aa3f78-7f54-44cb-8a94-c565f591b8b4" mode="Opaque" x="432" y="10" width="45" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a482dfb1-2c72-4b0e-8f78-9d1fe668f39e" mode="Opaque" x="72" y="10" width="36" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[M]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="cd245b49-ca1f-4c2d-b53a-306526e57fb6" mode="Opaque" x="0" y="10" width="36" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[E]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="77cb85fc-a690-4f73-a2a5-2b9417465363" mode="Opaque" x="360" y="10" width="36" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[N]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="463e1a03-799e-47c7-b890-c9dd58574595" mode="Opaque" x="144" y="10" width="36" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[M]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0ce00e45-9d3d-4bb7-8dc8-8f028cfd0388" mode="Opaque" x="180" y="10" width="36" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[J]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="618bfdff-f0aa-4b83-b7f9-e7e7003e365e" mode="Opaque" x="288" y="10" width="36" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[S]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="45060faa-195b-4579-95c8-c355709585d5" mode="Opaque" x="324" y="10" width="36" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[O]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="75e7e6bc-b734-4b57-a777-e4cfb304fd3d" mode="Opaque" x="216" y="10" width="36" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[J]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1ca86971-6d08-4491-820a-2f624bf18807" mode="Opaque" x="252" y="10" width="36" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[A]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bc34b5f5-3206-4927-bd54-a03b7553c546" mode="Opaque" x="396" y="10" width="36" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[D]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="879a8d2a-eac8-4a75-a60c-02220d0cc2f7" mode="Opaque" x="108" y="10" width="36" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[A]]></text>
+			</staticText>
+			<textField pattern="">
+				<reportElement uuid="a4ec25dd-88b3-429c-ab65-084a948ce29d" x="0" y="20" width="36" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="4"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="f3d9c0dd-0105-4b68-89b3-411fd9e7b3ca" x="36" y="20" width="36" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="4"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="e872f3e1-8707-4ac2-ab8d-aef73832f5ef" x="72" y="20" width="36" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="4"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP3}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="3d1b6c99-eb17-4726-bd22-41838efc7e91" x="108" y="20" width="36" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="4"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP4}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="5c65441b-e43c-41c5-94f5-9749bcd62e3e" x="144" y="20" width="36" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="4"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP5}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="27d154e6-43ec-4f16-b762-35193092d2bc" x="180" y="20" width="36" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="4"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP6}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="cfabfb63-54a5-44eb-ade3-efe4933adb6a" x="216" y="20" width="36" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="4"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP7}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="e2e99ee5-d5a0-4e59-af79-d248c0a5707e" x="252" y="20" width="36" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="4"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP8}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="d0b21e8e-2ae7-42f0-a19b-d788a0c63c1b" x="288" y="20" width="36" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="4"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP9}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="5ac7450c-2d4c-43aa-8135-92eef967ce93" x="324" y="20" width="36" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="4"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP10}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="e66cbbf2-e86a-44b4-b795-4a3e1c4f599d" x="360" y="20" width="36" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="4"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP11}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="c77c2b77-6f16-445f-9dcb-9a0621210176" x="396" y="20" width="36" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="4"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP12}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="63606692-5526-4e4f-bde9-7c6e1a5d0a2a" x="432" y="20" width="45" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="4"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subRptMIRActividad" language="groovy" pageWidth="752" pageHeight="802" columnWidth="752" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d73f9c31-535c-42f5-b5e5-dd3c33ce4bdc">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="YEAR" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[2017]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RAMO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[07]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PRG" class="java.lang.String">
+		<defaultValueExpression><![CDATA[017]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COMPONENTE" class="java.math.BigDecimal"/>
+	<parameter name="COMPONENTEROW" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+   'A'||ROW_NUMBER() OVER (ORDER BY  A.ACTIVIDAD ASC) ||'. '||A.DESCR  AS DESCR,
+    A.META,
+    A.ACCION,
+    IACT.DESCR AS INDICADOR,
+    IACT.MEDIOS_VERIFICACION AS MEDIOS_VERIFICACION,
+    IACT.SUPUESTO AS SUPUESTO,
+    ' ' AS RELLENO
+FROM  POA.MIR_ACTIVIDAD A
+    LEFT JOIN DGI.VW_MIR_INDICADOR IACT ON IACT.YEAR = A.YEAR AND IACT.RAMO = A.RAMO AND IACT.PRG = A.PRG AND IACT.COMPONENTE = A.COMPONENTE AND IACT.DIMENSION = 4
+WHERE
+        A.YEAR = $P{YEAR}
+    AND A.RAMO = $P{RAMO}
+    AND A.PRG = $P{PRG}
+    AND A.COMPONENTE = $P{COMPONENTE}
+ORDER BY A.ACTIVIDAD]]>
+	</queryString>
+	<field name="DESCR" class="java.lang.String"/>
+	<field name="META" class="java.math.BigDecimal"/>
+	<field name="ACCION" class="java.math.BigDecimal"/>
+	<field name="INDICADOR" class="java.lang.String"/>
+	<field name="MEDIOS_VERIFICACION" class="java.lang.String"/>
+	<field name="SUPUESTO" class="java.lang.String"/>
+	<field name="RELLENO" class="java.lang.String"/>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="1f0167a9-8e2f-4ad6-abaf-5bad8b7ae998" stretchType="RelativeToTallestObject" x="20" y="0" width="207" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<box leftPadding="0" bottomPadding="2">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+					<paragraph spacingAfter="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{COMPONENTEROW}+$F{DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="92611649-5d08-4623-b326-7fbf66f62868" stretchType="RelativeToTallestObject" x="0" y="0" width="20" height="15" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+					<paragraph spacingAfter="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RELLENO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="b73f9af0-d458-4715-9f40-b870b546f44d" stretchType="RelativeToTallestObject" x="227" y="0" width="175" height="15" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+					<paragraph spacingAfter="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INDICADOR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="bb71b4a3-460f-49b9-b8a6-998a2d677ff0" stretchType="RelativeToTallestObject" x="402" y="0" width="175" height="15" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+					<paragraph spacingAfter="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MEDIOS_VERIFICACION}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="7ced64ad-e05c-483d-a54b-4a64410568f1" stretchType="RelativeToTallestObject" x="577" y="0" width="175" height="15" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+					<paragraph spacingAfter="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SUPUESTO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

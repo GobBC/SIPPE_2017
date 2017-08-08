@@ -1,0 +1,573 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="repModificacionPPTOConsolidado" language="groovy" pageWidth="2866" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="2866" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="429c0da5-fcda-455f-b04a-9d4a3bbaa9d5">
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.cell.locked" value="false"/>
+	<property name="ireport.zoom" value="0.75"/>
+	<property name="ireport.x" value="263"/>
+	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
+	<parameter name="RAMO_IN_LIST" class="java.lang.String"/>
+	<parameter name="P_YEAR" class="java.lang.String"/>
+	<parameter name="IMG_DIR" class="java.lang.String"/>
+	<parameter name="P_QUERY" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_RAMO" class="java.lang.String"/>
+	<parameter name="P_PRG" class="java.lang.String"/>
+	<parameter name="P_META" class="java.lang.String"/>
+	<parameter name="P_DEPTO" class="java.lang.String"/>
+	<parameter name="P_ACCION" class="java.lang.String"/>
+	<parameter name="P_PARTIDA" class="java.lang.String"/>
+	<parameter name="P_ENTE_NOMBRE" class="java.lang.String"/>
+	<parameter name="P_ENTE_SIGLAS" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT PTO.OFICIO, PTO.RAMO, PTO.DEPTO
+, D.DESCR AS UE_DESCR, PTO.PRG
+, PTO.PROY
+, PTO.TIPO_PROY
+, PTO.META
+, MOM.DESCR AS METADESCR
+, PTO.ACCION
+, MOA.DESCR AS ACCION_DESCR
+, NVL(MOA.MPO,'') AS CODMUNICIPIO
+, NVL(MOA.LOCALIDAD,'') AS CODLOCALIDAD
+, PTO.PARTIDA
+, P.DESCR AS DESCR_PARTIDA
+, PTO.FUENTE
+, PTO.FONDO
+, NVL(MAX(PCP.APROBADO),0) AS PPTOINICIALAPROBADO
+, NVL(MAX(PCP.AMPLIACION),0) AS AUMENTOS
+, NVL(MAX(PCP.REDUCCION),0) AS DISMINUCIONES
+, NVL(MAX(PCP.APROBADO+PCP.AMPLIACION+PCP.REDUCCION),0) AS PPTOMODIFICADOAPROBADO
+, MAX(PTO.AMPS), MAX(PTO.DISM), MAX(PTO.TAMPS), MAX(PTO.TDISM)
+, MAX(PTO.AMPS+PTO.DISM+PTO.TAMPS-PTO.TDISM) AS PPTOMODIFSOLICITADO
+, MAX(PTO.CAMPS), MAX(PTO.CDISM), MAX(PTO.CTAMPS), MAX(PTO.CTDISM)
+, MAX(PTO.CAMPS+PTO.CDISM+PTO.CTAMPS+PTO.CTDISM) AS TOTALMOVS
+, CASE WHEN PTO.APMETA > 0 THEN 'SI' ELSE 'NO' END APMETA
+, CASE WHEN PTO.APACCION > 0 THEN 'SI' ELSE 'NO' END APACCION
+
+FROM
+(
+      SELECT A.OFICIO, A.RAMO, A.DEPTO, A.PRG, A.PROYECTO AS PROY, A.TIPO_PROY, A.META, A.ACCION, A.PARTIDA, A.FUENTE, A.FONDO
+       ,SUM(CASE WHEN TIPOMOV IN('A','C') THEN  IMPTE ELSE 0 END) AS AMPS
+       ,SUM(CASE WHEN TIPOMOV = 'R' THEN  IMPTE ELSE 0 END) AS DISM, TO_NUMBER(0) "TAMPS", TO_NUMBER(0) "TDISM"
+       ,SUM(CASE WHEN TIPOMOV IN('A','C') THEN  1 ELSE 0 END) AS CAMPS
+       ,SUM(CASE WHEN TIPOMOV = 'R' THEN  1 ELSE 0 END) AS CDISM,TO_NUMBER(0) "CTAMPS",TO_NUMBER(0) "CTDISM"
+       ,COUNT(MOM.OFICIO) AS APMETA, COUNT(MOA.OFICIO) AS APACCION
+      FROM SPP.AMPLIACIONES A
+            LEFT JOIN POA.MOVOFICIOS_ACCION MOA ON
+                MOA.OFICIO = A.OFICIO AND MOA.RAMO = A.RAMO AND MOA.DEPTO = A.DEPTO AND MOA.PRG = A.PRG AND MOA.META = A.META AND MOA.ACCION = A.ACCION
+            LEFT JOIN POA.MOVOFICIOS_META MOM ON
+                MOM.OFICIO = A.OFICIO AND MOM.RAMO = A.RAMO AND MOM.PRG = A.PRG AND MOM.PROY = A.PROYECTO AND MOM.TIPO_PROY = A.TIPO_PROY AND MOM.META = A.META
+      GROUP BY A.OFICIO, A.RAMO, A.DEPTO, A.PRG, A.PROYECTO, A.TIPO_PROY, A.META, A.ACCION, A.PARTIDA, A.FUENTE, A.FONDO
+
+UNION ALL
+
+      SELECT    TR.OFICIO, TR.RAMO, TR.DEPTO, TR.PRG, TR.PROYECTO AS PROY, TR.TIPO_PROY, TR.META, TR.ACCION, TR.PARTIDA, TR.FUENTE, TR.FONDO
+        , TO_NUMBER(0) "AMPS", TO_NUMBER(0) "DISM",SUM(TR.IMPTE) AS TAMPS, TO_NUMBER(0) "TDISM"
+        , TO_NUMBER(0) "CAMPS", TO_NUMBER(0) "CDISM", COUNT(TR.IMPTE) AS CTAMPS, TO_NUMBER(0) "CTDISM"
+        ,COUNT(MOM.OFICIO) AS APMETA, COUNT(MOA.OFICIO) AS APACCION
+      FROM SPP.TRANSFREC TR
+            LEFT JOIN POA.MOVOFICIOS_ACCION MOA ON
+                MOA.OFICIO = TR.OFICIO AND MOA.RAMO = TR.RAMO AND MOA.DEPTO = TR.DEPTO AND MOA.PRG = TR.PRG AND MOA.META = TR.META AND MOA.ACCION = TR.ACCION
+            LEFT JOIN POA.MOVOFICIOS_META MOM ON
+                MOM.OFICIO = TR.OFICIO AND MOM.RAMO = TR.RAMO AND MOM.PRG = TR.PRG AND MOM.PROY = TR.PROYECTO AND MOM.TIPO_PROY = TR.TIPO_PROY AND MOM.META = TR.META
+      GROUP BY TR.OFICIO, TR.RAMO, TR.DEPTO, TR.PRG, TR.PROYECTO, TR.TIPO_PROY, TR.META, TR.ACCION, TR.PARTIDA, TR.FUENTE, TR.FONDO
+
+UNION ALL
+
+      SELECT   TR.OFICIO, TR.RAMO, TR.DEPTO, TR.PRG, TR.PROYECTO, TR.TIPO_PROY, TR.META, TR.ACCION, TR.PARTIDA, TR.FUENTE, TR.FONDO
+        , TO_NUMBER(0) "AMPS", TO_NUMBER(0) "DISM", TO_NUMBER(0) "TAMPS",SUM(TR.IMPTE) AS TDISM
+        , TO_NUMBER(0) "CAMPS", TO_NUMBER(0) "CDISM", TO_NUMBER(0) "CTAMPS",COUNT(TR.IMPTE) AS CTDISM
+        , COUNT(MOM.OFICIO) AS APMETA, COUNT(MOA.OFICIO) AS APACCION
+      FROM SPP.TRANSFERENCIAS TR
+            LEFT JOIN POA.MOVOFICIOS_ACCION MOA ON
+                MOA.OFICIO = TR.OFICIO AND MOA.RAMO = TR.RAMO AND MOA.DEPTO = TR.DEPTO AND MOA.PRG = TR.PRG AND MOA.META = TR.META AND MOA.ACCION = TR.ACCION
+            LEFT JOIN POA.MOVOFICIOS_META MOM ON
+                MOM.OFICIO = TR.OFICIO AND MOM.RAMO = TR.RAMO AND MOM.PRG = TR.PRG AND MOM.PROY = TR.PROYECTO AND MOM.TIPO_PROY = TR.TIPO_PROY AND MOM.META = TR.META
+      GROUP BY TR.OFICIO, TR.RAMO, TR.DEPTO, TR.PRG, TR.PROYECTO, TR.TIPO_PROY, TR.META, TR.ACCION, TR.PARTIDA, TR.FUENTE, TR.FONDO
+
+) PTO
+   LEFT JOIN SPP.VW_PPTO_CTAPUBLICA PCP ON PCP.RAMO = PTO.RAMO AND PCP.DEPTO = PTO.DEPTO AND PCP.PRG = PTO.PRG AND PCP.YEAR = $P{P_YEAR}
+   LEFT JOIN DGI.DEPENDENCIA D ON D.RAMO = PTO.RAMO AND D.DEPTO = PTO.DEPTO AND D.YEAR = $P{P_YEAR}
+   LEFT JOIN DGI.PARTIDA P ON P.PARTIDA = PTO.PARTIDA AND P.YEAR = $P{P_YEAR}
+   LEFT JOIN POA.MOVOFICIOS_ACCION MOA ON
+        MOA.OFICIO = PTO.OFICIO AND MOA.RAMO = PTO.RAMO AND MOA.DEPTO = PTO.DEPTO AND MOA.PRG = PTO.PRG AND MOA.META = PTO.META AND MOA.ACCION = PTO.ACCION
+   LEFT JOIN POA.MOVOFICIOS_META MOM ON MOM.OFICIO = PTO.OFICIO AND MOM.RAMO = PTO.RAMO AND MOM.PRG = PTO.PRG AND MOM.META = PTO.META AND MOM.YEAR = $P{P_YEAR}
+
+
+
+GROUP BY PTO.OFICIO, PTO.RAMO, PTO.DEPTO
+, D.DESCR
+, PTO.PRG, PTO.PROY, PTO.TIPO_PROY, PTO.META, MOM.DESCR, PTO.ACCION, MOA.DESCR , PTO.PARTIDA, P.DESCR, MOA.MPO, MOA.LOCALIDAD , PTO.FUENTE, PTO.FONDO, PTO.APMETA, PTO.APACCION
+ORDER BY PTO.OFICIO]]>
+	</queryString>
+	<field name="OFICIO" class="java.math.BigDecimal"/>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="DEPTO" class="java.lang.String"/>
+	<field name="UE_DESCR" class="java.lang.String"/>
+	<field name="PRG" class="java.lang.String"/>
+	<field name="PROY" class="java.math.BigDecimal"/>
+	<field name="TIPO_PROY" class="java.lang.String"/>
+	<field name="META" class="java.math.BigDecimal"/>
+	<field name="METADESCR" class="java.lang.String"/>
+	<field name="ACCION" class="java.math.BigDecimal"/>
+	<field name="ACCION_DESCR" class="java.lang.String"/>
+	<field name="CODMUNICIPIO" class="java.lang.String"/>
+	<field name="CODLOCALIDAD" class="java.math.BigDecimal"/>
+	<field name="PARTIDA" class="java.lang.String"/>
+	<field name="DESCR_PARTIDA" class="java.lang.String"/>
+	<field name="FUENTE" class="java.lang.String"/>
+	<field name="FONDO" class="java.lang.String"/>
+	<field name="PPTOINICIALAPROBADO" class="java.math.BigDecimal"/>
+	<field name="AUMENTOS" class="java.math.BigDecimal"/>
+	<field name="DISMINUCIONES" class="java.math.BigDecimal"/>
+	<field name="PPTOMODIFICADOAPROBADO" class="java.math.BigDecimal"/>
+	<field name="MAX(PTO.AMPS)" class="java.math.BigDecimal"/>
+	<field name="MAX(PTO.DISM)" class="java.math.BigDecimal"/>
+	<field name="MAX(PTO.TAMPS)" class="java.math.BigDecimal"/>
+	<field name="MAX(PTO.TDISM)" class="java.math.BigDecimal"/>
+	<field name="PPTOMODIFSOLICITADO" class="java.math.BigDecimal"/>
+	<field name="MAX(PTO.CAMPS)" class="java.math.BigDecimal"/>
+	<field name="MAX(PTO.CDISM)" class="java.math.BigDecimal"/>
+	<field name="MAX(PTO.CTAMPS)" class="java.math.BigDecimal"/>
+	<field name="MAX(PTO.CTDISM)" class="java.math.BigDecimal"/>
+	<field name="TOTALMOVS" class="java.math.BigDecimal"/>
+	<field name="APMETA" class="java.lang.String"/>
+	<field name="APACCION" class="java.lang.String"/>
+	<variable name="BAKCGROUND" class="java.lang.String" resetType="None" calculation="DistinctCount">
+		<variableExpression><![CDATA[$V{REPORT_COUNT}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<group name="RAMO">
+		<groupExpression><![CDATA[$F{RAMO}]]></groupExpression>
+	</group>
+	<group name="PROGRAMA">
+		<groupExpression><![CDATA[$F{PRG}]]></groupExpression>
+	</group>
+	<group name="DEPTO">
+		<groupExpression><![CDATA[$F{DEPTO}]]></groupExpression>
+	</group>
+	<pageHeader>
+		<band height="74">
+			<staticText>
+				<reportElement uuid="1a3a3211-9cf0-4ccf-b78b-25b7ba62da22" x="0" y="34" width="2854" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FORMATO CONSOLIDADO DE MODIFICACIONES PRESUPUESTALES]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="b1fddfde-d5fb-4aa2-980d-85a8109f14f7" x="0" y="54" width="2854" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA["EJERCICIO "+$P{P_YEAR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="61">
+			<staticText>
+				<reportElement uuid="2ca57250-5d2c-46a4-8566-8814502ca7fd" mode="Opaque" x="0" y="0" width="67" height="60" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NUMERO
+DE MOV.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3322ce35-359d-4922-aaaa-b5e8e08deb8c" mode="Opaque" x="67" y="0" width="43" height="60" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NUM.
+RAMO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="15f85f23-2236-49a5-9e71-4253d003688a" mode="Opaque" x="110" y="0" width="36" height="60" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NUM
+UE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="84b8ca73-fed6-42d3-99a5-ec15e92a7357" mode="Opaque" x="446" y="0" width="43" height="60" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NÚM
+PROG.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="562df448-980b-4c03-bf0d-5f3e86958612" mode="Opaque" x="146" y="0" width="300" height="60" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[UNIDAD EJECUTORA DESCRIPCIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1717edf0-5fbe-4b2e-9639-7895e44ee8b6" mode="Opaque" x="489" y="0" width="43" height="60" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NÚM.
+ACT.
+INST.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5b9821fc-dad2-45ec-8e60-0596f225c543" mode="Opaque" x="532" y="0" width="43" height="60" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NUM.
+META]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="32a2ac9b-89be-4cad-baad-6f4b2e6beae9" mode="Opaque" x="575" y="0" width="300" height="60" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[META DESCRIPCIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5250aefd-d7cf-487a-ae6e-ddf0e1178c14" mode="Opaque" x="875" y="0" width="50" height="60" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NÚM.
+ACCIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="567f4d7c-1655-4b67-943f-263cfdc4f1f8" mode="Opaque" x="925" y="0" width="300" height="60" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ACCIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1208f201-4601-4cf1-8e53-4cd20c86364d" mode="Opaque" x="1225" y="0" width="65" height="60" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CÓD.
+MUNICIPIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c37aac36-ede9-4481-9394-7e0a06d4c43f" mode="Opaque" x="1290" y="0" width="65" height="60" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CÓD.
+LOCALIDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="dbd0310e-af14-4d70-9a51-0b964d543a04" mode="Opaque" x="1355" y="0" width="60" height="60" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PARTIDA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6f58e1dc-d451-4f22-9789-845172473efb" mode="Opaque" x="1415" y="0" width="300" height="60" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIP.
+PARTIDA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="abea4275-6df1-41cd-9535-15a53dff0fd8" mode="Opaque" x="1715" y="0" width="40" height="60" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[FUENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b5ef9d90-2622-4381-ba59-3bb62cb3a312" mode="Opaque" x="1755" y="0" width="40" height="60" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[FONDO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0db73d1a-b187-42fa-b0bc-d36c4af20dbf" mode="Opaque" x="1795" y="0" width="40" height="60" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="Left">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[EJERCICIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ece3a26a-dfa0-4ec4-b806-bab6e7bf8949" mode="Opaque" x="2199" y="20" width="90" height="40" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[AMPLIACIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f76b2958-6298-46eb-be1c-7dcf29e122c1" mode="Opaque" x="2289" y="20" width="90" height="40" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DISMINUCIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="40c72f1a-1ee9-46b9-a6ae-2eb59b84575b" mode="Opaque" x="2379" y="40" width="90" height="20" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[AUMENTOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="103a5d2d-e4b4-47b2-95c3-556fc809d519" mode="Opaque" x="2469" y="40" width="90" height="20" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DISMINUCIONES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="789cd108-c2ea-48d1-9f2a-3e41fbd0cc02" mode="Opaque" x="1835" y="0" width="90" height="60" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRESUPUESTO
+INICIAL
+APROBADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d02e5ffe-9585-4884-b472-9bfa17904e1f" mode="Opaque" x="1925" y="40" width="90" height="20" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[AUMENTOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="fb6f928d-f7c8-4b5e-aba5-1292d08447a7" mode="Opaque" x="2015" y="40" width="94" height="20" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DISMINUCIONES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a80c5cb8-3c57-4766-aa6b-1801ce360304" mode="Opaque" x="2109" y="0" width="90" height="60" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRESUPUESTO
+MODIFICADO
+APROBADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bc244fa9-bd9c-4897-90d9-1fefa4b1e871" mode="Opaque" x="2559" y="0" width="92" height="60" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL DE
+MOVIMIENTOS
+(SUMA DE
+MOVIMIENTOS)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3768f46e-81ae-4413-a5e1-35f48b03d569" mode="Opaque" x="2651" y="0" width="89" height="60" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRESUPUESTO
+MODIFICADO
+SOLICITADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="63559ae8-dbdb-490c-a45b-659fca60c8fe" mode="Opaque" x="2740" y="40" width="63" height="20" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[EN META]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="538cfbb6-ca5d-4404-b914-2b9beafaffe8" mode="Opaque" x="2803" y="40" width="63" height="20" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[EN ACCIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="38314191-2b8c-4d11-9c32-d6f85f00cc88" mode="Opaque" x="2740" y="0" width="126" height="40" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[AFECTACIÓN
+PROGRAMATICA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d45df8bc-6120-44f9-bf59-b4b3d24b5f74" mode="Opaque" x="2379" y="20" width="180" height="20" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TRANSFERENCIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6fc7a22b-a104-4041-95d2-a9d2b42eb95d" mode="Opaque" x="2199" y="0" width="360" height="20" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[MODIFICACIÓN SOLICITADA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2b132f72-b375-4852-983e-8c4d7bb9f967" mode="Opaque" x="1925" y="0" width="184" height="40" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[MODIFICACIONES
+ACUMULADAS]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement uuid="f5d677f3-9440-4b5d-8341-d9beee9e52c9" x="0" y="0" width="67" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{OFICIO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="966db410-dabf-4aab-9b80-0f05dd0852af" x="110" y="0" width="36" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{DEPTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="a9a599b6-3dc0-4f7d-bf1f-fc75b4dd4d92" x="67" y="0" width="43" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{RAMO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="5fb24be1-6245-4ca7-85a8-99cafcd86509" x="446" y="0" width="43" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{PRG}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="1100472e-30b5-48c7-b3fc-ee1797c8e70a" x="146" y="0" width="300" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{UE_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="8aa7ca70-274f-4144-b8bb-97a01fa5220a" x="489" y="0" width="43" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{PROY}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="8cb8d890-a040-4f42-8295-8054eb4312da" x="532" y="0" width="43" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{META}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="d99e25d0-ce49-4756-a9ba-aaa428c8079c" x="575" y="0" width="300" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{METADESCR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="d19840ad-ddf1-4894-9b68-f96c41e702ed" x="875" y="0" width="50" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{ACCION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="2aab2065-8011-4d98-99d6-ddce1c3dd34c" x="925" y="0" width="300" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{ACCION_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="58eaa491-c815-4202-9937-9841f49539c6" x="1225" y="0" width="65" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{CODMUNICIPIO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="a7e4c7b1-987b-4c5c-a0b8-e13364c2e77a" x="1290" y="0" width="65" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{CODLOCALIDAD}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="46efbd57-47cb-45a2-b1ca-0fbf4611569b" x="1355" y="0" width="60" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{PARTIDA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="49598c2d-aec2-41f7-b370-d62fb4c7ccec" x="1415" y="0" width="300" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{DESCR_PARTIDA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="edcdc3b3-02d7-4e00-ae9b-d066f2a0b531" x="1715" y="0" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{FUENTE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="cd6136ae-517c-4f4c-86ca-e12914b1320b" x="1755" y="0" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{FONDO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="5eb202fd-a4bd-43fa-b7d6-46c269125d5d" x="2199" y="0" width="90" height="20"/>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$F{MAX(PTO.AMPS)}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="8d8ff343-2e4e-4f7f-a936-015ea1b5d19f" x="2289" y="0" width="90" height="20"/>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$F{MAX(PTO.DISM)}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="3fd59d0d-6a8c-4f9d-8382-9b32a89a0489" x="2379" y="0" width="90" height="20"/>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$F{MAX(PTO.TAMPS)}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="6fd73ec2-a787-4295-a8e0-093a7eb1010d" x="2469" y="0" width="90" height="20"/>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$F{MAX(PTO.TDISM)}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="dc11a783-db09-440a-a6c7-a56d4dec8faf" x="1835" y="0" width="90" height="20"/>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$F{PPTOINICIALAPROBADO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="62846fcc-d323-4827-b13b-464f365ab2b2" x="1925" y="0" width="90" height="20"/>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$F{AUMENTOS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="eecd052c-f66c-417e-b9ed-66edccbeaecc" x="2015" y="0" width="94" height="20"/>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$F{DISMINUCIONES}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="0df2e979-1c74-4374-9f58-3f5dc8f5cd67" x="2109" y="0" width="90" height="20"/>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$F{PPTOMODIFICADOAPROBADO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="fa92257d-3bae-4b61-83fa-ce555e1ed8e8" x="2559" y="0" width="92" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{TOTALMOVS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="c8d1e593-267d-4a80-bd7c-0e36e9d3405f" x="2651" y="0" width="89" height="20"/>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$F{PPTOMODIFSOLICITADO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="076f1f7b-de25-435a-a786-93163dfa7b86" x="2740" y="0" width="63" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{APMETA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="6ff56782-7947-4442-a327-2f5d61b085c9" x="2803" y="0" width="63" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{APACCION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="3656aba0-cfa6-4f39-8e2b-42d38fac4faf" x="1795" y="0" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_YEAR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

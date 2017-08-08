@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RptComparativoIngresoEgresoActualSiguiente" language="groovy" pageWidth="792" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a0f433f4-8d0b-40ba-8a44-d8a2279f7c67">
+	<property name="ireport.zoom" value="1.4641000000000015"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="190"/>
+	<parameter name="RAMO_IN_LIST" class="java.lang.String"/>
+	<parameter name="YEAR_SIG" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\SIMG\\Desarrollo\\Web\\Java\\repositorio_local\\Aplicaciones Web\\POA\\web\\reportes\\ComparativoIngresoEgreso\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RPT_DIR" class="java.lang.String"/>
+	<parameter name="IMG_DIR" class="java.lang.String"/>
+	<parameter name="YEAR" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[SELECT
+    DGI.PARAMETROS.GOBIERNO,
+    DGI.PARAMETROS.SECRETARIA,
+    sysdate as fecha,
+    DGI.RAMOS.RAMO AS RAMO,
+    DGI.RAMOS.DESCR AS RAMO_DESCR,
+    DECODE(dgi.vw_empleados.nombre,NULL,' ',dgi.vw_empleados.nombre)|| ' ' ||DECODE(dgi.vw_empleados.paterno,NULL,' ',dgi.vw_empleados.paterno)|| ' ' ||DECODE(dgi.vw_empleados.materno,NULL,' ',dgi.vw_empleados.materno) AS NOMBRE
+FROM
+    DGI.PARAMETROS,
+    DGI.RAMOS,
+    dgi.vw_empleados
+WHERE
+    dgi.vw_empleados.rfc(+) = DGI.RAMOS.RFC AND
+    dgi.vw_empleados.homoclave(+) = DGI.RAMOS.HOMOCLAVE AND
+    DGI.RAMOS.RAMO IN($P!{RAMO_IN_LIST}) AND
+    DGI.RAMOS.YEAR= to_char(to_number($P{YEAR_SIG})+1)
+ORDER BY DGI.RAMOS.RAMO]]>
+	</queryString>
+	<field name="GOBIERNO" class="java.lang.String"/>
+	<field name="SECRETARIA" class="java.lang.String"/>
+	<field name="FECHA" class="java.sql.Timestamp"/>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="RAMO_DESCR" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<variable name="SALIDA_INICIAL" class="java.math.BigDecimal"/>
+	<variable name="SALIDA_MODIFICADO" class="java.math.BigDecimal"/>
+	<variable name="SALIDA_PPTO" class="java.math.BigDecimal"/>
+	<variable name="SALIDA_IMPORTE" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="123">
+			<textField>
+				<reportElement uuid="8e912d8a-5bfb-44cc-b59d-73c9bc867c6c" x="65" y="0" width="622" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GOBIERNO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="88f2734f-d236-4c80-bed2-2b5466966bc2" x="65" y="21" width="622" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SECRETARIA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="9c19b533-d35a-42ba-bfd4-3362b9249be8" x="65" y="42" width="622" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["COMPARATIVO DE PRESUPUESTO " + $P{YEAR_SIG} + " CON PRESUPUESTO " + (Integer.parseInt($P{YEAR_SIG}) + 1) + " CONSOLIDADO"]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement uuid="12d49839-9cba-4267-a03c-e1f007170057" x="0" y="1" width="65" height="67"/>
+				<imageExpression><![CDATA[$P{IMG_DIR} + "EDO.gif"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement uuid="51da9e54-d7c7-473e-8004-83616d88683e" x="65" y="63" width="622" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RAMO}+" - "+$F{RAMO_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="d9585769-1b7d-4d8a-bdd7-b3d34a5dd4bf" mode="Opaque" x="238" y="93" width="216" height="15" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression><![CDATA["PRESUPUESTO " + $P{YEAR_SIG}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="4952d96c-d6a8-46a7-8c5a-c008a9b5bcd3" mode="Opaque" x="574" y="93" width="178" height="15" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression><![CDATA[(Integer.parseInt($P{YEAR_SIG}) + 1) +"  Vs. "+ $P{YEAR_SIG}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="53d5f25d-cc74-4f6e-ab0b-ad20a580512d" mode="Opaque" x="454" y="108" width="120" height="15" backcolor="#CCCCCC"/>
+				<box>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression><![CDATA[(Integer.parseInt($P{YEAR_SIG}) + 1)]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="1e0a25bb-d042-48e7-95ce-aeabfaf2c254" mode="Opaque" x="354" y="108" width="100" height="15" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[MODIFICADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="742c3c62-a41e-490d-9d7b-99fb895b1990" mode="Opaque" x="696" y="108" width="56" height="15" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1693b1c9-a240-4ed8-88ee-6fa3804ab480" mode="Opaque" x="574" y="108" width="122" height="15" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[IMPORTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="99b3eab8-5be9-4b0a-91c3-b3be9b875812" mode="Opaque" x="0" y="93" width="238" height="30" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[CONCEPTO]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="56f8b633-ee28-4418-ac21-a5291ae61b1d" mode="Opaque" x="454" y="93" width="120" height="15" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression><![CDATA["PRESUPUESTO "]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="d20f2188-621a-4690-a871-ae6ceeb1825d" mode="Opaque" x="238" y="108" width="116" height="15" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[INICIAL]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="58">
+			<subreport>
+				<reportElement uuid="890a5cb5-7847-4881-8a79-b86306e82834" x="0" y="0" width="752" height="50"/>
+				<subreportParameter name="YEAR_SIG">
+					<subreportParameterExpression><![CDATA[$P{YEAR_SIG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "RptComparativoIngresoAnioActual.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="58" splitType="Stretch">
+			<subreport>
+				<reportElement uuid="702a76a7-7b34-44d7-bec8-0a6b54b426f3" x="0" y="0" width="752" height="50"/>
+				<subreportParameter name="YEAR_SIG">
+					<subreportParameterExpression><![CDATA[$P{YEAR_SIG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "sunRptPresupIngresoAnioActual.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="28">
+			<subreport>
+				<reportElement uuid="fc58d296-f702-4af6-bbdc-d79fc1ed5d61" x="0" y="0" width="752" height="20"/>
+				<subreportParameter name="YEAR_SIG">
+					<subreportParameterExpression><![CDATA[$P{YEAR_SIG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "subRptComparativoActualSiguienteDisponible.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="48">
+			<subreport>
+				<reportElement uuid="72351640-70de-46c3-8e92-d477a886474a" x="0" y="0" width="752" height="40"/>
+				<subreportParameter name="YEAR_SIG">
+					<subreportParameterExpression><![CDATA[$P{YEAR_SIG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "subRptEgresoAnioActualSiguiente.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="20">
+			<subreport>
+				<reportElement uuid="6c5674fb-7f68-4ea4-bb72-6138be44ffe9" x="0" y="0" width="752" height="20"/>
+				<subreportParameter name="YEAR_SIG">
+					<subreportParameterExpression><![CDATA[$P{YEAR_SIG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "subRptPresupIngEgreBalanceFinalDisponible.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="58">
+			<subreport>
+				<reportElement uuid="f81f78f3-a684-4055-b96b-2990a5a668f0" x="0" y="10" width="752" height="48"/>
+				<subreportParameter name="YEAR_SIG">
+					<subreportParameterExpression><![CDATA[$P{YEAR_SIG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "subRptPlantillaPersonalVertical.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="59">
+			<subreport>
+				<reportElement uuid="b9df3d9f-e337-405b-96cd-dc3b7f0ca32f" x="0" y="11" width="752" height="48" isRemoveLineWhenBlank="true"/>
+				<subreportParameter name="YEAR_SIG">
+					<subreportParameterExpression><![CDATA[$P{YEAR_SIG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "subRptPlantillaPersonalVerticalHoras.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="23">
+			<line>
+				<reportElement uuid="0440d63a-6ba1-4c01-8352-00c225d50d48" x="0" y="2" width="752" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="02cf35a2-8285-4c2e-b54d-1158227f628f" x="0" y="3" width="259" height="20"/>
+				<textElement/>
+				<text><![CDATA[<RptComparativoIngresoEgresoEgresoActualSiguiente>]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="4cd8c7ed-4079-4865-be44-a50b57e873c8" x="632" y="3" width="80" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement uuid="a8e9c8cf-2424-42eb-86e8-6f3a1a75e9df" x="712" y="3" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

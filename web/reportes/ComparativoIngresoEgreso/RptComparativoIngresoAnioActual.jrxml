@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RptComparativoIngresoAnioActual" language="groovy" pageWidth="752" pageHeight="572" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="752" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="6aa2a4fb-51e5-498d-9096-82b3592ee11b">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Porcentaje1">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[($F{PRESUPSIG} - $F{PRESUP_MODIFICADO}) >= 0]]></conditionExpression>
+			<style forecolor="#000000" pattern=""/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[($F{PRESUPSIG} - $F{PRESUP_MODIFICADO}) < 0]]></conditionExpression>
+			<style forecolor="#FF0000" pattern="">
+				<pen lineColor="#000000"/>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+			</style>
+		</conditionalStyle>
+	</style>
+	<style name="Inicial">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{ASIGNADO} >= 0]]></conditionExpression>
+			<style forecolor="#000000"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{ASIGNADO} < 0]]></conditionExpression>
+			<style forecolor="#FF0000">
+				<pen lineColor="#000000"/>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+			</style>
+		</conditionalStyle>
+	</style>
+	<style name="Asignado">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{PRESUP_MODIFICADO} >= 0]]></conditionExpression>
+			<style forecolor="#000000">
+				<pen lineColor="#000000"/>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+			</style>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{PRESUP_MODIFICADO} < 0]]></conditionExpression>
+			<style forecolor="#FF0000">
+				<pen lineColor="#000000"/>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+			</style>
+		</conditionalStyle>
+	</style>
+	<style name="Presupuestado">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{PRESUPSIG} >= 0]]></conditionExpression>
+			<style forecolor="#000000">
+				<pen lineColor="#000000"/>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+			</style>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{PRESUPSIG} < 0]]></conditionExpression>
+			<style forecolor="#FF0000">
+				<pen lineColor="#000000"/>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+			</style>
+		</conditionalStyle>
+	</style>
+	<parameter name="YEAR_SIG" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RAMO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+	PCLSI.RUBRO AS RUBRO,
+	PCLSI.DESCR AS RUBRO_DESCR,
+	SUM(NVL(A.ASIGNADO,0)) AS ASIGNADO,
+	SUM(NVL(A.PRESUP_MODIFICADO,0)) AS PRESUP_MODIFICADO,
+	SUM(NVL(A.PRESUP,0)) AS PRESUPSIG
+
+FROM
+	(
+		SELECT
+			DISTINCT
+				SIC.RUBRO,SIC.DESCR
+		FROM
+			S_ING_CONCEP SIC,
+			S_ING_RUBRO SIR
+		WHERE
+			SIC.RUBRO = SIR.RUBRO(+)
+            AND SIC.EJERCICIO = TO_CHAR(TO_NUMBER($P{YEAR_SIG})+1)
+	) PCLSI,
+	(
+		SELECT
+			PCL.RUBRO AS RUBRO,
+			0 AS ASIGNADO,
+			0 PRESUP_MODIFICADO,
+			SUM(NVL(PPI.ENE,0)+NVL(PPI.FEB,0)+NVL(PPI.MZO,0)+NVL(PPI.ABR,0)+NVL(PPI.MAY,0)+NVL(PPI.JUN,0)+NVL(PPI.JUL,0)+NVL(PPI.AGO,0)+NVL(PPI.SEP,0)+NVL(PPI.OCT,0)+NVL(PPI.NOV,0)+NVL(PPI.DIC,0)) AS PRESUP
+		FROM
+			DGI.POA_PPTO_ING PPI,
+			S_ING_CONCEP PCL
+		WHERE
+			PPI.CONCEPTO=PCL.CONCEPTO AND
+			PPI.RAMO= $P{RAMO} AND
+			PPI.YEAR=TO_CHAR(TO_NUMBER($P{YEAR_SIG})+1) AND
+			PCL.RUBRO='B' AND
+            PCL.EJERCICIO = PPI.YEAR
+		GROUP BY
+			PCL.RUBRO
+
+		UNION ALL
+
+		SELECT
+			PIC.RUBRO AS RUBRO,
+			PIC.ASIGNADO AS ASIGNADO,
+			PIC.PRESUP_MODIFICADO AS PRESUP_MODIFICADO,
+			0 AS PRESUP
+		FROM
+			(
+				SELECT
+					PPING.YEAR,
+					PPING.RAMO,
+					PPING.RUBRO,
+					SUM(NVL(PPING.ASIGNADO,0)) ASIGNADO,
+					SUM(NVL(PPING.PRESUP_MODIFICADO,0)) PRESUP_MODIFICADO
+				FROM
+					S_POA_PPTO_ING_CAPTURA_ANT PPING
+				GROUP BY
+					PPING.YEAR,
+					PPING.RAMO,
+					PPING.RUBRO
+
+				UNION
+
+				SELECT
+					PPING.YEAR,
+					PPING.RAMO,
+					PPING.RUBRO,
+					SUM(NVL(PPING.ASIGNADO,0)) ASIGNADO,
+					SUM(NVL(PPING.ASIGNADO,0)) + SUM(NVL(PPING.AMPLIACIONES,0)) - SUM(NVL(PPING.REDUCCIONES,0)) PRESUP_MODIFICADO
+				FROM
+					(
+						SELECT
+							PPI.YEAR,
+							PPI.RAMO,
+							PCL.RUBRO,
+							SUM(NVL(PPI.ENE,0)+NVL(PPI.FEB,0)+NVL(PPI.MZO,0)+NVL(PPI.ABR,0)+NVL(PPI.MAY,0)+NVL(PPI.JUN,0)+NVL(PPI.JUL,0)+NVL(PPI.AGO,0)+NVL(PPI.SEP,0)+NVL(PPI.OCT,0)+NVL(PPI.NOV,0)+NVL(PPI.DIC,0)) AS ASIGNADO,
+							0 AMPLIACIONES,
+							0 REDUCCIONES
+						FROM
+							DGI.POA_PPTO_ING PPI,
+							S_ING_CONCEP PCL
+						WHERE
+							PPI.CONCEPTO=PCL.CONCEPTO
+                            AND PCL.EJERCICIO = TO_CHAR(TO_NUMBER($P{YEAR_SIG})+1)
+						GROUP BY
+							PPI.YEAR,
+							PPI.RAMO,
+							PCL.RUBRO
+
+						UNION ALL
+
+						SELECT
+							PPI.YEAR,
+							PPI.RAMO,
+							PCL.RUBRO,
+							0 AS ASIGNADO,
+							CASE PPI.TIPOMOV WHEN 'A' THEN SUM(NVL(PPI.ENE,0)+NVL(PPI.FEB,0)+NVL(PPI.MZO,0)+NVL(PPI.ABR,0)+NVL(PPI.MAY,0)+NVL(PPI.JUN,0)+NVL(PPI.JUL,0)+NVL(PPI.AGO,0)+NVL(PPI.SEP,0)+NVL(PPI.OCT,0)+NVL(PPI.NOV,0)+NVL(PPI.DIC,0)) ELSE 0 END AMPLIACIONES,
+							CASE PPI.TIPOMOV WHEN 'R' THEN SUM(NVL(PPI.ENE,0)+NVL(PPI.FEB,0)+NVL(PPI.MZO,0)+NVL(PPI.ABR,0)+NVL(PPI.MAY,0)+NVL(PPI.JUN,0)+NVL(PPI.JUL,0)+NVL(PPI.AGO,0)+NVL(PPI.SEP,0)+NVL(PPI.OCT,0)+NVL(PPI.NOV,0)+NVL(PPI.DIC,0)) ELSE 0 END REDUCCIONES
+						FROM
+							POA.CARATULA_PPTO_ING PPI,
+							S_ING_CONCEP PCL
+						WHERE
+							PPI.CONCEPTO=PCL.CONCEPTO
+                            AND PCL.EJERCICIO = TO_CHAR(TO_NUMBER($P{YEAR_SIG})+1)
+						GROUP BY
+							PPI.YEAR,
+							PPI.RAMO,
+							PCL.RUBRO,
+							PPI.TIPOMOV
+					) PPING
+				GROUP BY
+					PPING.YEAR,
+					PPING.RAMO,
+					PPING.RUBRO
+			) PIC
+		WHERE
+			PIC.RAMO = $P{RAMO} AND
+			PIC.YEAR = $P{YEAR_SIG}  AND
+			PIC.RUBRO='B'
+	) A
+
+WHERE
+	PCLSI.RUBRO=A.RUBRO(+) AND
+	PCLSI.RUBRO='B'
+
+GROUP BY
+	PCLSI.RUBRO, PCLSI.DESCR
+
+ORDER BY
+	PCLSI.RUBRO]]>
+	</queryString>
+	<field name="RUBRO" class="java.lang.String"/>
+	<field name="RUBRO_DESCR" class="java.lang.String"/>
+	<field name="ASIGNADO" class="java.math.BigDecimal"/>
+	<field name="PRESUP_MODIFICADO" class="java.math.BigDecimal"/>
+	<field name="PRESUPSIG" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField>
+				<reportElement uuid="8ced1b56-e01a-4cbf-a1ea-4681cdd7aaaa" x="0" y="0" width="238" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{RUBRO} + "-" + $F{RUBRO_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00;(¤ #,##0.00)" isBlankWhenNull="true">
+				<reportElement uuid="83317126-7ebc-419b-bf8f-436d01b74a11" style="Inicial" x="238" y="0" width="116" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ASIGNADO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00;(¤ #,##0.00)" isBlankWhenNull="true">
+				<reportElement uuid="6877b065-016d-4f91-85e5-d8cb1e4438b4" style="Asignado" x="354" y="0" width="100" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRESUP_MODIFICADO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00;(¤ #,##0.00)" isBlankWhenNull="true">
+				<reportElement uuid="2c59cae4-3177-406f-b7fa-6d8d19b79a27" style="Presupuestado" x="454" y="0" width="120" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRESUPSIG}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00;(¤ #,##0.00)" isBlankWhenNull="true">
+				<reportElement uuid="f55e6d16-7e0b-4b79-8210-f1aca07cb9e8" style="Porcentaje1" x="574" y="0" width="122" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRESUPSIG} - $F{PRESUP_MODIFICADO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 %;(#,##0.00 %)" isBlankWhenNull="true">
+				<reportElement uuid="b4f87202-8e2b-46b7-9b2a-88ed2122fd7e" style="Porcentaje1" x="696" y="0" width="56" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRESUP_MODIFICADO} == 0 ? "0 %" : ($F{PRESUPSIG}-$F{PRESUP_MODIFICADO})/$F{PRESUP_MODIFICADO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

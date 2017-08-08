@@ -1,0 +1,1318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="repPptoXCodigoExce" language="groovy" pageWidth="5380" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="5380" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="429c0da5-fcda-455f-b04a-9d4a3bbaa9d5">
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.cell.locked" value="false"/>
+	<property name="ireport.zoom" value="1.6105100000000079"/>
+	<property name="ireport.x" value="5609"/>
+	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
+	<parameter name="RAMO_IN_LIST" class="java.lang.String"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<parameter name="IMG_DIR" class="java.lang.String"/>
+	<parameter name="QUERY" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+	PPTO.RAMO,
+	RAM.DESCR AS R_DESCR,
+	PPTO.PRG,
+	PRG.DESCR AS PGR_DESCR,
+	PPTO.PRG_CONAC,
+	PPTO.DEPTO,
+	DEPTO.DESCR AS DEPTO_DESC,
+	PPTO.TIPO_PROY,
+	PPTO.PROYECTO,
+	PROY.DESCR AS P_DESCR,
+	PPTO.FINALIDAD,
+	PPTO.FUNCION,
+	PPTO.SUBFUNCION,
+	PPTO.META,
+	MET.DESCR AS M_DESCR,
+	PPTO.ACCION,
+	ACC.DESCR AS A_DESCR,
+	PPTO.PARTIDA,
+	PART.DESCR AS PDA_DESCR,
+	PPTO.TIPO_GASTO,
+	PPTO.FUENTE,
+	PPTO.FONDO,
+	PPTO.RECURSO,
+	RES.DESCR AS FUENTE_F,
+	PPTO.MUNICIPIO,
+	PPTO.DELEGACION,
+	PPTO.REL_LABORAL,
+	(
+		SUM(PPTO.ENE) +
+		SUM(PPTO.FEB) +
+		SUM(PPTO.MAR) +
+		SUM(PPTO.ABR) +
+		SUM(PPTO.MAY) +
+		SUM(PPTO.JUN) +
+		SUM(PPTO.JUL) +
+		SUM(PPTO.AGO) +
+		SUM(PPTO.SEP) +
+		SUM(PPTO.OCT) +
+		SUM(PPTO.NOV) +
+		SUM(PPTO.DIC)
+	) ASIGNADO,
+	SUM(PPTO.ENE) ENE,
+	SUM(PPTO.FEB) FEB,
+	SUM(PPTO.MAR) MAR,
+	SUM(PPTO.ABR) ABR,
+	SUM(PPTO.MAY) MAY,
+	SUM(PPTO.JUN) JUN,
+	SUM(PPTO.JUL) JUL,
+	SUM(PPTO.AGO) AGO,
+	SUM(PPTO.SEP) SEP,
+	SUM(PPTO.OCT) OCT,
+	SUM(PPTO.NOV) NOV,
+	SUM(PPTO.DIC) DIC
+
+FROM
+(
+		SELECT
+			YEAR,
+			RAMO,
+			PRG,
+            PRG_CONAC,
+            DEPTO,
+            TIPO_PROY,
+			PROYECTO,
+			FINALIDAD,
+            FUNCION,
+            SUBFUNCION,
+            META,
+			ACCION,
+            PARTIDA,
+            TIPO_GASTO,
+            FUENTE,
+            FONDO,
+            RECURSO,
+            MUNICIPIO,
+            DELEGACION,
+            REL_LABORAL,
+			SUM(NVL(ENE,0)) ENE,
+			SUM(NVL(FEB,0)) FEB,
+			SUM(NVL(MAR,0)) MAR,
+			SUM(NVL(ABR,0)) ABR,
+			SUM(NVL(MAY,0)) MAY,
+			SUM(NVL(JUN,0)) JUN,
+			SUM(NVL(JUL,0)) JUL,
+			SUM(NVL(AGO,0)) AGO,
+			SUM(NVL(SEP,0)) SEP,
+			SUM(NVL(OCT,0)) OCT,
+			SUM(NVL(NOV,0)) NOV,
+			SUM(NVL(DIC,0)) DIC
+		FROM
+			(
+				SELECT
+                    YEAR,
+                    RAMO,
+                    PRG,
+                    PRG_CONAC,
+                    DEPTO,
+                    TIPO_PROY,
+                    PROYECTO,
+                    FINALIDAD,
+                    FUNCION,
+                    SUBFUNCION,
+                    META,
+                    ACCION,
+                    PARTIDA,
+                    TIPO_GASTO,
+                    FUENTE,
+                    FONDO,
+                    RECURSO,
+                    MUNICIPIO,
+                    DELEGACION,
+                    REL_LABORAL,
+					NVL(ENE,0) ENE,
+					NVL(FEB,0) FEB,
+					NVL(MAR,0) MAR,
+					NVL(ABR,0) ABR,
+					NVL(MAY,0) MAY,
+					NVL(JUN,0) JUN,
+					NVL(JUL,0) JUL,
+					NVL(AGO,0) AGO,
+					NVL(SEP,0) SEP,
+					NVL(OCT,0) OCT,
+					NVL(NOV,0) NOV,
+					NVL(DIC,0) DIC
+				FROM
+					(
+					   SELECT
+
+                            PPTO.YEAR,
+                            PPTO.RAMO,
+                            PPTO.PRG,
+                            PPTO.PRG_CONAC,
+                            PPTO.DEPTO,
+                            PPTO.TIPO_PROY,
+                            PPTO.PROYECTO,
+                            PPTO.FINALIDAD,
+                            PPTO.FUNCION,
+                            PPTO.SUBFUNCION,
+                            PPTO.META,
+                            PPTO.ACCION,
+                            PPTO.PARTIDA,
+                            PPTO.TIPO_GASTO,
+                            PPTO.FUENTE,
+                            PPTO.FONDO,
+                            PPTO.RECURSO,
+                            PPTO.MUNICIPIO,
+                            PPTO.DELEGACION,
+                            PPTO.REL_LABORAL,
+                            PPTO.MES,
+							NVL(SUM(PPTO.ASIGNADO),0) VALOR
+						FROM
+							SPP.PPTO PPTO
+						WHERE
+							PPTO.YEAR = $P{YEAR} AND
+							PPTO.RAMO IN ($P!{RAMO_IN_LIST})
+						GROUP BY
+							PPTO.YEAR,
+                            PPTO.RAMO,
+                            PPTO.PRG,
+                            PPTO.PRG_CONAC,
+                            PPTO.DEPTO,
+                            PPTO.TIPO_PROY,
+                            PPTO.PROYECTO,
+                            PPTO.FINALIDAD,
+                            PPTO.FUNCION,
+                            PPTO.SUBFUNCION,
+                            PPTO.META,
+                            PPTO.ACCION,
+                            PPTO.PARTIDA,
+                            PPTO.TIPO_GASTO,
+                            PPTO.FUENTE,
+                            PPTO.FONDO,
+                            PPTO.RECURSO,
+                            PPTO.MUNICIPIO,
+                            PPTO.DELEGACION,
+                            PPTO.REL_LABORAL,
+                            PPTO.MES
+						ORDER BY
+                            PPTO.YEAR,
+                            PPTO.RAMO,
+                            PPTO.PRG,
+                            PPTO.PRG_CONAC,
+                            PPTO.DEPTO,
+                            PPTO.TIPO_PROY,
+                            PPTO.PROYECTO,
+                            PPTO.FINALIDAD,
+                            PPTO.FUNCION,
+                            PPTO.SUBFUNCION,
+                            PPTO.META,
+                            PPTO.ACCION,
+                            PPTO.PARTIDA,
+                            PPTO.TIPO_GASTO,
+                            PPTO.FUENTE,
+                            PPTO.FONDO,
+                            PPTO.RECURSO,
+                            PPTO.MUNICIPIO,
+                            PPTO.DELEGACION,
+                            PPTO.REL_LABORAL,
+                            PPTO.MES
+					) ASIGNADO
+				PIVOT
+					(
+						SUM(VALOR)
+						FOR MES IN(1 ENE, 2 FEB, 3 MAR, 4 ABR, 5 MAY, 6 JUN, 7 JUL, 8 AGO, 9 SEP, 10 OCT, 11 NOV, 12 DIC)
+					)
+
+				UNION ALL
+
+				SELECT
+					YEAR,
+                    RAMO,
+                    PRG,
+                    PRG_CONAC,
+                    DEPTO,
+                    TIPO_PROY,
+                    PROYECTO,
+                    FINALIDAD,
+                    FUNCION,
+                    SUBFUNCION,
+                    META,
+                    ACCION,
+                    PARTIDA,
+                    TIPO_GASTO,
+                    FUENTE,
+                    FONDO,
+                    RECURSO,
+                    MUNICIPIO,
+                    DELEGACION,
+                    REL_LABORAL,
+					NVL(ENE,0) ENE,
+					NVL(FEB,0) FEB,
+					NVL(MAR,0) MAR,
+					NVL(ABR,0) ABR,
+					NVL(MAY,0) MAY,
+					NVL(JUN,0) JUN,
+					NVL(JUL,0) JUL,
+					NVL(AGO,0) AGO,
+					NVL(SEP,0) SEP,
+					NVL(OCT,0) OCT,
+					NVL(NOV,0) NOV,
+					NVL(DIC,0) DIC
+				FROM
+					(
+					   SELECT
+							PPTO.YEAR,
+                            PPTO.RAMO,
+                            PPTO.PRG,
+                            PPTO.PRG_CONAC,
+                            PPTO.DEPTO,
+                            PPTO.TIPO_PROY,
+                            PPTO.PROYECTO,
+                            PPTO.FINALIDAD,
+                            PPTO.FUNCION,
+                            PPTO.SUBFUNCION,
+                            PPTO.META,
+                            PPTO.ACCION,
+                            PPTO.PARTIDA,
+                            PPTO.TIPO_GASTO,
+                            PPTO.FUENTE,
+                            PPTO.FONDO,
+                            PPTO.RECURSO,
+                            PPTO.MUNICIPIO,
+                            PPTO.DELEGACION,
+                            PPTO.REL_LABORAL,
+                            PPTO.MES,
+							NVL(SUM(PPTO.AMPLIACION),0) VALOR
+						FROM
+							SPP.VW_PPTO_MOD_AUT_CALEND PPTO
+						WHERE
+							PPTO.YEAR = $P{YEAR} AND
+							PPTO.RAMO IN ($P!{RAMO_IN_LIST})
+						GROUP BY
+                            PPTO.YEAR,
+                            PPTO.RAMO,
+                            PPTO.PRG,
+                            PPTO.PRG_CONAC,
+                            PPTO.DEPTO,
+                            PPTO.TIPO_PROY,
+                            PPTO.PROYECTO,
+                            PPTO.FINALIDAD,
+                            PPTO.FUNCION,
+                            PPTO.SUBFUNCION,
+                            PPTO.META,
+                            PPTO.ACCION,
+                            PPTO.PARTIDA,
+                            PPTO.TIPO_GASTO,
+                            PPTO.FUENTE,
+                            PPTO.FONDO,
+                            PPTO.RECURSO,
+                            PPTO.MUNICIPIO,
+                            PPTO.DELEGACION,
+                            PPTO.REL_LABORAL,
+                            PPTO.MES
+						ORDER BY
+                            PPTO.YEAR,
+                            PPTO.RAMO,
+                            PPTO.PRG,
+                            PPTO.PRG_CONAC,
+                            PPTO.DEPTO,
+                            PPTO.TIPO_PROY,
+                            PPTO.PROYECTO,
+                            PPTO.FINALIDAD,
+                            PPTO.FUNCION,
+                            PPTO.SUBFUNCION,
+                            PPTO.META,
+                            PPTO.ACCION,
+                            PPTO.PARTIDA,
+                            PPTO.TIPO_GASTO,
+                            PPTO.FUENTE,
+                            PPTO.FONDO,
+                            PPTO.RECURSO,
+                            PPTO.MUNICIPIO,
+                            PPTO.DELEGACION,
+                            PPTO.REL_LABORAL,
+                            PPTO.MES
+					) AMPLIACIONES
+				PIVOT
+					(
+						SUM(VALOR)
+						FOR MES IN(1 ENE, 2 FEB, 3 MAR, 4 ABR, 5 MAY, 6 JUN, 7 JUL, 8 AGO, 9 SEP, 10 OCT, 11 NOV, 12 DIC)
+					)
+
+				UNION ALL
+
+				SELECT
+					YEAR,
+                    RAMO,
+                    PRG,
+                    PRG_CONAC,
+                    DEPTO,
+                    TIPO_PROY,
+                    PROYECTO,
+                    FINALIDAD,
+                    FUNCION,
+                    SUBFUNCION,
+                    META,
+                    ACCION,
+                    PARTIDA,
+                    TIPO_GASTO,
+                    FUENTE,
+                    FONDO,
+                    RECURSO,
+                    MUNICIPIO,
+                    DELEGACION,
+                    REL_LABORAL,
+					NVL(ENE,0) ENE,
+					NVL(FEB,0) FEB,
+					NVL(MAR,0) MAR,
+					NVL(ABR,0) ABR,
+					NVL(MAY,0) MAY,
+					NVL(JUN,0) JUN,
+					NVL(JUL,0) JUL,
+					NVL(AGO,0) AGO,
+					NVL(SEP,0) SEP,
+					NVL(OCT,0) OCT,
+					NVL(NOV,0) NOV,
+					NVL(DIC,0) DIC
+				FROM
+					(
+					   SELECT
+							PPTO.YEAR,
+                            PPTO.RAMO,
+                            PPTO.PRG,
+                            PPTO.PRG_CONAC,
+                            PPTO.DEPTO,
+                            PPTO.TIPO_PROY,
+                            PPTO.PROYECTO,
+                            PPTO.FINALIDAD,
+                            PPTO.FUNCION,
+                            PPTO.SUBFUNCION,
+                            PPTO.META,
+                            PPTO.ACCION,
+                            PPTO.PARTIDA,
+                            PPTO.TIPO_GASTO,
+                            PPTO.FUENTE,
+                            PPTO.FONDO,
+                            PPTO.RECURSO,
+                            PPTO.MUNICIPIO,
+                            PPTO.DELEGACION,
+                            PPTO.REL_LABORAL,
+                            PPTO.MES,
+							NVL(SUM(PPTO.REDUCCION),0) VALOR
+						FROM
+							SPP.VW_PPTO_MOD_AUT_CALEND PPTO
+						WHERE
+							PPTO.YEAR = $P{YEAR} AND
+							PPTO.RAMO IN ($P!{RAMO_IN_LIST})
+						GROUP BY
+							PPTO.YEAR,
+                            PPTO.RAMO,
+                            PPTO.PRG,
+                            PPTO.PRG_CONAC,
+                            PPTO.DEPTO,
+                            PPTO.TIPO_PROY,
+                            PPTO.PROYECTO,
+                            PPTO.FINALIDAD,
+                            PPTO.FUNCION,
+                            PPTO.SUBFUNCION,
+                            PPTO.META,
+                            PPTO.ACCION,
+                            PPTO.PARTIDA,
+                            PPTO.TIPO_GASTO,
+                            PPTO.FUENTE,
+                            PPTO.FONDO,
+                            PPTO.RECURSO,
+                            PPTO.MUNICIPIO,
+                            PPTO.DELEGACION,
+                            PPTO.REL_LABORAL,
+                            PPTO.MES
+						ORDER BY
+                            PPTO.YEAR,
+                            PPTO.RAMO,
+                            PPTO.PRG,
+                            PPTO.PRG_CONAC,
+                            PPTO.DEPTO,
+                            PPTO.TIPO_PROY,
+                            PPTO.PROYECTO,
+                            PPTO.FINALIDAD,
+                            PPTO.FUNCION,
+                            PPTO.SUBFUNCION,
+                            PPTO.META,
+                            PPTO.ACCION,
+                            PPTO.PARTIDA,
+                            PPTO.TIPO_GASTO,
+                            PPTO.FUENTE,
+                            PPTO.FONDO,
+                            PPTO.RECURSO,
+                            PPTO.MUNICIPIO,
+                            PPTO.DELEGACION,
+                            PPTO.REL_LABORAL,
+                            PPTO.MES
+					) REDUCCIONES
+				PIVOT
+					(
+						SUM(VALOR)
+						FOR MES IN(1 ENE, 2 FEB, 3 MAR, 4 ABR, 5 MAY, 6 JUN, 7 JUL, 8 AGO, 9 SEP, 10 OCT, 11 NOV, 12 DIC)
+					)
+			) PPTO
+		GROUP BY
+            YEAR,
+            RAMO,
+            PRG,
+            PRG_CONAC,
+            DEPTO,
+            TIPO_PROY,
+            PROYECTO,
+            FINALIDAD,
+            FUNCION,
+            SUBFUNCION,
+            META,
+            ACCION,
+            PARTIDA,
+            TIPO_GASTO,
+            FUENTE,
+            FONDO,
+            RECURSO,
+            MUNICIPIO,
+            DELEGACION,
+            REL_LABORAL
+	) PPTO,
+
+
+
+	DGI.RAMOS RAM,
+	S_POA_PROGRAMA PRG,
+	DGI.DEPENDENCIA DEPTO,
+ 	DGI.PARTIDA PART,
+	S_POA_META MET,
+	S_POA_ACCION ACC,
+	S_POA_RECURSO RES,
+	DGI.VW_SP_PROY_ACT PROY
+
+WHERE
+    PPTO.YEAR = $P{YEAR} AND
+	PPTO.RAMO IN ($P!{RAMO_IN_LIST}) AND
+	RAM.YEAR = PPTO.YEAR AND
+	RAM.RAMO = PPTO.RAMO AND
+	PRG.YEAR = PPTO.YEAR AND
+	PRG.PRG = PPTO.PRG AND
+	DEPTO.YEAR = PPTO.YEAR AND
+	DEPTO.RAMO = PPTO.RAMO AND
+	DEPTO.DEPTO = PPTO.DEPTO AND
+	PART.YEAR = PPTO.YEAR AND
+	PART.PARTIDA = PPTO.PARTIDA AND
+	MET.YEAR = PPTO.YEAR AND
+	MET.RAMO = PPTO.RAMO AND
+	MET.META = PPTO.META AND
+	ACC.YEAR = PPTO.YEAR AND
+	ACC.RAMO = PPTO.RAMO AND
+	ACC.META = PPTO.META AND
+	ACC.ACCION = PPTO.ACCION AND
+	RES.YEAR = PPTO.YEAR AND
+	RES.FUENTE = PPTO.FUENTE AND
+	RES.FONDO = PPTO.FONDO AND
+	RES.RECURSO = PPTO.RECURSO AND
+	PROY.YEAR = PPTO.YEAR AND
+	PROY.PROY = PPTO.PROYECTO AND
+	PROY.TIPO_PROY = PPTO.TIPO_PROY
+
+	$P!{QUERY}
+
+GROUP BY
+PPTO.RAMO,
+	RAM.DESCR,
+	PPTO.PRG,
+	PRG.DESCR,
+	PPTO.DEPTO,
+	DEPTO.DESCR,
+	PART.DESCR,
+	PPTO.FINALIDAD,
+	PPTO.FUNCION,
+	PPTO.SUBFUNCION,
+	PPTO.PRG_CONAC,
+	PPTO.TIPO_PROY,
+	PPTO.PROYECTO,
+	PROY.DESCR,
+	PPTO.META,
+	MET.DESCR,
+	PPTO.ACCION,
+	ACC.DESCR,
+	PPTO.PARTIDA,
+	PPTO.TIPO_GASTO,
+	PPTO.FUENTE,
+	PPTO.FONDO,
+	PPTO.RECURSO,
+	RES.DESCR,
+	PPTO.MUNICIPIO,
+	PPTO.DELEGACION,
+	PPTO.REL_LABORAL
+
+ORDER BY
+	PPTO.RAMO,
+	RAM.DESCR,
+	PPTO.PRG,
+	PRG.DESCR,
+	PPTO.DEPTO,
+	DEPTO.DESCR,
+	PART.DESCR,
+	PPTO.FINALIDAD,
+	PPTO.FUNCION,
+	PPTO.SUBFUNCION,
+	PPTO.PRG_CONAC,
+	PPTO.TIPO_PROY,
+	PPTO.PROYECTO,
+	PROY.DESCR,
+	PPTO.META,
+	MET.DESCR,
+	PPTO.ACCION,
+	ACC.DESCR,
+	PPTO.PARTIDA,
+	PPTO.TIPO_GASTO,
+	PPTO.FUENTE,
+	PPTO.FONDO,
+	PPTO.RECURSO,
+	RES.DESCR,
+	PPTO.MUNICIPIO,
+	PPTO.DELEGACION,
+	PPTO.REL_LABORAL]]>
+	</queryString>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="R_DESCR" class="java.lang.String"/>
+	<field name="PRG" class="java.lang.String"/>
+	<field name="PGR_DESCR" class="java.lang.String"/>
+	<field name="PRG_CONAC" class="java.lang.String"/>
+	<field name="DEPTO" class="java.lang.String"/>
+	<field name="DEPTO_DESC" class="java.lang.String"/>
+	<field name="TIPO_PROY" class="java.lang.String"/>
+	<field name="PROYECTO" class="java.math.BigDecimal"/>
+	<field name="P_DESCR" class="java.lang.String"/>
+	<field name="FINALIDAD" class="java.lang.String"/>
+	<field name="FUNCION" class="java.lang.String"/>
+	<field name="SUBFUNCION" class="java.lang.String"/>
+	<field name="META" class="java.math.BigDecimal"/>
+	<field name="M_DESCR" class="java.lang.String"/>
+	<field name="ACCION" class="java.math.BigDecimal"/>
+	<field name="A_DESCR" class="java.lang.String"/>
+	<field name="PARTIDA" class="java.lang.String"/>
+	<field name="PDA_DESCR" class="java.lang.String"/>
+	<field name="TIPO_GASTO" class="java.lang.String"/>
+	<field name="FUENTE" class="java.lang.String"/>
+	<field name="FONDO" class="java.lang.String"/>
+	<field name="RECURSO" class="java.lang.String"/>
+	<field name="FUENTE_F" class="java.lang.String"/>
+	<field name="MUNICIPIO" class="java.lang.String"/>
+	<field name="DELEGACION" class="java.math.BigDecimal"/>
+	<field name="REL_LABORAL" class="java.lang.String"/>
+	<field name="ASIGNADO" class="java.math.BigDecimal"/>
+	<field name="ENE" class="java.math.BigDecimal"/>
+	<field name="FEB" class="java.math.BigDecimal"/>
+	<field name="MAR" class="java.math.BigDecimal"/>
+	<field name="ABR" class="java.math.BigDecimal"/>
+	<field name="MAY" class="java.math.BigDecimal"/>
+	<field name="JUN" class="java.math.BigDecimal"/>
+	<field name="JUL" class="java.math.BigDecimal"/>
+	<field name="AGO" class="java.math.BigDecimal"/>
+	<field name="SEP" class="java.math.BigDecimal"/>
+	<field name="OCT" class="java.math.BigDecimal"/>
+	<field name="NOV" class="java.math.BigDecimal"/>
+	<field name="DIC" class="java.math.BigDecimal"/>
+	<variable name="BAKCGROUND" class="java.lang.String" resetType="None" calculation="DistinctCount">
+		<variableExpression><![CDATA[$V{REPORT_COUNT}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<group name="RAMO">
+		<groupExpression><![CDATA[$F{RAMO}]]></groupExpression>
+	</group>
+	<group name="PROGRAMA">
+		<groupExpression><![CDATA[$F{PRG}]]></groupExpression>
+	</group>
+	<group name="DEPTO">
+		<groupExpression><![CDATA[$F{DEPTO}]]></groupExpression>
+	</group>
+	<columnHeader>
+		<band height="21">
+			<staticText>
+				<reportElement uuid="823317f0-01ba-45a4-85e6-a16185cb0d11" mode="Transparent" x="702" y="0" width="54" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DEPTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="606c4890-29b8-4d95-ba90-05a768496bfb" mode="Transparent" x="3560" y="0" width="140" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRESUPUESTO MODIF.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4ca72781-8416-4a50-9762-89d423fef258" mode="Transparent" x="0" y="0" width="61" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<text><![CDATA[RAMO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="957983d8-1072-4e61-885d-be2f742d9fae" mode="Transparent" x="339" y="0" width="43" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRG]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bcfb97d0-2543-4bb0-8710-90acabe8c418" mode="Transparent" x="756" y="0" width="339" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f9edecf4-b962-4e77-9b46-617f2547e6aa" mode="Transparent" x="450" y="0" width="252" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b388fc58-286a-4804-8065-9484968fbd5b" mode="Transparent" x="61" y="0" width="278" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9ae3bdb9-e7b4-450f-a39b-6544918b2658" x="1722" y="0" width="52" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[FUNCION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1d57d45d-c82c-41cd-a3b1-be83155cfcbd" x="1774" y="0" width="72" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[SUBFUNCION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="797e48e1-50f5-4167-8195-ea208326bd4a" x="1658" y="0" width="64" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[FINALIDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d09df140-08cb-4235-91b5-30224e9505d2" x="382" y="0" width="68" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRG CONAC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e396b669-94d9-413e-a34f-173d066b9c4b" x="1184" y="0" width="97" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Num. Proy./Act. Inst.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b37926d7-0121-4965-8773-93ba765d89ec" x="1095" y="0" width="89" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TIPO AI/PY]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="73f38dd0-e9e0-4f9e-afa7-6c362ea779a5" x="1281" y="0" width="377" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="943be098-00e1-4bf3-9d4b-c89a88e4b91a" x="1846" y="0" width="53" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[META]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7935bfd5-3487-43de-bdd9-1236b4b2e77d" x="1899" y="0" width="378" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="144386a7-f645-4daf-9f38-1a4f48942381" x="2277" y="0" width="50" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ACCIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f1e55fa2-46bb-4b03-bb76-27967edb5daf" x="2327" y="0" width="343" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="65fe6e09-3201-4067-b2ae-2e0bb925ac29" x="2670" y="0" width="61" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PARTIDA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="26098a42-2e5d-4e2b-87de-ac3371d58c2b" x="2731" y="0" width="297" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5f623a06-3011-4dea-b705-521ba9c6ceaa" x="3028" y="0" width="68" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TIPO GASTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c3d6dcaa-eaa2-401c-b332-797c3ab323a6" x="3096" y="0" width="46" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[FUENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="90b7146a-2417-4d12-b16d-798a2c911060" x="3142" y="0" width="44" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[FONDO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ff52d620-1897-4c37-a2fd-10d8c2834035" x="3186" y="0" width="53" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[RECURSO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e2677757-f5ef-48d3-b2af-6d8185c355fc" x="3239" y="0" width="100" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3da58e38-7985-4123-8558-c95029c00612" x="3339" y="0" width="64" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[MUNICIPIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="474c921f-3040-4d7f-8b31-44905ac13f5a" x="3403" y="0" width="78" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DELEGACION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="af61a72f-b652-4657-94a1-ad5b6f624e2f" x="3481" y="0" width="79" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[REL. LABORAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="172f7c76-84c0-485d-8c6a-a852f9c446ab" mode="Transparent" x="3700" y="0" width="140" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ENERO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="00fb3c4d-7ae6-4bcf-8ba9-73c001311493" mode="Transparent" x="3840" y="0" width="140" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[FEBRERO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="61d7a04d-dfaf-4ce8-8bbf-76c1f323ae22" mode="Transparent" x="3980" y="0" width="140" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[MARZO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="160ede29-e839-4010-a7db-42b5b395fdcb" mode="Transparent" x="4120" y="0" width="140" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ABRIL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4566cc3f-24ab-4ac8-857f-d7a6e2a526c2" mode="Transparent" x="4260" y="0" width="140" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[MAYO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="96146698-891a-4917-b0d0-4bac95963417" mode="Transparent" x="4400" y="0" width="140" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[JUNIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e9203bdc-f03e-48b8-bdb3-a9ed5ea3447e" mode="Transparent" x="4540" y="0" width="140" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[JULIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a5433cb8-61b0-48db-8769-b71b8e7b4678" mode="Transparent" x="4680" y="0" width="140" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[AGOSTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="43af3d77-7497-42ef-8f91-c1124abdc187" mode="Transparent" x="4820" y="0" width="140" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[SEPTIEMBRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="728de69f-8f1c-464c-b73f-4d7138e04ee0" mode="Transparent" x="4960" y="0" width="140" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[OCTUBRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8f290b01-4005-43bc-b043-067465b49f7f" mode="Transparent" x="5100" y="0" width="140" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOVIEMBRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3e20e2ad-bfc4-4fdb-9164-2680c1a87d6c" mode="Transparent" x="5240" y="0" width="140" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DICIEMBRE]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement uuid="64152468-ada6-46f4-a7c4-f658509d7426" stretchType="RelativeToBandHeight" mode="Transparent" x="3560" y="0" width="140" height="20" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#0066FF">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ASIGNADO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="f146d85f-f150-4c95-8178-31fc50ad108c" stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="0" width="61" height="20" isRemoveLineWhenBlank="true" printWhenGroupChanges="RAMO" forecolor="#000000" backcolor="#0066FF">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{RAMO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="9975ae11-df9c-4256-99bf-454f4b0bb468" stretchType="RelativeToBandHeight" mode="Transparent" x="339" y="0" width="43" height="20" isRemoveLineWhenBlank="true" printWhenGroupChanges="PROGRAMA" forecolor="#000000" backcolor="#0066FF">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PRG}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="2d3196f6-51be-4895-b4ec-f592c6056cde" stretchType="RelativeToBandHeight" mode="Transparent" x="756" y="0" width="339" height="20" isRemoveLineWhenBlank="true" printWhenGroupChanges="DEPTO" forecolor="#000000" backcolor="#CCCCCC">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Justified" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{DEPTO_DESC}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="50100f65-8115-4cbf-86b6-1039599d63a3" stretchType="RelativeToBandHeight" mode="Transparent" x="450" y="0" width="252" height="20" isRemoveLineWhenBlank="true" printWhenGroupChanges="PROGRAMA" forecolor="#000000" backcolor="#CCCCCC">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Justified" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PGR_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="296f2854-e6f9-477c-a9a3-c32299099144" stretchType="RelativeToBandHeight" mode="Transparent" x="702" y="0" width="54" height="20" isRemoveLineWhenBlank="true" printWhenGroupChanges="DEPTO" forecolor="#000000" backcolor="#0066FF">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{DEPTO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="2cf2f384-7c86-4050-870b-81badede68ac" stretchType="RelativeToBandHeight" mode="Transparent" x="61" y="0" width="278" height="20" isRemoveLineWhenBlank="true" printWhenGroupChanges="RAMO" forecolor="#000000" backcolor="#CCCCCC">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Justified" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{R_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="0e585a78-1b25-4213-b02c-87b2d9fa3864" stretchType="RelativeToBandHeight" x="1658" y="0" width="64" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{FINALIDAD}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="efe4f3ae-c106-4755-a391-af8dd6ee176f" stretchType="RelativeToBandHeight" x="1722" y="0" width="52" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{FUNCION}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="823457bb-f3fd-4ac2-abfe-409ffac7f36a" stretchType="RelativeToBandHeight" x="1774" y="0" width="72" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{SUBFUNCION}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="cf68dcf5-56ff-4d60-888b-b7a4b57beba6" stretchType="RelativeToBandHeight" x="382" y="0" width="68" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PRG_CONAC}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="3d19d9b2-fec7-43db-8e1b-b517c54e7721" stretchType="RelativeToBandHeight" x="1184" y="0" width="97" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PROYECTO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="4d3f978c-944b-4454-b718-682d2b9087ae" stretchType="RelativeToBandHeight" x="1095" y="0" width="89" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{TIPO_PROY}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="bd7d878a-3296-446f-a53d-9b645f6b120e" stretchType="RelativeToBandHeight" x="1281" y="0" width="377" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{P_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="3b6fced9-e3d8-4ec0-be16-c9c22219fef8" stretchType="RelativeToBandHeight" x="1846" y="0" width="53" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{META}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="6e6180a1-974c-4b5b-849f-ebb779ffdb9b" stretchType="RelativeToBandHeight" x="1899" y="0" width="378" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{M_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="fc2a9d54-b686-4bc1-b052-e2e13eb2b57c" stretchType="RelativeToBandHeight" x="2277" y="0" width="50" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ACCION}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="b2cbbb95-51fd-4795-a541-845bbf7f0c90" stretchType="RelativeToBandHeight" x="2327" y="0" width="343" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{A_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="a3037f09-483b-41e3-85f6-6b5fbbe889fc" stretchType="RelativeToBandHeight" x="2670" y="0" width="61" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PARTIDA}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="94636431-8dca-43f0-b509-ea7752cddfb4" stretchType="RelativeToBandHeight" x="2731" y="0" width="297" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PDA_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="a033cc7e-2434-4dc2-8e70-9d4075b9ceba" stretchType="RelativeToBandHeight" x="3028" y="0" width="68" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{TIPO_GASTO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="a1bcd594-8849-478f-ab66-e2f97da24de1" stretchType="RelativeToBandHeight" x="3096" y="0" width="46" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{FUENTE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="66fef2e9-ab0c-44e5-afdf-44c4347bb737" stretchType="RelativeToBandHeight" x="3142" y="0" width="44" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{FONDO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="8013c7c1-8921-44b5-ac4e-6210e1157706" stretchType="RelativeToBandHeight" x="3186" y="0" width="53" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{RECURSO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="c1af76e5-4dc8-4ef4-bce4-6d617cf31bdd" stretchType="RelativeToBandHeight" x="3239" y="0" width="100" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{FUENTE_F}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="a9c6296b-b22e-45ed-939e-e0dc206c2ba4" stretchType="RelativeToBandHeight" x="3339" y="0" width="64" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{MUNICIPIO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="8704949c-e437-4067-8d43-ce433ad69fed" stretchType="RelativeToBandHeight" x="3403" y="0" width="78" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{DELEGACION}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="4440dae7-683d-4f7d-92b7-a58fe4efaaa3" stretchType="RelativeToBandHeight" x="3481" y="0" width="79" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{REL_LABORAL}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement uuid="dc20f2b4-ee50-4400-9475-5d8e48053de1" stretchType="RelativeToBandHeight" mode="Transparent" x="3700" y="0" width="140" height="20" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#0066FF">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ENE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement uuid="2470ee2a-cc03-41db-bb5b-13d11fc64a26" stretchType="RelativeToBandHeight" mode="Transparent" x="3840" y="0" width="140" height="20" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#0066FF">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{FEB}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement uuid="cba5fd23-24d4-4f12-84a8-bb19bb95efaa" stretchType="RelativeToBandHeight" mode="Transparent" x="3980" y="0" width="140" height="20" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#0066FF">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{MAR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement uuid="e43ec023-a325-4868-b37b-a3928a305377" stretchType="RelativeToBandHeight" mode="Transparent" x="4120" y="0" width="140" height="20" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#0066FF">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ABR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement uuid="5a33b918-c45e-4c89-bc32-eb35f4028860" stretchType="RelativeToBandHeight" mode="Transparent" x="4260" y="0" width="140" height="20" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#0066FF">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{MAY}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement uuid="72f88a5c-48b5-4c98-8d0e-25d7cc8df52d" stretchType="RelativeToBandHeight" mode="Transparent" x="4400" y="0" width="140" height="20" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#0066FF">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{JUN}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement uuid="ed6426c1-39e7-44b5-9b74-fcbe64b5018e" stretchType="RelativeToBandHeight" mode="Transparent" x="4540" y="0" width="140" height="20" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#0066FF">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{JUL}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement uuid="6b4ad1a2-ae49-44e8-8e8e-4ae203d5e53f" stretchType="RelativeToBandHeight" mode="Transparent" x="4680" y="0" width="140" height="20" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#0066FF">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{AGO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement uuid="97d505cc-94bd-41b5-93ba-06b9f8cccd1f" stretchType="RelativeToBandHeight" mode="Transparent" x="4820" y="0" width="140" height="20" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#0066FF">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{SEP}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement uuid="9a1f0e65-5b42-471f-8471-c6b64f217d50" stretchType="RelativeToBandHeight" mode="Transparent" x="4960" y="0" width="140" height="20" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#0066FF">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{OCT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement uuid="a86da1a2-c3f1-48d2-82e4-ff057c67a38e" stretchType="RelativeToBandHeight" mode="Transparent" x="5100" y="0" width="140" height="20" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#0066FF">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{NOV}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement uuid="03f507d6-53e2-4d82-9809-b35ca8a010d7" stretchType="RelativeToBandHeight" mode="Transparent" x="5240" y="0" width="140" height="20" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#0066FF">
+					<printWhenExpression><![CDATA[$F{ASIGNADO} > 0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{DIC}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

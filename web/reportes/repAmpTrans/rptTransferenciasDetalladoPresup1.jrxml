@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptTransferenciasDetalladoPresup1" language="groovy" pageWidth="780" pageHeight="612" columnWidth="780" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="951bc56c-45be-41a8-90f3-d9131620f302">
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="1538"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMG_DIR" class="java.lang.String"/>
+	<parameter name="OFICIO" class="java.lang.Long"/>
+	<parameter name="TIPO" class="java.lang.String"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ESTATUS" class="java.lang.String"/>
+	<parameter name="RPT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\desarrollo\\repositorio_local\\POA_13042016\\trunk\\POA\\web\\reportes\\repAmpTrans\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TIPOFICIO" class="java.lang.String"/>
+	<parameter name="CODIGOCOMPLETO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT OFI.CONSEC as consec,
+        TRAN.RAMO,
+        TRAN.PRG ,
+        TRAN.DEPTO,
+        TRAN.PARTIDA,
+        TRAN.META,
+        TRAN.ACCION,
+        TRAN.IMPTE as importetran,
+         REC.RAMO AS RAMO_REC,
+         REC.PRG AS PRG_REC,
+         REC.DEPTO AS DEPTO_REC,
+         REC.PARTIDA AS PARTIDA_REC,
+         REC.META AS META_REC,
+         REC.ACCION AS ACCION_REC,
+         REC.IMPTE as importerec,
+         PARTIDA_A.DESCR as descrtran,
+         PARAM.GOBIERNO,
+         PARAM.SECRETARIA,
+         rpad(PARTIDA_B.DESCR,60 ) as descrrec,
+        TRAN.STATUS,
+         MOVS.FECPPTO  ,
+			PARAM.LOGO,
+		TRAN.RAMO||'-'||TRAN.DEPTO||'-'||TRAN.PRG||'-'||TRAN.TIPO_PROY||LPAD(TRAN.PROYECTO, PLC.PROYECTO, '0')||'-'|| LPAD(TRAN.META, PLC.META,
+   '0')||'-'||LPAD(TRAN.ACCION, PLC.ACCION, '0')||'-'||TRAN.PARTIDA||'-'||TRAN.TIPO_GASTO||'-'|| LPAD(TRAN.FUENTE, PLC.FUENTE, '0')||LPAD(
+   TRAN.FONDO, PLC.FONDO, '0')||LPAD(TRAN.RECURSO, PLC.RECURSO, '0')||'-'|| TRAN.REL_LABORAL as codigotran,
+TRAN.RAMO||'-'||TRAN.PRG||'-'||TRAN.DEPTO||'-'||TRAN.PARTIDA AS CODTRAN_CORTO,TRAN.TIPO_PROY AS TRAN_TIPO_PROY,TRAN.PROYECTO AS TRAN_PROYECTO,TRAN.META AS TRAN_META,TRAN.ACCION AS TRAN_ACCION,
+		REC.RAMO||'-'||REC.DEPTO||'-'||REC.PRG||'-'||REC.TIPO_PROY||LPAD(REC.PROYECTO, PLC.PROYECTO, '0')||'-'|| LPAD(REC.META, PLC.META,
+   '0')||'-'||LPAD(REC.ACCION, PLC.ACCION, '0')||'-'||REC.PARTIDA||'-'||REC.TIPO_GASTO||'-'|| LPAD(REC.FUENTE, PLC.FUENTE, '0')||LPAD(
+   REC.FONDO, PLC.FONDO, '0')||LPAD(REC.RECURSO, PLC.RECURSO, '0')||'-'|| REC.REL_LABORAL as codigorec,
+REC.RAMO||'-'||REC.PRG||'-'||REC.DEPTO||'-'||REC.PARTIDA AS CODREC_CORTO,REC.TIPO_PROY  AS REC_TIPO_PROY,REC.PROYECTO AS REC_PROY,REC.META AS REC_META,REC.ACCION AS REC_ACCION,
+	DBMS_LOB.substr(MOVS.JUSTIFICACION, DBMS_LOB.getlength(MOVS.JUSTIFICACION), 1) as JUSTIFICACION
+    FROM DGI.OFICONS OFI,
+         SPP.TRANSFERENCIAS TRAN,
+         SPP.TRANSFREC REC,
+         DGI.PARTIDA PARTIDA_A,
+         DGI.PARTIDA PARTIDA_B,
+         DGI.PARAMETROS PARAM,
+         POA.MOVOFICIOS MOVS,
+	S_DGI_PARAM_LONG_COD PLC
+   WHERE (TRAN.OFICIO = OFI.OFICIO ) and
+         ( REC.OFICIO =TRAN.OFICIO ) and
+         ( REC.CONSEC =TRAN.CONSEC ) and
+         (TRAN.PARTIDA = PARTIDA_A.PARTIDA ) and
+         ( REC.PARTIDA = PARTIDA_B.PARTIDA ) and
+         ( OFI.CONSEC =TRAN.CONSEC ) and
+         (TRAN.OFICIO = MOVS.OFICIO ) and
+         ( PARTIDA_A.YEAR = PARTIDA_B.YEAR ) and
+         ( ( OFI.OFICIO = $P{OFICIO} ) AND
+         ( OFI.TIPO = $P{TIPOFICIO} )) AND
+         PARTIDA_A.YEAR = $P{YEAR} AND
+	PLC.YEAR = PARTIDA_A.YEAR AND
+         (LENGTH(NVL($P{TIPOFICIO},'00'))=1)
+
+UNION ALL
+
+
+
+SELECT
+        TRAN.CONSEC AS CONSEC,
+        TRAN.RAMO,
+        TRAN.PRG ,
+        TRAN.DEPTO,
+        TRAN.PARTIDA,
+        TRAN.META,
+        TRAN.ACCION,
+        TRAN.IMPTE as importetran,
+         REC.RAMO AS RAMO_REC,
+         REC.PRG AS PRG_REC,
+         REC.DEPTO AS DEPTO_REC,
+         REC.PARTIDA AS PARTIDA_REC,
+         REC.META AS META_REC,
+         REC.ACCION AS ACCION_REC,
+         REC.IMPTE as importerec,
+         PARTIDA_A.DESCR as descrtran,
+         PARAM.GOBIERNO,
+         PARAM.SECRETARIA,
+         rpad(PARTIDA_B.DESCR,60 ) as descrrec,
+        TRAN.STATUS,
+         MOVS.FECPPTO  ,
+			PARAM.LOGO,
+		TRAN.RAMO||'-'||TRAN.DEPTO||'-'||TRAN.PRG||'-'||TRAN.TIPO_PROY||LPAD(TRAN.PROYECTO, PLC.PROYECTO, '0')||'-'|| LPAD(TRAN.META, PLC.META,
+   '0')||'-'||LPAD(TRAN.ACCION, PLC.ACCION, '0')||'-'||TRAN.PARTIDA||'-'||TRAN.TIPO_GASTO||'-'|| LPAD(TRAN.FUENTE, PLC.FUENTE, '0')||LPAD(
+   TRAN.FONDO, PLC.FONDO, '0')||LPAD(TRAN.RECURSO, PLC.RECURSO, '0')||'-'|| TRAN.REL_LABORAL as codigotran,
+TRAN.RAMO||'-'||TRAN.PRG||'-'||TRAN.DEPTO||'-'||TRAN.PARTIDA AS CODTRAN_CORTO,TRAN.TIPO_PROY AS TRAN_TIPO_PROY,TRAN.PROYECTO AS TRAN_PROYECTO,TRAN.META AS TRAN_META,TRAN.ACCION AS TRAN_ACCION,
+		REC.RAMO||'-'||REC.DEPTO||'-'||REC.PRG||'-'||REC.TIPO_PROY||LPAD(REC.PROYECTO, PLC.PROYECTO, '0')||'-'|| LPAD(REC.META, PLC.META,
+   '0')||'-'||LPAD(REC.ACCION, PLC.ACCION, '0')||'-'||REC.PARTIDA||'-'||REC.TIPO_GASTO||'-'|| LPAD(REC.FUENTE, PLC.FUENTE, '0')||LPAD(
+   REC.FONDO, PLC.FONDO, '0')||LPAD(REC.RECURSO, PLC.RECURSO, '0')||'-'|| REC.REL_LABORAL as codigorec,
+REC.RAMO||'-'||REC.PRG||'-'||REC.DEPTO||'-'||REC.PARTIDA AS CODREC_CORTO,REC.TIPO_PROY  AS REC_TIPO_PROY,REC.PROYECTO AS REC_PROY,REC.META AS REC_META,REC.ACCION AS REC_ACCION,
+		DBMS_LOB.substr(MOVS.JUSTIFICACION, DBMS_LOB.getlength(MOVS.JUSTIFICACION), 1) as JUSTIFICACION
+    FROM
+         SPP.TRANSFERENCIAS TRAN,
+         SPP.TRANSFREC REC,
+         DGI.PARTIDA PARTIDA_A,
+         DGI.PARTIDA PARTIDA_B,
+         DGI.PARAMETROS PARAM,
+         POA.MOVOFICIOS MOVS,
+	S_DGI_PARAM_LONG_COD PLC
+   WHERE ( REC.OFICIO =TRAN.OFICIO ) and
+         ( REC.CONSEC =TRAN.CONSEC ) and
+         (TRAN.PARTIDA = PARTIDA_A.PARTIDA ) and
+         ( REC.PARTIDA = PARTIDA_B.PARTIDA ) and
+         (TRAN.OFICIO = MOVS.OFICIO ) and
+         ( PARTIDA_A.YEAR = PARTIDA_B.YEAR ) and
+         ( MOVS.OFICIO=$P{OFICIO} ) AND
+         PARTIDA_A.YEAR = $P{YEAR} AND
+	PLC.YEAR = PARTIDA_A.YEAR AND
+    (LENGTH(NVL($P{TIPOFICIO},'00'))>1)]]>
+	</queryString>
+	<field name="CONSEC" class="java.math.BigDecimal"/>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="PRG" class="java.lang.String"/>
+	<field name="DEPTO" class="java.lang.String"/>
+	<field name="PARTIDA" class="java.lang.String"/>
+	<field name="META" class="java.math.BigDecimal"/>
+	<field name="ACCION" class="java.math.BigDecimal"/>
+	<field name="IMPORTETRAN" class="java.math.BigDecimal"/>
+	<field name="RAMO_REC" class="java.lang.String"/>
+	<field name="PRG_REC" class="java.lang.String"/>
+	<field name="DEPTO_REC" class="java.lang.String"/>
+	<field name="PARTIDA_REC" class="java.lang.String"/>
+	<field name="META_REC" class="java.math.BigDecimal"/>
+	<field name="ACCION_REC" class="java.math.BigDecimal"/>
+	<field name="IMPORTEREC" class="java.math.BigDecimal"/>
+	<field name="DESCRTRAN" class="java.lang.String"/>
+	<field name="GOBIERNO" class="java.lang.String"/>
+	<field name="SECRETARIA" class="java.lang.String"/>
+	<field name="DESCRREC" class="java.lang.String"/>
+	<field name="STATUS" class="java.lang.String"/>
+	<field name="FECPPTO" class="java.sql.Timestamp"/>
+	<field name="LOGO" class="java.lang.String"/>
+	<field name="CODIGOTRAN" class="java.lang.String"/>
+	<field name="CODTRAN_CORTO" class="java.lang.String"/>
+	<field name="TRAN_TIPO_PROY" class="java.lang.String"/>
+	<field name="TRAN_PROYECTO" class="java.math.BigDecimal"/>
+	<field name="TRAN_META" class="java.math.BigDecimal"/>
+	<field name="TRAN_ACCION" class="java.math.BigDecimal"/>
+	<field name="CODIGOREC" class="java.lang.String"/>
+	<field name="CODREC_CORTO" class="java.lang.String"/>
+	<field name="REC_TIPO_PROY" class="java.lang.String"/>
+	<field name="REC_PROY" class="java.math.BigDecimal"/>
+	<field name="REC_META" class="java.math.BigDecimal"/>
+	<field name="REC_ACCION" class="java.math.BigDecimal"/>
+	<field name="JUSTIFICACION" class="java.lang.String"/>
+	<variable name="IMPORTEREC_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTEREC}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTETRAN_1" class="java.math.BigDecimal" resetType="Group" resetGroup="consec" calculation="First">
+		<variableExpression><![CDATA[$F{IMPORTETRAN}]]></variableExpression>
+	</variable>
+	<group name="consec">
+		<groupExpression><![CDATA[$F{CONSEC}]]></groupExpression>
+		<groupHeader>
+			<band height="12">
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="5d5ce48d-343b-48fc-b23a-08bc16430c1f" x="0" y="0" width="52" height="12"/>
+					<textElement textAlignment="Center">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{STATUS}.equals("X"))?" ":$P{TIPOFICIO}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="8f02f5fc-8ccf-4544-9e3a-f24cb9851e6f" x="54" y="0" width="36" height="12"/>
+					<textElement textAlignment="Center">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CONSEC}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="19883d0b-0439-4f81-b269-87021566cf0e" x="90" y="0" width="232" height="12"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($P{CODIGOCOMPLETO}.equals("S")?$F{CODIGOTRAN}:$F{CODTRAN_CORTO})]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="34d38bf4-2468-4b54-9bfc-44a9acf3a20a" x="423" y="0" width="303" height="12"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESCRTRAN}]]></textFieldExpression>
+				</textField>
+				<subreport>
+					<reportElement uuid="56cc386e-095d-48b2-9a1d-6fd1bb918ff5" x="728" y="0" width="26" height="12"/>
+					<subreportParameter name="TIPO">
+						<subreportParameterExpression><![CDATA[$P{TIPO}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="ACCION">
+						<subreportParameterExpression><![CDATA[$F{ACCION}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="ESTATUS">
+						<subreportParameterExpression><![CDATA[$P{ESTATUS}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="TIPOFICIO">
+						<subreportParameterExpression><![CDATA[$P{TIPOFICIO}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="YEAR">
+						<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="OFICIO">
+						<subreportParameterExpression><![CDATA[$P{OFICIO}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PRG">
+						<subreportParameterExpression><![CDATA[$F{PRG}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="DEPTO">
+						<subreportParameterExpression><![CDATA[$F{DEPTO}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PROY">
+						<subreportParameterExpression><![CDATA[$F{TRAN_PROYECTO}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="META">
+						<subreportParameterExpression><![CDATA[$F{TRAN_META}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="RAMO">
+						<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="RPT_DIR">
+						<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="TIPO_PROY">
+						<subreportParameterExpression><![CDATA[$F{TRAN_TIPO_PROY}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{RPT_DIR} + "rptImpactoProgramatico.jasper"]]></subreportExpression>
+				</subreport>
+				<textField evaluationTime="Group" evaluationGroup="consec" pattern="&lt;style forecolor=&quot;red&quot;&gt;(¤#,##0.00)&lt;/style&gt;;&lt;style forecolor=&quot;red&quot;&gt;¤(#,##0.00)&lt;/style&gt;">
+					<reportElement uuid="7250d894-d2b7-4334-bc20-afe417c5d5e2" x="323" y="0" width="92" height="12"/>
+					<textElement textAlignment="Right" markup="styled">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{IMPORTETRAN_1}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<columnHeader>
+		<band height="46">
+			<staticText>
+				<reportElement uuid="00310336-8f82-40e9-a8fb-9d8ef900db8c" x="2" y="24" width="50" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MOV.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6651992a-17c8-4d57-85db-7aee36eae810" x="56" y="24" width="40" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONS.]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="a90d81fe-225b-4e9f-bfe1-aaf41f865c34" x="103" y="14" width="232" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CODIGOCOMPLETO}.equals("S") ? "CÓDIGO RECIBE\nRA-DEP-PR-P/ACT-ME-ACC-PAR-TG-FFR-RL":"CÓDIGO RECIBE\nRA-PR-DEP-PAR"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="29c2b13e-43c5-4b05-a9e1-ee34cf94b7eb" x="415" y="24" width="285" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7a2d7f81-64b9-400d-ba9d-f01ee6d3f0f0" x="338" y="24" width="77" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[IMPORTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="78474141-570d-4796-af3a-369463a3cdb2" x="705" y="14" width="51" height="30"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[IMPACTO PROG.]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="8fd253a2-31d1-4caa-b309-c216d08196fb" x="0" y="45" width="752" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="60ac0087-efd9-45d4-89df-75b0a9aa6aa2" x="103" y="0" width="230" height="13"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CÓDIGO TRANSFIERE]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField>
+				<reportElement uuid="e73c92a3-a398-4ce0-b6f6-52d507d94aec" x="99" y="0" width="232" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{CODIGOCOMPLETO}.equals("S")?$F{CODIGOREC}:$F{CODREC_CORTO})]]></textFieldExpression>
+			</textField>
+			<textField pattern="&lt;style forecolor=&quot;black&quot;&gt;¤#,##0.00&lt;/style&gt;;&lt;style forecolor=&quot;red&quot;&gt;¤(#,##0.00)&lt;/style&gt;" isBlankWhenNull="true">
+				<reportElement uuid="a4c7fee9-2130-461d-b5f5-02acfc278ef9" x="333" y="0" width="82" height="12"/>
+				<textElement textAlignment="Right" markup="styled">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTEREC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="4d8bea5d-9493-4975-a579-f7b003922329" x="423" y="0" width="303" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCRREC}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement uuid="87fa4b1e-de79-4fb2-85f9-1a224d01c765" x="728" y="0" width="26" height="12"/>
+				<subreportParameter name="TIPO">
+					<subreportParameterExpression><![CDATA[$P{TIPOFICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ACCION">
+					<subreportParameterExpression><![CDATA[$F{REC_ACCION}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ESTATUS">
+					<subreportParameterExpression><![CDATA[$F{STATUS}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPOFICIO">
+					<subreportParameterExpression><![CDATA[$P{TIPOFICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="OFICIO">
+					<subreportParameterExpression><![CDATA[$P{OFICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PRG">
+					<subreportParameterExpression><![CDATA[$F{PRG_REC}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DEPTO">
+					<subreportParameterExpression><![CDATA[$F{DEPTO_REC}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PROY">
+					<subreportParameterExpression><![CDATA[$F{REC_PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="META">
+					<subreportParameterExpression><![CDATA[$F{REC_META}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PROY">
+					<subreportParameterExpression><![CDATA[$F{REC_TIPO_PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "rptImpactoProgramatico.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<summary>
+		<band height="25">
+			<staticText>
+				<reportElement uuid="a62c61f0-79b9-4ec6-aad1-98df2c4d4357" x="222" y="12" width="100" height="12"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[TOTAL RECIBIDO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8133ee14-9365-4384-aada-7e70011400f9" x="210" y="0" width="112" height="12"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL TRANSFERIDO:]]></text>
+			</staticText>
+			<textField pattern="&lt;style forecolor=&quot;black&quot;&gt;¤#,##0.00&lt;/style&gt;;&lt;style forecolor=&quot;red&quot;&gt;¤(#,##0.00)&lt;/styl">
+				<reportElement uuid="267657ac-c360-4c52-84af-7bfb0a09860f" x="323" y="12" width="92" height="12"/>
+				<textElement textAlignment="Right" markup="styled">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{IMPORTEREC_1}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement uuid="bef63840-2724-44d8-b22e-9ef70481c607" x="322" y="0" width="93" height="12"/>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPOFICIO">
+					<subreportParameterExpression><![CDATA[$P{TIPOFICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO">
+					<subreportParameterExpression><![CDATA[$P{TIPO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ESTATUS">
+					<subreportParameterExpression><![CDATA[$P{ESTATUS}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="OFICIO">
+					<subreportParameterExpression><![CDATA[$P{OFICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "subrptTotalTransferencias.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptCalMensRamPrgMetas" language="groovy" pageWidth="802" pageHeight="150" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d6debe3c-c455-440d-a45c-88c85b532806">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="YEAR" class="java.lang.Integer"/>
+	<parameter name="RAMO" class="java.lang.String"/>
+	<parameter name="PRG" class="java.lang.String"/>
+	<parameter name="DEPTO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PROY" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TIPO_PROY" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RPT_DIR" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+    MET.META,
+    MET.RAMO,
+    MET.YEAR ,
+	MET.LINEA,
+	MET.DESCR,
+	MEDMET.DESCR DES_UNIMED
+    FROM
+        S_POA_META MET,
+        S_POA_MEDIDA_META MEDMET
+    WHERE
+         MET.RAMO = $P{RAMO}  AND
+         MET.YEAR = $P{YEAR}  AND
+		 MET.PRG = $P{PRG} AND
+		 MET.TIPO_PROY = $P{TIPO_PROY}  AND
+         MET.PROY = $P{PROY} AND
+		MET.CVE_MEDIDA = MEDMET.MEDIDA  AND
+		MET.YEAR = MEDMET.YEAR]]>
+	</queryString>
+	<field name="META" class="java.math.BigDecimal"/>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="YEAR" class="java.lang.String"/>
+	<field name="LINEA" class="java.lang.String"/>
+	<field name="DESCR" class="java.lang.String"/>
+	<field name="DES_UNIMED" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="26" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="90bc5cee-cae1-4e5d-a5df-379db2c7b2b0" x="0" y="0" width="719" height="25"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="7c7744f9-72e2-4e84-8805-3b2a8f1485eb" x="0" y="5" width="180" height="20"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descripcion del compromiso]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4f9091c5-e365-46d6-a5db-054562dc24d1" x="180" y="5" width="110" height="20"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unidad de medida]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c5e86e73-d869-4b9f-aed6-c65e134af681" x="290" y="5" width="67" height="20"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cantidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7e82c573-a35a-4e2d-817e-6972e4350dec" x="357" y="5" width="100" height="20"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Metas esperadas por mes]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="29">
+			<subreport>
+				<reportElement uuid="3a77f6bc-63f6-49de-b5f2-b8e1f5dc7afd" stretchType="RelativeToBandHeight" x="0" y="0" width="719" height="29"/>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$P{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PRG">
+					<subreportParameterExpression><![CDATA[$P{PRG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DEPTO">
+					<subreportParameterExpression><![CDATA[$P{DEPTO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PROY">
+					<subreportParameterExpression><![CDATA[$P{PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PROY">
+					<subreportParameterExpression><![CDATA[$P{TIPO_PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="META">
+					<subreportParameterExpression><![CDATA[$F{META}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "rptCalMensRamPrgMetasDetalle.jasper"]]></subreportExpression>
+			</subreport>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="a5bdcc55-0f46-4370-bcf2-56932af277f9" stretchType="RelativeToBandHeight" x="0" y="0" width="180" height="29"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{META}+" "+$F{DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="c024326d-5d7c-4683-9268-242944c36326" stretchType="RelativeToBandHeight" x="180" y="0" width="110" height="29"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DES_UNIMED}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="15">
+			<staticText>
+				<reportElement uuid="b713fb20-0771-4d58-9de3-ebabef85406b" positionType="Float" x="0" y="0" width="94" height="15">
+					<printWhenExpression><![CDATA[($F{LINEA}.equalsIgnoreCase("-1") != true ) && ($F{LINEA}.isEmpty() != true)]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Línea Estratégica]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="56b7cf57-394a-4f80-99d5-8e69d9f38c07" positionType="Float" x="94" y="0" width="284" height="15">
+					<printWhenExpression><![CDATA[($F{LINEA}.equalsIgnoreCase("-1") != true ) && ($F{LINEA}.isEmpty() != true)]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LINEA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

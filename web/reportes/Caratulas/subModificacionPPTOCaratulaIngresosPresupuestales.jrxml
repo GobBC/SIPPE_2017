@@ -1,0 +1,733 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subModificacionPPTOCaratulaIngresosPresupuestales" language="groovy" pageWidth="970" pageHeight="11" orientation="Landscape" columnWidth="970" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="d08c2163-aa59-4226-a299-145bee118e5f">
+	<property name="ireport.zoom" value="1.6105100000000077"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Table Dataset 1" uuid="f35a429f-5fca-46f3-9a38-51cb2470a5e1"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<parameter name="RPT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\desarrollo\\repositorio_local\\POA\\web\\reportes\\RecalendarizacionFormatoRevision\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RAMO" class="java.lang.String"/>
+	<parameter name="ID_CARATULA" class="java.lang.String"/>
+	<parameter name="FECHA_REVISION" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+	YEAR,
+	RAMO,
+	RUBRO,
+	RUBRO_DESCR,
+	SUM(PPTO_INICIAL) AS PPTO_INICIAL,
+	SUM(AMP_ACUM) AS AMP_ACUM,
+	SUM(RED_ACUM) AS RED_ACUM,
+	SUM(AMP_CARATULA) AS AMP_CARATULA,
+	SUM(RED_CARATULA) AS RED_CARATULA,
+	SUM(CIERRE_ANT) AS CIERRE_ANT
+FROM
+	(
+		SELECT
+			PPTO_ING.YEAR,
+			PPTO_ING.RAMO,
+			PPTO_ING.CONCEPTO,
+			RUBRO.RUBRO,
+			RUBRO.DESCR RUBRO_DESCR,
+			(
+				NVL
+					(
+						SUM(NVL(PPTO_ING.ENE,0)) +
+						SUM(NVL(PPTO_ING.FEB,0)) +
+						SUM(NVL(PPTO_ING.MZO,0)) +
+						SUM(NVL(PPTO_ING.ABR,0)) +
+						SUM(NVL(PPTO_ING.MAY,0)) +
+						SUM(NVL(PPTO_ING.JUN,0)) +
+						SUM(NVL(PPTO_ING.JUL,0)) +
+						SUM(NVL(PPTO_ING.AGO,0)) +
+						SUM(NVL(PPTO_ING.SEP,0)) +
+						SUM(NVL(PPTO_ING.OCT,0)) +
+						SUM(NVL(PPTO_ING.NOV,0)) +
+						SUM(NVL(PPTO_ING.DIC,0))
+						,0
+					)
+			) PPTO_INICIAL,
+			(
+				NVL
+					(
+						(
+							SELECT
+								(
+									SUM(NVL(CAR_PPTO_ING.ENE,0)) +
+									SUM(NVL(CAR_PPTO_ING.FEB,0)) +
+									SUM(NVL(CAR_PPTO_ING.MZO,0)) +
+									SUM(NVL(CAR_PPTO_ING.ABR,0)) +
+									SUM(NVL(CAR_PPTO_ING.MAY,0)) +
+									SUM(NVL(CAR_PPTO_ING.JUN,0)) +
+									SUM(NVL(CAR_PPTO_ING.JUL,0)) +
+									SUM(NVL(CAR_PPTO_ING.AGO,0)) +
+									SUM(NVL(CAR_PPTO_ING.SEP,0)) +
+									SUM(NVL(CAR_PPTO_ING.OCT,0)) +
+									SUM(NVL(CAR_PPTO_ING.NOV,0)) +
+									SUM(NVL(CAR_PPTO_ING.DIC,0))
+								) TOTAL_AMP
+							FROM
+								POA.CARATULA_PPTO_ING CAR_PPTO_ING,
+								S_ING_CONCEP CONCEPTO,
+								S_ING_RUBRO RUBRO,
+								POA.CARATULA CAR
+							WHERE
+								CAR_PPTO_ING.YEAR = PPTO_ING.YEAR AND
+								CAR_PPTO_ING.RAMO = PPTO_ING.RAMO AND
+								CAR_PPTO_ING.CONCEPTO = PPTO_ING.CONCEPTO AND
+								CAR_PPTO_ING.TIPOMOV = 'A' AND
+								CONCEPTO.EJERCICIO = CAR_PPTO_ING.YEAR AND
+								CONCEPTO.CONCEPTO = CAR_PPTO_ING.CONCEPTO AND
+								CONCEPTO.RUBRO <> 'B' AND
+								RUBRO.RUBRO = CONCEPTO.RUBRO AND
+								CAR.YEAR = CAR_PPTO_ING.YEAR AND
+								CAR.RAMO = CAR_PPTO_ING.RAMO AND
+								CAR.ID_CARATULA = CAR_PPTO_ING.ID_CARATULA AND
+								CAR.NUM_MOD_PRES*1 < (SELECT C.NUM_MOD_PRES*1 FROM POA.CARATULA C WHERE C.ID_CARATULA = $P{ID_CARATULA})
+						)
+						,0
+					)
+			) AMP_ACUM,
+			(
+				NVL
+					(
+						(
+							SELECT
+								(
+									SUM(NVL(CAR_PPTO_ING.ENE,0)) +
+									SUM(NVL(CAR_PPTO_ING.FEB,0)) +
+									SUM(NVL(CAR_PPTO_ING.MZO,0)) +
+									SUM(NVL(CAR_PPTO_ING.ABR,0)) +
+									SUM(NVL(CAR_PPTO_ING.MAY,0)) +
+									SUM(NVL(CAR_PPTO_ING.JUN,0)) +
+									SUM(NVL(CAR_PPTO_ING.JUL,0)) +
+									SUM(NVL(CAR_PPTO_ING.AGO,0)) +
+									SUM(NVL(CAR_PPTO_ING.SEP,0)) +
+									SUM(NVL(CAR_PPTO_ING.OCT,0)) +
+									SUM(NVL(CAR_PPTO_ING.NOV,0)) +
+									SUM(NVL(CAR_PPTO_ING.DIC,0))
+								) TOTAL_AMP
+							FROM
+								POA.CARATULA_PPTO_ING CAR_PPTO_ING,
+								S_ING_CONCEP CONCEPTO,
+								S_ING_RUBRO RUBRO,
+								POA.CARATULA CAR
+							WHERE
+								CAR_PPTO_ING.YEAR = PPTO_ING.YEAR AND
+								CAR_PPTO_ING.RAMO = PPTO_ING.RAMO AND
+								CAR_PPTO_ING.CONCEPTO = PPTO_ING.CONCEPTO AND
+								CAR_PPTO_ING.TIPOMOV = 'R' AND
+								CONCEPTO.EJERCICIO = CAR_PPTO_ING.YEAR AND
+								CONCEPTO.CONCEPTO = CAR_PPTO_ING.CONCEPTO AND
+								CONCEPTO.RUBRO <> 'B' AND
+								RUBRO.RUBRO = CONCEPTO.RUBRO AND
+								CAR.YEAR = CAR_PPTO_ING.YEAR AND
+								CAR.RAMO = CAR_PPTO_ING.RAMO AND
+								CAR.ID_CARATULA = CAR_PPTO_ING.ID_CARATULA AND
+								CAR.NUM_MOD_PRES*1 < (SELECT C.NUM_MOD_PRES*1 FROM POA.CARATULA C WHERE C.ID_CARATULA = $P{ID_CARATULA})
+						)
+						,0
+					)
+			) RED_ACUM,
+			(
+				NVL
+					(
+						(
+							SELECT
+								(
+									SUM(NVL(CAR_PPTO_ING.ENE,0)) +
+									SUM(NVL(CAR_PPTO_ING.FEB,0)) +
+									SUM(NVL(CAR_PPTO_ING.MZO,0)) +
+									SUM(NVL(CAR_PPTO_ING.ABR,0)) +
+									SUM(NVL(CAR_PPTO_ING.MAY,0)) +
+									SUM(NVL(CAR_PPTO_ING.JUN,0)) +
+									SUM(NVL(CAR_PPTO_ING.JUL,0)) +
+									SUM(NVL(CAR_PPTO_ING.AGO,0)) +
+									SUM(NVL(CAR_PPTO_ING.SEP,0)) +
+									SUM(NVL(CAR_PPTO_ING.OCT,0)) +
+									SUM(NVL(CAR_PPTO_ING.NOV,0)) +
+									SUM(NVL(CAR_PPTO_ING.DIC,0))
+								) TOTAL_AMP
+							FROM
+								POA.CARATULA_PPTO_ING CAR_PPTO_ING,
+								S_ING_CONCEP CONCEPTO,
+								S_ING_RUBRO RUBRO,
+								POA.CARATULA CAR
+							WHERE
+								CAR_PPTO_ING.YEAR = PPTO_ING.YEAR AND
+								CAR_PPTO_ING.RAMO = PPTO_ING.RAMO AND
+								CAR_PPTO_ING.CONCEPTO = PPTO_ING.CONCEPTO AND
+								CAR_PPTO_ING.TIPOMOV = 'A' AND
+								CAR_PPTO_ING.ID_CARATULA = $P{ID_CARATULA} AND
+								CONCEPTO.EJERCICIO = CAR_PPTO_ING.YEAR AND
+								CONCEPTO.CONCEPTO = CAR_PPTO_ING.CONCEPTO AND
+								CONCEPTO.RUBRO <> 'B' AND
+								RUBRO.RUBRO = CONCEPTO.RUBRO AND
+								CAR.YEAR = CAR_PPTO_ING.YEAR AND
+								CAR.RAMO = CAR_PPTO_ING.RAMO AND
+								CAR.ID_CARATULA = CAR_PPTO_ING.ID_CARATULA AND
+								CAR.NUM_MOD_PRES*1 >= (SELECT C.NUM_MOD_PRES*1 FROM POA.CARATULA C WHERE C.ID_CARATULA = $P{ID_CARATULA})
+						)
+						,0
+					)
+			) AMP_CARATULA,
+			(
+				NVL
+					(
+						(
+							SELECT
+								(
+									SUM(NVL(CAR_PPTO_ING.ENE,0)) +
+									SUM(NVL(CAR_PPTO_ING.FEB,0)) +
+									SUM(NVL(CAR_PPTO_ING.MZO,0)) +
+									SUM(NVL(CAR_PPTO_ING.ABR,0)) +
+									SUM(NVL(CAR_PPTO_ING.MAY,0)) +
+									SUM(NVL(CAR_PPTO_ING.JUN,0)) +
+									SUM(NVL(CAR_PPTO_ING.JUL,0)) +
+									SUM(NVL(CAR_PPTO_ING.AGO,0)) +
+									SUM(NVL(CAR_PPTO_ING.SEP,0)) +
+									SUM(NVL(CAR_PPTO_ING.OCT,0)) +
+									SUM(NVL(CAR_PPTO_ING.NOV,0)) +
+									SUM(NVL(CAR_PPTO_ING.DIC,0))
+								) TOTAL_AMP
+							FROM
+								POA.CARATULA_PPTO_ING CAR_PPTO_ING,
+								S_ING_CONCEP CONCEPTO,
+								S_ING_RUBRO RUBRO,
+								POA.CARATULA CAR
+							WHERE
+								CAR_PPTO_ING.YEAR = PPTO_ING.YEAR AND
+								CAR_PPTO_ING.RAMO = PPTO_ING.RAMO AND
+								CAR_PPTO_ING.CONCEPTO = PPTO_ING.CONCEPTO AND
+								CAR_PPTO_ING.TIPOMOV = 'R' AND
+								CAR_PPTO_ING.ID_CARATULA = $P{ID_CARATULA} AND
+								CONCEPTO.EJERCICIO = CAR_PPTO_ING.YEAR AND
+								CONCEPTO.CONCEPTO = CAR_PPTO_ING.CONCEPTO AND
+								CONCEPTO.RUBRO <> 'B' AND
+								RUBRO.RUBRO = CONCEPTO.RUBRO AND
+								CAR.YEAR = CAR_PPTO_ING.YEAR AND
+								CAR.RAMO = CAR_PPTO_ING.RAMO AND
+								CAR.ID_CARATULA = CAR_PPTO_ING.ID_CARATULA AND
+						CAR.NUM_MOD_PRES*1 >= (SELECT C.NUM_MOD_PRES*1 FROM POA.CARATULA C WHERE C.ID_CARATULA = $P{ID_CARATULA})
+						)
+						,0
+					)
+			) RED_CARATULA,
+			(
+				NVL
+					(
+						(
+							SELECT
+								SUM(NVL(INGCIM.DEVENGADO,0)) CIERRE_ANT
+							FROM
+								S_POA_VW_CIERRE_IEM_INGRESO INGCIM
+							WHERE
+								INGCIM.EJERCICIO = TO_CHAR(TO_NUMBER(PPTO_ING.YEAR)-1) AND
+								INGCIM.RAMO_PPTAL = PPTO_ING.RAMO AND
+								INGCIM.CONCEPTO = PPTO_ING.CONCEPTO AND
+								INGCIM.RUBRO <> 'B'
+						)
+						,0
+					)
+			) CIERRE_ANT
+		FROM
+			(
+				SELECT
+					YEAR,
+					RAMO,
+					CONCEPTO,
+					SUM(ENE) ENE,
+					SUM(FEB) FEB,
+					SUM(MZO) MZO,
+					SUM(ABR) ABR,
+					SUM(MAY) MAY,
+					SUM(JUN) JUN,
+					SUM(JUL) JUL,
+					SUM(AGO) AGO,
+					SUM(SEP) SEP,
+					SUM(OCT) OCT,
+					SUM(NOV) NOV,
+					SUM(DIC) DIC
+				FROM
+					DGI.POA_PPTO_ING
+				WHERE
+					YEAR = $P{YEAR} AND
+					RAMO = $P{RAMO}
+				GROUP BY
+					YEAR,
+					RAMO,
+					CONCEPTO
+
+
+				UNION ALL
+
+				SELECT
+					YEAR,
+					RAMO,
+					CONCEPTO,
+					SUM(0) ENE,
+					SUM(0) FEB,
+					SUM(0) MZO,
+					SUM(0) ABR,
+					SUM(0) MAY,
+					SUM(0) JUN,
+					SUM(0) JUL,
+					SUM(0) AGO,
+					SUM(0) SEP,
+					SUM(0) OCT,
+					SUM(0) NOV,
+					SUM(0) DIC
+				FROM
+					POA.CARATULA_PPTO_ING
+				WHERE
+					YEAR = $P{YEAR} AND
+					RAMO = $P{RAMO}
+
+				GROUP BY
+					YEAR,
+					RAMO,
+					CONCEPTO
+
+				UNION ALL
+
+				SELECT
+					TO_CHAR(TO_NUMBER($P{YEAR})) YEAR,
+					INGCIM.RAMO_PPTAL,
+					INGCIM.CONCEPTO,
+					SUM(0) ENE,
+					SUM(0) FEB,
+					SUM(0) MZO,
+					SUM(0) ABR,
+					SUM(0) MAY,
+					SUM(0) JUN,
+					SUM(0) JUL,
+					SUM(0) AGO,
+					SUM(0) SEP,
+					SUM(0) OCT,
+					SUM(0) NOV,
+					SUM(0) DIC
+				FROM
+					S_POA_VW_CIERRE_IEM_INGRESO INGCIM
+				WHERE
+					INGCIM.EJERCICIO = TO_CHAR(TO_NUMBER($P{YEAR})-1) AND
+					INGCIM.RAMO_PPTAL = $P{RAMO} AND
+					INGCIM.RUBRO <> 'B'
+				GROUP BY
+					TO_CHAR(TO_NUMBER($P{YEAR})),
+					INGCIM.RAMO_PPTAL,
+					INGCIM.CONCEPTO
+			) PPTO_ING,
+			S_ING_CONCEP_PG CONCEPTO,
+			S_ING_RUBRO RUBRO
+		WHERE
+			PPTO_ING.YEAR = $P{YEAR} AND
+			PPTO_ING.RAMO = $P{RAMO} AND
+			CONCEPTO.EJERCICIO = PPTO_ING.YEAR AND
+			CONCEPTO.CONCEPTO = PPTO_ING.CONCEPTO AND
+			CONCEPTO.RUBRO <> 'B' AND
+			RUBRO.RUBRO = CONCEPTO.RUBRO
+		GROUP BY
+			PPTO_ING.YEAR,
+			PPTO_ING.RAMO,
+			PPTO_ING.CONCEPTO,
+			RUBRO.RUBRO,
+			RUBRO.DESCR
+	)
+GROUP BY
+	YEAR,
+	RAMO,
+	RUBRO,
+	RUBRO_DESCR
+ORDER BY
+	RUBRO]]>
+	</queryString>
+	<field name="YEAR" class="java.lang.String"/>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="RUBRO" class="java.lang.String"/>
+	<field name="RUBRO_DESCR" class="java.lang.String"/>
+	<field name="PPTO_INICIAL" class="java.math.BigDecimal"/>
+	<field name="AMP_ACUM" class="java.math.BigDecimal"/>
+	<field name="RED_ACUM" class="java.math.BigDecimal"/>
+	<field name="AMP_CARATULA" class="java.math.BigDecimal"/>
+	<field name="RED_CARATULA" class="java.math.BigDecimal"/>
+	<field name="CIERRE_ANT" class="java.math.BigDecimal"/>
+	<variable name="PPTO_INICIAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{PPTO_INICIAL}]]></variableExpression>
+	</variable>
+	<variable name="AMP_ACUM" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{AMP_ACUM}]]></variableExpression>
+	</variable>
+	<variable name="DISM_ACUM" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{RED_ACUM}]]></variableExpression>
+	</variable>
+	<variable name="DISM_CARATULA" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{RED_CARATULA}]]></variableExpression>
+	</variable>
+	<variable name="AMP_CARATULA" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{AMP_CARATULA}]]></variableExpression>
+	</variable>
+	<variable name="CIERRE_ANT" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CIERRE_ANT}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[($V{PPTO_INICIAL} + $V{AMP_ACUM} + $V{AMP_CARATULA} - $V{DISM_ACUM} - $V{DISM_CARATULA})-$V{CIERRE_ANT}]]></variableExpression>
+	</variable>
+	<variable name="PORCENTAJE" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$V{CIERRE_ANT} > 0 ?
+(($V{PPTO_INICIAL}+$V{AMP_ACUM}+$V{AMP_CARATULA}-$V{DISM_ACUM}-$V{DISM_CARATULA})-$V{CIERRE_ANT})/$V{CIERRE_ANT}
+:
+1]]></variableExpression>
+	</variable>
+	<variable name="PPTO_MOD_ACUM" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$V{PPTO_INICIAL} + $V{AMP_ACUM} - $V{DISM_ACUM}]]></variableExpression>
+	</variable>
+	<variable name="PPTO_MOD_CARATULA" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$V{PPTO_INICIAL} + $V{AMP_ACUM} + $V{AMP_CARATULA} - $V{DISM_ACUM} - $V{DISM_CARATULA}]]></variableExpression>
+	</variable>
+	<detail>
+		<band height="11">
+			<textField>
+				<reportElement uuid="44752f6c-810a-42ee-809c-286c851301e0" x="0" y="0" width="300" height="11"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RUBRO_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="48602ef2-0658-460a-8da9-1971b7ccc267" x="300" y="0" width="70" height="11"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PPTO_INICIAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="8bf8aee2-32bf-452c-8ffa-d13e42e22a9e" x="370" y="0" width="70" height="11"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AMP_ACUM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="88cc23df-6780-4e43-ab18-9ffde4d4109f" x="440" y="0" width="70" height="11"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RED_ACUM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="468f6656-ff72-4bd4-af0a-8c4a7aeafdd2" x="580" y="0" width="70" height="11" forecolor="#000000"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AMP_CARATULA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="9c36f785-a1e7-4a14-a0dd-e51920b5c39b" x="650" y="0" width="70" height="11" forecolor="#000000"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RED_CARATULA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="eaa392bf-58f1-4fda-b73c-daedd61639ec" x="510" y="0" width="70" height="11"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PPTO_INICIAL}+$F{AMP_ACUM}-$F{RED_ACUM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="8c912f17-85d6-45ac-9332-1ce92b783a86" x="720" y="0" width="70" height="11"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PPTO_INICIAL}+$F{AMP_ACUM}+$F{AMP_CARATULA}-$F{RED_ACUM}-$F{RED_CARATULA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="981aa1d0-1bc1-43b6-8860-55f494ba9df7" x="790" y="0" width="70" height="11"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CIERRE_ANT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="c087e54f-1426-4af9-8292-d02f82efa7a6" x="860" y="0" width="70" height="11"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{PPTO_INICIAL}+$F{AMP_ACUM}+$F{AMP_CARATULA}-$F{RED_ACUM}-$F{RED_CARATULA})-$F{CIERRE_ANT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 %" isBlankWhenNull="true">
+				<reportElement uuid="1ad23ceb-b8e0-4d96-8210-2493ce96d3a7" x="930" y="0" width="40" height="11"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CIERRE_ANT} > 0 ?
+(($F{PPTO_INICIAL}+$F{AMP_ACUM}+$F{AMP_CARATULA}-$F{RED_ACUM}-$F{RED_CARATULA})-$F{CIERRE_ANT})/$F{CIERRE_ANT}
+:
+1]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="11">
+			<textField>
+				<reportElement uuid="ea66d98c-cca6-4a66-85dc-44aebb1c5567" x="0" y="0" width="300" height="11"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA["TOTAL INGRESOS PRESUPUESTALES"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="3da38713-0fc6-420d-8664-9fe6a0e55c59" x="300" y="0" width="70" height="11"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PPTO_INICIAL}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="d291ab0f-e47f-484f-9246-24269f41c659" x="370" y="0" width="70" height="11"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{AMP_ACUM}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="a12be111-7c36-4f97-ab53-1878afebee34" x="440" y="0" width="70" height="11"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{DISM_ACUM}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="0402ce36-0e21-4fb3-bcd3-c2918f3dd416" x="510" y="0" width="70" height="11"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PPTO_INICIAL} + $V{AMP_ACUM} - $V{DISM_ACUM}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="b79ee48a-2dc1-42b3-953e-7a9ca653e095" x="650" y="0" width="70" height="11"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{DISM_CARATULA}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="7b6f32fe-da98-4c0c-b569-d102e7159f95" x="580" y="0" width="70" height="11"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{AMP_CARATULA}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="84140dce-a91f-4571-805d-b41c705e7f7e" x="720" y="0" width="70" height="11"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PPTO_INICIAL} + $V{AMP_ACUM} + $V{AMP_CARATULA} - $V{DISM_ACUM} - $V{DISM_CARATULA}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="e1816df7-7191-450c-8024-3d98eea29855" x="860" y="0" width="70" height="11"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($V{PPTO_INICIAL} + $V{AMP_ACUM} + $V{AMP_CARATULA} - $V{DISM_ACUM} - $V{DISM_CARATULA})-$V{CIERRE_ANT}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="f6d8c042-a860-4ce5-8c2c-bcbb83f2fca7" x="790" y="0" width="70" height="11"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{CIERRE_ANT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 %" isBlankWhenNull="true">
+				<reportElement uuid="c6046cd3-65dc-40e0-924f-2052ed9288d8" x="930" y="0" width="40" height="11"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{CIERRE_ANT} > 0 ?
+(($V{PPTO_INICIAL}+$V{AMP_ACUM}+$V{AMP_CARATULA}-$V{DISM_ACUM}-$V{DISM_CARATULA})-$V{CIERRE_ANT})/$V{CIERRE_ANT}
+:
+1]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

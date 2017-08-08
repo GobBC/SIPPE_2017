@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SubRptMetasIndicadores" language="groovy" pageWidth="750" pageHeight="572" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="750" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isTitleNewPage="true" isIgnorePagination="true" uuid="e4b8cf87-a55d-4444-919c-aeee8b435317">
+	<property name="ireport.zoom" value="1.6105100000000014"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<parameter name="RAMO" class="java.lang.String"/>
+	<parameter name="PROG" class="java.lang.String"/>
+	<parameter name="MES" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IMG_DIR" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\desarrollo\\repositorio_local\\poaUltimaVersion\\trunk\\web\\reportes\\MasivoTrimestre\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RPT_DIR" class="java.lang.String"/>
+	<parameter name="DOCVALIDO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT DISTINCT I.CLAVE_INDICADOR AS INDICADOR,
+       I.NOMBRE_INDICADOR AS NOMBRE_INDICADOR,
+       I.CLAVE_INDICADOR AS CLAVE_INDICADOR, DECODE(I.PERIODICIDAD,1,'MENSUAL',DECODE(I.PERIODICIDAD,2,'BIMESTRAL',DECODE(I.PERIODICIDAD,3,'TRIMESTRAL',DECODE(I.PERIODICIDAD,4,'CUATRIMESTRAL',DECODE(I.PERIODICIDAD,6,'SEMESTRAL',DECODE(I.PERIODICIDAD,12,'ANUAL',DECODE(I.PERIODICIDAD,24,'BIANUAL',DECODE(I.PERIODICIDAD,36,'TRIANUAL',DECODE(I.PERIODICIDAD,60,'QUINQUEANUAL',' ')))))))))  AS PERIODICIDAD,
+       MA.META AS META_ANUAL,
+       METANT.META AS META_ANUAL_ANT,
+       R.RAMO||' '||R.DESCR AS RAMO,
+	    P.PRG||' '||P.DESCR AS PROGRAMA,
+       PTO.GOBIERNO AS GOBIERNO,
+       PTO.SECRETARIA AS SECRETARIA,
+       PTO.LOGO AS LOGO,
+       SYSDATE AS FECHA,
+       '' AS FOLIO,
+       I.PROG AS PRG,
+       PTO.PARAESTATAL AS PARAESTATAL,
+       I.UNIDAD_MEDIDA AS UNIDAD_MEDIDA,
+       I.OBJETIVO_INDICADOR AS OBJETIVO,
+       DGI.F_ULT_RESULT_INDIC_ALPERIODO(I.CLAVE_INDICADOR,TO_NUMBER($P{YEAR}),$P{MES}) AS ULTIMO_RESULT,
+       DECODE(I.INICIO,0,DECODE(SIGN($P{MES}-I.PERIODICIDAD),-1,1,0),DECODE(SIGN($P{MES}-I.INICIO),-1,1,0)) AS SINCAP,
+       I.DIMENSION_ID,
+       CI.NOMBRE_DIMENSION,
+       CI.ORDEN_DIMENSION
+FROM POA.RAMO_PROGRAMA RP,
+    S_POA_PROGRAMA P,
+    DGI.RAMOS R,
+     DGI.VW_SEI_INDIC_GRAL I,
+     DGI.VW_SEI_INDICADOR_DIMENSION CI,
+     DGI.VW_SEI_INDIC_META_ANUAL MA,
+     DGI.PARAMETROS PTO,
+        (SELECT MAA.CLAVE_INDICADOR,
+                MAA.ANIO,
+                MAA.META
+         FROM DGI.VW_SEI_INDIC_META_ANUAL MAA
+         WHERE MAA.ANIO=TO_NUMBER($P{YEAR})-1) METANT
+WHERE
+    P.YEAR = $P{YEAR}  AND
+	RP.RAMO = $P{RAMO} AND
+	RP.PRG = $P{PROG} AND
+	R.YEAR = RP.YEAR AND
+	R.RAMO = RP.RAMO AND
+	P.YEAR = RP.YEAR AND
+	P.PRG = RP.PRG AND
+    I.YEAR (+)= RP.YEAR AND
+	I.RAMO (+)= RP.RAMO AND
+	I.PROG (+)= RP.PRG  AND
+    MA.ANIO(+) = $P{YEAR} AND
+    MA.CLAVE_INDICADOR(+)= I.CLAVE_INDICADOR AND
+    METANT.CLAVE_INDICADOR(+)= I.CLAVE_INDICADOR AND
+    CI.DIMENSION_ID=I.DIMENSION_ID]]>
+	</queryString>
+	<field name="INDICADOR" class="java.lang.String"/>
+	<field name="NOMBRE_INDICADOR" class="java.lang.String"/>
+	<field name="CLAVE_INDICADOR" class="java.lang.String"/>
+	<field name="PERIODICIDAD" class="java.lang.String"/>
+	<field name="META_ANUAL" class="java.math.BigDecimal"/>
+	<field name="META_ANUAL_ANT" class="java.math.BigDecimal"/>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="PROGRAMA" class="java.lang.String"/>
+	<field name="GOBIERNO" class="java.lang.String"/>
+	<field name="SECRETARIA" class="java.lang.String"/>
+	<field name="LOGO" class="java.lang.String"/>
+	<field name="FECHA" class="java.sql.Timestamp"/>
+	<field name="FOLIO" class="java.lang.String"/>
+	<field name="PRG" class="java.lang.String"/>
+	<field name="PARAESTATAL" class="java.lang.String"/>
+	<field name="UNIDAD_MEDIDA" class="java.lang.String"/>
+	<field name="OBJETIVO" class="java.lang.String"/>
+	<field name="ULTIMO_RESULT" class="java.lang.String"/>
+	<field name="SINCAP" class="java.math.BigDecimal"/>
+	<field name="DIMENSION_ID" class="java.math.BigDecimal"/>
+	<field name="NOMBRE_DIMENSION" class="java.lang.String"/>
+	<field name="ORDEN_DIMENSION" class="java.math.BigDecimal"/>
+	<sortField name="ORDEN_DIMENSION"/>
+	<variable name="NOMBRE_DIMENSION_1" class="java.lang.Integer" resetType="Group" resetGroup="FIN" calculation="Count">
+		<variableExpression><![CDATA[$F{NOMBRE_DIMENSION}]]></variableExpression>
+	</variable>
+	<group name="FIN">
+		<groupExpression><![CDATA[$F{DIMENSION_ID}]]></groupExpression>
+		<groupHeader>
+			<band height="16">
+				<textField>
+					<reportElement uuid="38b35b26-b3ba-42fb-8849-d5140709e612" x="22" y="0" width="398" height="15"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["INDICADOR(ES) DE "+$F{NOMBRE_DIMENSION}.toUpperCase()]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement uuid="a124e550-8eac-49ed-8f9c-4e766c07a39a" x="12" y="12" width="727" height="1" forecolor="#0099FF"/>
+				</line>
+				<subreport>
+					<reportElement uuid="f93da5be-259c-4c99-b647-cb42faaa097e" x="12" y="15" width="727" height="0">
+						<printWhenExpression><![CDATA[$F{DIMENSION_ID}==1]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="YEAR">
+						<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{RPT_DIR} + "subRptEncabezadoIndicadoresFin.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport>
+					<reportElement uuid="1e2538de-9a7f-4333-a0de-3c635ba4c752" x="12" y="15" width="727" height="0" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{DIMENSION_ID}!=1]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="YEAR">
+						<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="RPT_DIR">
+						<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{RPT_DIR} + "subRptEncabezadoIndicadores.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="RAMO">
+		<groupExpression><![CDATA[$F{RAMO}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="9" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="131">
+			<image>
+				<reportElement uuid="f7127544-66e8-4c95-ab98-7fe475b5e849" x="186" y="1" width="399" height="59">
+					<printWhenExpression><![CDATA[$P{DOCVALIDO}.equals('N')]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{IMG_DIR} + "NOVALIDO.gif"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="095879a9-acf2-4ceb-b15b-9a32c48d9f58" x="14" y="102" width="63" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PROGRAMA:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="b7497087-dada-45ee-8b11-3f58b72b9423" x="77" y="102" width="627" height="20"/>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="1095e2e4-17d8-4a4b-b57a-733677b07b2f" x="77" y="82" width="627" height="20"/>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RAMO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="9295bfb6-7545-489b-b517-d6e6cd4848dd" x="14" y="82" width="63" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RAMO:]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="ea6138c9-384c-4297-98e1-0ba050daebcd" x="12" y="76" width="727" height="1"/>
+			</line>
+			<line>
+				<reportElement uuid="85604b3e-87cc-42fe-8c84-e287b0ac6f9c" x="12" y="128" width="727" height="1"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="dc01adfa-0120-4366-bc6a-9c18713ac876" x="65" y="20" width="622" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SECRETARIA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="609ab281-10bd-44b8-843d-c66c75c9a012" x="65" y="40" width="622" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="SansSerif" size="12" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CONCENTRADO DE INDICADORES DEL PROGRAMA  "+$P{YEAR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="895a08a6-d87a-4ac2-a144-8cba9bddc655" x="65" y="0" width="622" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GOBIERNO}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement uuid="56d61e1c-51b2-46b9-9529-f258bc64b358" x="0" y="0" width="65" height="59">
+					<printWhenExpression><![CDATA[$P{DOCVALIDO}.equals('S')]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{IMG_DIR} + "EDO.gif"]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="1">
+			<subreport>
+				<reportElement uuid="29bbf833-3e21-4e46-af74-923621e6efa6" x="12" y="0" width="727" height="0" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{DIMENSION_ID}!=1]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NOMBRE_INDICADOR">
+					<subreportParameterExpression><![CDATA[$F{NOMBRE_INDICADOR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="META_ANUAL">
+					<subreportParameterExpression><![CDATA[$F{META_ANUAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="UNIDAD_MEDIDA">
+					<subreportParameterExpression><![CDATA[$F{UNIDAD_MEDIDA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PERIODICIDAD">
+					<subreportParameterExpression><![CDATA[$F{PERIODICIDAD}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="OBJETIVO">
+					<subreportParameterExpression><![CDATA[$F{OBJETIVO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SINCAP">
+					<subreportParameterExpression><![CDATA[$F{SINCAP}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ULTIMO_RESULT">
+					<subreportParameterExpression><![CDATA[$F{ULTIMO_RESULT}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "subRptIndicadoresDetalle.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement uuid="42200e05-118a-4dcd-9aa3-ec5dad32df40" x="12" y="1" width="727" height="0">
+					<printWhenExpression><![CDATA[$F{DIMENSION_ID}==1]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="NOMBRE_INDICADOR">
+					<subreportParameterExpression><![CDATA[$F{NOMBRE_INDICADOR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="OBJETIVO">
+					<subreportParameterExpression><![CDATA[$F{OBJETIVO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ACTUALIZACION">
+					<subreportParameterExpression><![CDATA[]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "subRptIndicadoresDetalleFIN.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptJustificacion1" language="groovy" pageWidth="790" pageHeight="612" whenNoDataType="NoDataSection" columnWidth="790" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="5ed8fa38-31ba-4e2d-8a04-7fbb94b4b3bf">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="JUSTIFICACION" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="EJEM" class="java.lang.String"/>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<noData>
+		<band height="40">
+			<textField>
+				<reportElement uuid="26c8287e-6ade-4a25-a6da-f711b1cc9470" stretchType="RelativeToBandHeight" x="0" y="16" width="750" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{JUSTIFICACION}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="4cb22bc1-8199-436d-9b91-f7ef045c4f94" x="0" y="15" width="750" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="2864efe5-e99b-43b9-9d55-143d2b0d02fe" stretchType="RelativeToBandHeight" x="0" y="1" width="100" height="15" isRemoveLineWhenBlank="true"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[JUSTIFICACIÓN:]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>

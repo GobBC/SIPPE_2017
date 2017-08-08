@@ -1,0 +1,889 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptConsolidadoControlRecalendarizaciones" language="groovy" pageWidth="10100" pageHeight="612" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="10060" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="960ea9f1-ecf4-4a13-bbcb-dd1214a9aecf">
+	<property name="ireport.zoom" value="0.8264462809917424"/>
+	<property name="ireport.x" value="5859"/>
+	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.white.page.background" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<parameter name="YEAR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RAMO_IN_LIST" class="java.lang.String"/>
+	<parameter name="PERIODO_INI" class="java.lang.Integer"/>
+	<parameter name="PERIODO_FIN" class="java.lang.String"/>
+	<parameter name="QUERY" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RPT_DIR" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+	TR.YEAR,
+	TR.OFICIO,
+	TR.RAMO,
+	RAMOS.DESCR RAMO_DESCR,
+	TR.PRG,
+	PROGRAMAS.DESCR PROGRAMA_DESCR,
+	TR.DEPTO,
+	DEPTOS.DESCR DEPARTAMENTO_DESCR,
+	METAS.TIPO_PROY,
+	METAS.PROY,
+	PROYACT.DESCR PROYACT_DESCR,
+	TR.META,
+	METAS.DESCR META_DESCR,
+	TR.ACCION,
+	ACCIONES.DESCR ACCION_DESCR,
+	TR.PARTIDA,
+	PARTIDAS.DESCR PARTIDA_DESCR,
+	TR.REQUERIMIENTO,
+	TR.DESCR REQUERIMIENTO_DESCR,
+	ACCREQ.COSTO_ANUAL COSTO_REQUERIMIENTO,
+	NVL(SUM(REC.IMPTE),0) IMPORTE_RECALENDARIZAR,
+	CASE WHEN TR.ENE <> (CASE WHEN MOVOF.STATUS = 'A' THEN HISTREQ.ENE ELSE ACCREQ.ENE END) THEN 1 ELSE 0 END ENE_MOD,
+	CASE WHEN TR.FEB <> (CASE WHEN MOVOF.STATUS = 'A' THEN HISTREQ.FEB ELSE ACCREQ.FEB END) THEN 1 ELSE 0 END FEB_MOD,
+	CASE WHEN TR.MAR <> (CASE WHEN MOVOF.STATUS = 'A' THEN HISTREQ.MAR ELSE ACCREQ.MAR END) THEN 1 ELSE 0 END MAR_MOD,
+	CASE WHEN TR.ABR <> (CASE WHEN MOVOF.STATUS = 'A' THEN HISTREQ.ABR ELSE ACCREQ.ABR END) THEN 1 ELSE 0 END ABR_MOD,
+	CASE WHEN TR.MAY <> (CASE WHEN MOVOF.STATUS = 'A' THEN HISTREQ.MAY ELSE ACCREQ.MAY END) THEN 1 ELSE 0 END MAY_MOD,
+	CASE WHEN TR.JUN <> (CASE WHEN MOVOF.STATUS = 'A' THEN HISTREQ.JUN ELSE ACCREQ.JUN END) THEN 1 ELSE 0 END JUN_MOD,
+	CASE WHEN TR.JUL <> (CASE WHEN MOVOF.STATUS = 'A' THEN HISTREQ.JUL ELSE ACCREQ.JUL END) THEN 1 ELSE 0 END JUL_MOD,
+	CASE WHEN TR.AGO <> (CASE WHEN MOVOF.STATUS = 'A' THEN HISTREQ.AGO ELSE ACCREQ.AGO END) THEN 1 ELSE 0 END AGO_MOD,
+	CASE WHEN TR.SEP <> (CASE WHEN MOVOF.STATUS = 'A' THEN HISTREQ.SEP ELSE ACCREQ.SEP END) THEN 1 ELSE 0 END SEP_MOD,
+	CASE WHEN TR.OCT <> (CASE WHEN MOVOF.STATUS = 'A' THEN HISTREQ.OCT ELSE ACCREQ.OCT END) THEN 1 ELSE 0 END OCT_MOD,
+	CASE WHEN TR.NOV <> (CASE WHEN MOVOF.STATUS = 'A' THEN HISTREQ.NOV ELSE ACCREQ.NOV END) THEN 1 ELSE 0 END NOV_MOD,
+	CASE WHEN TR.DIC <> (CASE WHEN MOVOF.STATUS = 'A' THEN HISTREQ.DIC ELSE ACCREQ.DIC END) THEN 1 ELSE 0 END DIC_MOD,
+	(SELECT TO_NUMBER(TO_CHAR(SYSDATE, 'Q')) FROM SYS.DUAL) TRIMESTRE_ACT,
+	(
+		SELECT
+			nvl(count(ROWNUM),0) CONT
+		FROM
+			POA.MOVOFICIOS_ESTIMACION MOVEST
+		WHERE
+			MOVEST.YEAR = TR.YEAR AND
+			MOVEST.OFICIO = TR.OFICIO AND
+			MOVEST.RAMO = TR.RAMO AND
+			MOVEST.META = TR.META
+
+	) IMPACTOS_PROG_META,
+	(
+		SELECT
+			nvl(count(ROWNUM),0) CONT
+		FROM
+			POA.MOVOFICIOS_ACCION_ESTIMACION MOVACCEST
+		WHERE
+			MOVACCEST.YEAR = TR.YEAR AND
+			MOVACCEST.OFICIO = TR.OFICIO AND
+			MOVACCEST.RAMO = TR.RAMO AND
+			MOVACCEST.META = TR.META AND
+			MOVACCEST.ACCION = TR.ACCION
+
+	) IMPACTOS_PROG_ACCION,
+	MOVOF.FECHAELAB,
+	MOVOF.FECPPTO,
+	ESTATUS.DESCR ESTATUS_DESCR,
+	(
+		SELECT
+			MOVS.JUSTIFICACION
+		FROM
+			POA.MOVOFICIOS MOVS
+		WHERE
+			MOVS.FECPPTO = MOVOF.FECPPTO AND
+			MOVS.OFICIO = TR.OFICIO
+	) JUSTIFICACION,
+	TR.CONSIDERAR
+
+FROM
+	POA.MOVOFICIOS MOVOF,
+	POA.MOVOFICIOS_ACCION_REQ TR,
+	DGI.RAMOS RAMOS,
+	S_POA_PROGRAMA PROGRAMAS,
+	DGI.DEPENDENCIA DEPTOS,
+	S_POA_VW_SP_PROY_ACT PROYACT,
+	S_POA_META METAS,
+	S_POA_ACCION ACCIONES,
+	SPP.RECALENDARIZACION REC,
+	DGI.PARTIDA PARTIDAS,
+	POA.ACCION_REQ ACCREQ,
+	POA.ESTATUS_MOV ESTATUS,
+	POA.HIST_ACCION_REQ HISTREQ
+
+WHERE
+	EXTRACT(YEAR FROM MOVOF.FECPPTO) = $P{YEAR} AND
+	EXTRACT(MONTH FROM MOVOF.FECPPTO) >= $P{PERIODO_INI} AND
+	EXTRACT(MONTH FROM MOVOF.FECPPTO) <= $P{PERIODO_FIN} AND
+	MOVOF.TIPOMOV = 'C' AND
+	MOVOF.STATUS <> 'X' AND
+	TR.YEAR = EXTRACT(YEAR FROM MOVOF.FECHAELAB) AND
+	TR.OFICIO = MOVOF.OFICIO AND
+	TR.RAMO IN($P!{RAMO_IN_LIST}) AND
+	RAMOS.YEAR = TR.YEAR AND
+	RAMOS.RAMO = TR.RAMO AND
+	PROGRAMAS.YEAR = TR.YEAR AND
+	PROGRAMAS.PRG = TR.PRG AND
+	DEPTOS.YEAR = TR.YEAR AND
+	DEPTOS.RAMO = TR.RAMO AND
+	DEPTOS.DEPTO = TR.DEPTO AND
+	METAS.YEAR = TR.YEAR AND
+	METAS.RAMO = TR.RAMO AND
+	METAS.META = TR.META AND
+	PROYACT.YEAR = METAS.YEAR AND
+	PROYACT.TIPO_PROY = METAS.TIPO_PROY AND
+	PROYACT.PROY = METAS.PROY AND
+	ACCIONES.YEAR = TR.YEAR AND
+	ACCIONES.RAMO = TR.RAMO AND
+	ACCIONES.META = TR.META AND
+	ACCIONES.ACCION = TR.ACCION AND
+	REC.OFICIO (+)= TR.OFICIO AND
+	REC.RAMO (+)= TR.RAMO AND
+	REC.PRG (+)= TR.PRG AND
+	REC.DEPTO (+)= TR.DEPTO AND
+	REC.META (+)= TR.META AND
+	REC.ACCION (+)= TR.ACCION AND
+	REC.REQUERIMIENTO (+)= TR.REQUERIMIENTO AND
+	(REC.IMPTE > 0 OR REC.IMPTE IS NULL) AND
+	PARTIDAS.YEAR = TR.YEAR AND
+	PARTIDAS.PARTIDA = TR.PARTIDA AND
+	ACCREQ.YEAR = TR.YEAR AND
+	ACCREQ.RAMO = TR.RAMO AND
+	ACCREQ.PRG = TR.PRG AND
+	ACCREQ.DEPTO = TR.DEPTO AND
+	ACCREQ.META = TR.META AND
+	ACCREQ.ACCION = TR.ACCION AND
+	ACCREQ.REQUERIMIENTO = TR.REQUERIMIENTO AND
+	HISTREQ.OFICIO (+)= TR.OFICIO AND
+	HISTREQ.RAMO (+)= TR.RAMO AND
+	HISTREQ.PRG (+)= TR.PRG AND
+	HISTREQ.DEPTO (+)= TR.DEPTO AND
+	HISTREQ.META (+)= TR.META AND
+	HISTREQ.ACCION (+)= TR.ACCION AND
+	HISTREQ.REQUERIMIENTO (+)= TR.REQUERIMIENTO AND
+	ESTATUS.ESTATUS = MOVOF.STATUS
+	$P!{QUERY}
+
+GROUP BY
+	TR.YEAR,
+	TR.OFICIO,
+	TR.RAMO,
+	RAMOS.DESCR,
+	TR.PRG,
+	PROGRAMAS.DESCR,
+	TR.DEPTO,
+	DEPTOS.DESCR,
+	METAS.TIPO_PROY,
+	METAS.PROY,
+	PROYACT.DESCR,
+	TR.META,
+	METAS.DESCR,
+	TR.ACCION,
+	ACCIONES.DESCR,
+	TR.PARTIDA,
+	PARTIDAS.DESCR,
+	TR.REQUERIMIENTO,
+	TR.DESCR,
+	ACCREQ.COSTO_ANUAL,
+	CASE WHEN TR.ENE <> (CASE WHEN MOVOF.STATUS = 'A' THEN HISTREQ.ENE ELSE ACCREQ.ENE END) THEN 1 ELSE 0 END,
+	CASE WHEN TR.FEB <> (CASE WHEN MOVOF.STATUS = 'A' THEN HISTREQ.FEB ELSE ACCREQ.FEB END) THEN 1 ELSE 0 END,
+	CASE WHEN TR.MAR <> (CASE WHEN MOVOF.STATUS = 'A' THEN HISTREQ.MAR ELSE ACCREQ.MAR END) THEN 1 ELSE 0 END,
+	CASE WHEN TR.ABR <> (CASE WHEN MOVOF.STATUS = 'A' THEN HISTREQ.ABR ELSE ACCREQ.ABR END) THEN 1 ELSE 0 END,
+	CASE WHEN TR.MAY <> (CASE WHEN MOVOF.STATUS = 'A' THEN HISTREQ.MAY ELSE ACCREQ.MAY END) THEN 1 ELSE 0 END,
+	CASE WHEN TR.JUN <> (CASE WHEN MOVOF.STATUS = 'A' THEN HISTREQ.JUN ELSE ACCREQ.JUN END) THEN 1 ELSE 0 END,
+	CASE WHEN TR.JUL <> (CASE WHEN MOVOF.STATUS = 'A' THEN HISTREQ.JUL ELSE ACCREQ.JUL END) THEN 1 ELSE 0 END,
+	CASE WHEN TR.AGO <> (CASE WHEN MOVOF.STATUS = 'A' THEN HISTREQ.AGO ELSE ACCREQ.AGO END) THEN 1 ELSE 0 END,
+	CASE WHEN TR.SEP <> (CASE WHEN MOVOF.STATUS = 'A' THEN HISTREQ.SEP ELSE ACCREQ.SEP END) THEN 1 ELSE 0 END,
+	CASE WHEN TR.OCT <> (CASE WHEN MOVOF.STATUS = 'A' THEN HISTREQ.OCT ELSE ACCREQ.OCT END) THEN 1 ELSE 0 END,
+	CASE WHEN TR.NOV <> (CASE WHEN MOVOF.STATUS = 'A' THEN HISTREQ.NOV ELSE ACCREQ.NOV END) THEN 1 ELSE 0 END,
+	CASE WHEN TR.DIC <> (CASE WHEN MOVOF.STATUS = 'A' THEN HISTREQ.DIC ELSE ACCREQ.DIC END) THEN 1 ELSE 0 END,
+	MOVOF.FECHAELAB,
+	MOVOF.FECPPTO,
+	ESTATUS.DESCR,
+	TR.CONSIDERAR
+
+ORDER BY
+	TR.OFICIO,
+	TR.RAMO,
+	TR.PRG,
+	TR.DEPTO,
+	METAS.TIPO_PROY,
+	METAS.PROY,
+	TR.META,
+	TR.ACCION,
+	TR.PARTIDA,
+	TR.REQUERIMIENTO,
+	ESTATUS.DESCR]]>
+	</queryString>
+	<field name="YEAR" class="java.lang.String"/>
+	<field name="OFICIO" class="java.math.BigDecimal"/>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="RAMO_DESCR" class="java.lang.String"/>
+	<field name="PRG" class="java.lang.String"/>
+	<field name="PROGRAMA_DESCR" class="java.lang.String"/>
+	<field name="DEPTO" class="java.lang.String"/>
+	<field name="DEPARTAMENTO_DESCR" class="java.lang.String"/>
+	<field name="TIPO_PROY" class="java.lang.String"/>
+	<field name="PROY" class="java.math.BigDecimal"/>
+	<field name="PROYACT_DESCR" class="java.lang.String"/>
+	<field name="META" class="java.math.BigDecimal"/>
+	<field name="META_DESCR" class="java.lang.String"/>
+	<field name="ACCION" class="java.math.BigDecimal"/>
+	<field name="ACCION_DESCR" class="java.lang.String"/>
+	<field name="PARTIDA" class="java.lang.String"/>
+	<field name="PARTIDA_DESCR" class="java.lang.String"/>
+	<field name="REQUERIMIENTO" class="java.math.BigDecimal"/>
+	<field name="REQUERIMIENTO_DESCR" class="java.lang.String"/>
+	<field name="COSTO_REQUERIMIENTO" class="java.math.BigDecimal"/>
+	<field name="IMPORTE_RECALENDARIZAR" class="java.math.BigDecimal"/>
+	<field name="ENE_MOD" class="java.math.BigDecimal"/>
+	<field name="FEB_MOD" class="java.math.BigDecimal"/>
+	<field name="MAR_MOD" class="java.math.BigDecimal"/>
+	<field name="ABR_MOD" class="java.math.BigDecimal"/>
+	<field name="MAY_MOD" class="java.math.BigDecimal"/>
+	<field name="JUN_MOD" class="java.math.BigDecimal"/>
+	<field name="JUL_MOD" class="java.math.BigDecimal"/>
+	<field name="AGO_MOD" class="java.math.BigDecimal"/>
+	<field name="SEP_MOD" class="java.math.BigDecimal"/>
+	<field name="OCT_MOD" class="java.math.BigDecimal"/>
+	<field name="NOV_MOD" class="java.math.BigDecimal"/>
+	<field name="DIC_MOD" class="java.math.BigDecimal"/>
+	<field name="TRIMESTRE_ACT" class="java.math.BigDecimal"/>
+	<field name="IMPACTOS_PROG_META" class="java.math.BigDecimal"/>
+	<field name="IMPACTOS_PROG_ACCION" class="java.math.BigDecimal"/>
+	<field name="FECHAELAB" class="java.sql.Timestamp"/>
+	<field name="FECPPTO" class="java.sql.Timestamp"/>
+	<field name="ESTATUS_DESCR" class="java.lang.String"/>
+	<field name="JUSTIFICACION" class="oracle.sql.CLOB"/>
+	<field name="CONSIDERAR" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="60">
+			<staticText>
+				<reportElement uuid="95b59981-9d2f-4ba4-b1ca-5823b25c8057" stretchType="RelativeToBandHeight" mode="Opaque" x="50" y="0" width="50" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ramo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="25144848-e30f-45d3-ac9e-9cb28300cdd9" stretchType="RelativeToBandHeight" mode="Opaque" x="100" y="0" width="400" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ramo Redacción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="cbe89956-6e0e-4348-93e8-6130dc2a5d9d" stretchType="RelativeToBandHeight" mode="Opaque" x="500" y="0" width="50" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Programa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="50f9607c-7944-4f7e-933a-5c8673a815e1" stretchType="RelativeToBandHeight" mode="Opaque" x="550" y="0" width="400" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Programa Redacción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="49810592-d610-4673-b677-9fbeb7aeacbd" mode="Opaque" x="950" y="0" width="50" height="30" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b06e8d0a-abc5-4a07-94a5-ca70aa2de0d6" stretchType="RelativeToBandHeight" mode="Opaque" x="950" y="30" width="50" height="30" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ejecutora]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="dfff477a-afcd-4940-ab9a-01f1d32da3c3" stretchType="RelativeToBandHeight" mode="Opaque" x="1000" y="0" width="400" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unidad Ejecutora Descripción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e163cd30-f004-45ce-aea1-9d8e5238d5dd" stretchType="RelativeToBandHeight" mode="Opaque" x="2050" y="0" width="50" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Meta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a8b985e7-49a9-45bb-ac84-7e1dcb5a5f07" stretchType="RelativeToBandHeight" mode="Opaque" x="2100" y="0" width="1000" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Meta Redacción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="494e4719-4986-479e-9690-7528353d13b8" stretchType="RelativeToBandHeight" mode="Opaque" x="3100" y="0" width="50" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Acción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="33471858-3fae-4acf-9371-dac39a0a05f8" stretchType="RelativeToBandHeight" mode="Opaque" x="3150" y="0" width="1000" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Acción Redacción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2e9e8f05-3f45-42ee-800e-db51f6aabb14" stretchType="RelativeToBandHeight" mode="Opaque" x="4200" y="0" width="1000" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Partida descripción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="acfc6752-7fc1-424d-adf3-2fbc1420b648" stretchType="RelativeToBandHeight" mode="Opaque" x="4150" y="0" width="50" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Partida]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7fc311ed-835c-436e-b2d4-fb6f5c3318f4" stretchType="RelativeToBandHeight" mode="Opaque" x="5200" y="0" width="1000" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Requerimiento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6d946b0e-b1a0-4152-9a29-90e1559870d5" stretchType="RelativeToBandHeight" mode="Opaque" x="6200" y="0" width="200" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Costo Requerimiento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a42c7487-b4e0-464e-8024-088ff729ca0e" stretchType="RelativeToBandHeight" mode="Opaque" x="6400" y="0" width="200" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Importe a recalendarizar]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2620c0f9-8f71-42cf-a983-f700b6ffcdb9" stretchType="RelativeToBandHeight" mode="Opaque" x="6600" y="0" width="200" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Rangos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="45fda2df-066d-43f3-baf9-3ff2195bf097" stretchType="RelativeToBandHeight" mode="Opaque" x="6800" y="0" width="200" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Afectación Programatica]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="896df6c9-fba8-4e94-b9fd-054e8875b3d8" stretchType="RelativeToBandHeight" mode="Opaque" x="7000" y="0" width="200" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo de afectación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="dd6b4824-f92b-43ad-aa6f-84670d266d9e" stretchType="RelativeToBandHeight" mode="Opaque" x="7200" y="0" width="200" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha de solicitud]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="66d7fd6d-4af3-4e66-97f2-003fa703ad35" stretchType="RelativeToBandHeight" mode="Opaque" x="7400" y="0" width="200" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha de aplicación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ca2e7f3d-f39a-49b5-94b1-17abfe5ced77" stretchType="RelativeToBandHeight" mode="Opaque" x="7600" y="0" width="200" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Status]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="40c294dd-34b9-43a7-93e7-4d50fbb29a86" stretchType="RelativeToBandHeight" mode="Opaque" x="7800" y="0" width="2000" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Justificación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b96945a1-1c37-4f41-9dba-5ebb631c87ae" stretchType="RelativeToBandHeight" mode="Opaque" x="9800" y="0" width="60" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Considerar?]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f7ff3a3c-cad5-4c3e-a829-4ad66742dc69" stretchType="RelativeToBandHeight" mode="Opaque" x="1400" y="0" width="50" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Proyecto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8fc53a83-f52e-4bfa-aa83-9e82e95d2af4" stretchType="RelativeToBandHeight" mode="Opaque" x="1450" y="0" width="600" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Proyecto Redacción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="66bfbfa2-1569-4c81-87b5-b277c7cf0023" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="50" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Oficio]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="e0af002e-c635-4736-95c6-f1e42a4e1a11" stretchType="RelativeToBandHeight" x="50" y="0" width="50" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RAMO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="e8fdcaab-bd2d-4883-a56c-eae921df831f" stretchType="RelativeToBandHeight" x="100" y="0" width="400" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RAMO_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="b1278004-3e98-4979-9252-b2eed452bc93" stretchType="RelativeToBandHeight" x="500" y="0" width="50" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRG}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="586d5844-d37d-427e-a070-8dbf7c32163c" stretchType="RelativeToBandHeight" x="550" y="0" width="400" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROGRAMA_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="1d5be847-0e45-4d3e-90fd-88f86730777d" stretchType="RelativeToBandHeight" x="950" y="0" width="50" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DEPTO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="10995c62-9cc9-462b-b773-ed1546a5af36" stretchType="RelativeToBandHeight" x="1000" y="0" width="400" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DEPARTAMENTO_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="a6e4c22b-c700-48b9-83b4-419aae9ee527" stretchType="RelativeToBandHeight" x="2050" y="0" width="50" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{META}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="5d955878-01bf-4fcc-ae90-5f429ca1bc90" stretchType="RelativeToBandHeight" x="2100" y="0" width="1000" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{META_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="30b4441f-828b-44d2-a542-92670535b878" stretchType="RelativeToBandHeight" x="3150" y="0" width="1000" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ACCION_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="b3104294-b213-4607-9028-ed779e882f60" stretchType="RelativeToBandHeight" x="4150" y="0" width="50" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PARTIDA}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="e719ca39-af34-47c8-aa78-2c53e1364431" stretchType="RelativeToBandHeight" x="4200" y="0" width="1000" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PARTIDA_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="b1a7afe7-d4af-41b4-a9a6-e41cd27879c5" stretchType="RelativeToBandHeight" x="5200" y="0" width="1000" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REQUERIMIENTO_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="31badef8-25b5-4dff-9ff8-ec6c44b12977" stretchType="RelativeToBandHeight" x="6200" y="0" width="200" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COSTO_REQUERIMIENTO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="28706e2f-4ef9-412d-bfdc-7a3b48ccad80" stretchType="RelativeToBandHeight" x="6400" y="0" width="200" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE_RECALENDARIZAR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="ddd6dba2-5072-400d-96a9-08d640646ac8" stretchType="RelativeToBandHeight" x="6600" y="0" width="200" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ENE_MOD}+$F{FEB_MOD}+$F{MAR_MOD}+$F{ABR_MOD}+$F{MAY_MOD}+$F{JUN_MOD}+$F{JUL_MOD}+$F{AGO_MOD}+$F{SEP_MOD}+$F{OCT_MOD}+$F{NOV_MOD}+$F{DIC_MOD} >6 ?
+	"Afecta más de 6 meses"
+:
+	($F{ENE_MOD}+$F{FEB_MOD}+$F{MAR_MOD} > 0 ) && ($F{ABR_MOD}+$F{MAY_MOD}+$F{JUN_MOD} > 0) ?
+		"Afecta 6 meses"
+	:
+		($F{ENE_MOD}+$F{FEB_MOD}+$F{MAR_MOD} > 0 ) && ($F{JUL_MOD}+$F{AGO_MOD}+$F{SEP_MOD} > 0) ?
+			"Afecta más de 6 meses"
+		:
+			($F{ENE_MOD}+$F{FEB_MOD}+$F{MAR_MOD} > 0 ) && ($F{OCT_MOD}+$F{NOV_MOD}+$F{DIC_MOD} > 0) ?
+				"Afecta más de 6 meses"
+			:
+				($F{ABR_MOD}+$F{MAY_MOD}+$F{JUN_MOD} > 0) && ($F{JUL_MOD}+$F{AGO_MOD}+$F{SEP_MOD} > 0) ?
+					"Afecta 6 meses"
+				:
+					($F{ABR_MOD}+$F{MAY_MOD}+$F{JUN_MOD} > 0) && ($F{OCT_MOD}+$F{NOV_MOD}+$F{DIC_MOD} > 0) ?
+						"Afecta más de 6 meses"
+					:
+						($F{JUL_MOD}+$F{AGO_MOD}+$F{SEP_MOD} > 0) && ($F{OCT_MOD}+$F{NOV_MOD}+$F{DIC_MOD} > 0) ?
+							"Afecta 6 meses"
+						:
+							$F{TRIMESTRE_ACT} == 1?
+								($F{ENE_MOD}+$F{FEB_MOD}+$F{MAR_MOD} > 0 ) && ($F{ENE_MOD}+$F{FEB_MOD}+$F{MAR_MOD}+$F{ABR_MOD}+$F{MAY_MOD}+$F{JUN_MOD}+$F{JUL_MOD}+$F{AGO_MOD}+$F{SEP_MOD}+$F{OCT_MOD}+$F{NOV_MOD}+$F{DIC_MOD} < 4 ) ?
+									"Dentro del trimestre"
+								:
+									"Excede el trimestre"
+							:
+								$F{TRIMESTRE_ACT} == 2?
+									($F{ABR_MOD}+$F{MAY_MOD}+$F{JUN_MOD} > 0) && ($F{ENE_MOD}+$F{FEB_MOD}+$F{MAR_MOD}+$F{ABR_MOD}+$F{MAY_MOD}+$F{JUN_MOD}+$F{JUL_MOD}+$F{AGO_MOD}+$F{SEP_MOD}+$F{OCT_MOD}+$F{NOV_MOD}+$F{DIC_MOD} < 4 ) ?
+										"Dentro del trimestre"
+									:
+										"Excede el trimestre"
+								:
+									$F{TRIMESTRE_ACT} == 3?
+										($F{JUL_MOD}+$F{AGO_MOD}+$F{SEP_MOD} > 0) && ($F{ENE_MOD}+$F{FEB_MOD}+$F{MAR_MOD}+$F{ABR_MOD}+$F{MAY_MOD}+$F{JUN_MOD}+$F{JUL_MOD}+$F{AGO_MOD}+$F{SEP_MOD}+$F{OCT_MOD}+$F{NOV_MOD}+$F{DIC_MOD} < 4 ) ?
+											"Dentro del trimestre"
+										:
+											"Excede el trimestre"
+									:
+										($F{TRIMESTRE_ACT} == 4) && ($F{ENE_MOD}+$F{FEB_MOD}+$F{MAR_MOD}+$F{ABR_MOD}+$F{MAY_MOD}+$F{JUN_MOD}+$F{JUL_MOD}+$F{AGO_MOD}+$F{SEP_MOD}+$F{OCT_MOD}+$F{NOV_MOD}+$F{DIC_MOD} < 4 ) ?
+											"Dentro del trimestre"
+										:
+											"Excede el trimestre"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="e359905a-7488-4492-9956-6e2ee8b8cdb8" stretchType="RelativeToBandHeight" x="6800" y="0" width="200" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[( $F{IMPACTOS_PROG_META}+$F{IMPACTOS_PROG_ACCION} > 2 ) ?
+"Si" :
+"No"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="d4af39ed-7ec5-4689-98ea-0c7a05d95b82" stretchType="RelativeToBandHeight" x="7000" y="0" width="200" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{IMPACTOS_PROG_META} > 0 && $F{IMPACTOS_PROG_ACCION} > 0) ?
+"Acción y Meta" :
+($F{IMPACTOS_PROG_META} > 0) ?
+"Meta" :
+($F{IMPACTOS_PROG_ACCION} > 0) ?
+"Acción" :
+""]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="9a7bdb17-5356-4a03-b577-ad443010b897" stretchType="RelativeToBandHeight" x="7200" y="0" width="200" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHAELAB}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="6f959ed7-71a2-4d69-a1c8-c51a402f8892" stretchType="RelativeToBandHeight" x="7400" y="0" width="200" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECPPTO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="71922ec2-dcd3-4d80-9871-46caf90b4738" stretchType="RelativeToBandHeight" x="7600" y="0" width="200" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ESTATUS_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="a77209a3-0226-48e4-81a9-c5fd076c03bd" stretchType="RelativeToBandHeight" x="7800" y="0" width="2000" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{JUSTIFICACION}.getSubString( (long)1, (int)$F{JUSTIFICACION}.length() )]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="d484cb52-0309-458b-9e04-8804e53b8661" stretchType="RelativeToBandHeight" x="9800" y="0" width="60" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CONSIDERAR}.equals("S")?
+"SI"
+:
+"NO"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="65f98e1d-7669-48b6-95b0-143bd0e93c33" stretchType="RelativeToBandHeight" x="1400" y="0" width="50" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPO_PROY}+$F{PROY}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="038a3c7f-b9ac-4801-bd41-ca96766b6232" stretchType="RelativeToBandHeight" x="1450" y="0" width="600" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROYACT_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="e4912bfa-f31c-466e-9a6c-4ef7d7601959" stretchType="RelativeToBandHeight" x="0" y="0" width="50" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OFICIO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="fbba6e52-ef5a-4833-95d8-22dbeaa0eac9" stretchType="RelativeToBandHeight" x="3100" y="0" width="50" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ACCION}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<noData>
+		<band height="81">
+			<staticText>
+				<reportElement uuid="98008ece-895f-4c46-93a6-90c1dee1a3a8" stretchType="RelativeToBandHeight" mode="Opaque" x="50" y="0" width="50" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ramo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2d48d158-3493-40c4-8d40-8eeb60ae937a" stretchType="RelativeToBandHeight" mode="Opaque" x="100" y="0" width="400" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ramo Redacción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="86e6fa9b-dd88-4069-8d2b-2882902279ce" stretchType="RelativeToBandHeight" mode="Opaque" x="500" y="0" width="50" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Programa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="eff0b03f-6dc5-48b7-888a-2c0db5c1aefc" stretchType="RelativeToBandHeight" mode="Opaque" x="550" y="0" width="400" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Programa Redacción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6f096ffc-9d01-484d-9fac-8866bafeb688" mode="Opaque" x="950" y="0" width="50" height="30" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4648c258-5ab6-4f48-8ebc-f2d08ce7463e" stretchType="RelativeToBandHeight" mode="Opaque" x="950" y="30" width="50" height="30" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ejecutora]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="aed91469-8d0b-4f07-8967-0588b26e22a4" stretchType="RelativeToBandHeight" mode="Opaque" x="1000" y="0" width="400" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unidad Ejecutora Descripción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b3cea31a-aa89-44d3-aa35-f47b32e2660d" stretchType="RelativeToBandHeight" mode="Opaque" x="2050" y="0" width="50" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Meta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="67abd37f-6e90-46b6-b634-cc19847c2bad" stretchType="RelativeToBandHeight" mode="Opaque" x="2100" y="0" width="1000" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Meta Redacción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b65a2a87-e10a-44e3-9298-799b2a6735c3" stretchType="RelativeToBandHeight" mode="Opaque" x="3100" y="0" width="50" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Acción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="da4f12f8-56bd-44bb-8323-94444b7f8f1a" stretchType="RelativeToBandHeight" mode="Opaque" x="3150" y="0" width="1000" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Acción Redacción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="39b73cda-717c-4fb2-9d5c-eaeb4bb86bbf" stretchType="RelativeToBandHeight" mode="Opaque" x="4200" y="0" width="1000" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Partida descripción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="31e6166b-3e71-4058-8318-3119e12c20e3" stretchType="RelativeToBandHeight" mode="Opaque" x="4150" y="0" width="50" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Partida]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="02e3e5b9-207e-425b-a254-7d94269d51d3" stretchType="RelativeToBandHeight" mode="Opaque" x="5200" y="0" width="1000" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Requerimiento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="74313799-7382-4aea-9c3c-02fb74659337" stretchType="RelativeToBandHeight" mode="Opaque" x="6200" y="0" width="200" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Costo Requerimiento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d3491da0-2f2d-46fe-ba7f-4a11560b06f4" stretchType="RelativeToBandHeight" mode="Opaque" x="6400" y="0" width="200" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Importe a recalendarizar]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="874124a2-6633-46eb-947b-6cf7a2453819" stretchType="RelativeToBandHeight" mode="Opaque" x="6600" y="0" width="200" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Rangos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="106499f0-14ea-41fa-8885-c9e015ac554e" stretchType="RelativeToBandHeight" mode="Opaque" x="6800" y="0" width="200" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Afectación Programatica]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e7f2c914-04a3-4614-b8a0-d8d3002f5eba" stretchType="RelativeToBandHeight" mode="Opaque" x="7000" y="0" width="200" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo de afectación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="03821432-48c4-41da-aa9c-d3184315f9d3" stretchType="RelativeToBandHeight" mode="Opaque" x="7200" y="0" width="200" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha de solicitud]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b8fbfa0c-1ea1-446a-a4b9-8b46ed2ea81b" stretchType="RelativeToBandHeight" mode="Opaque" x="7400" y="0" width="200" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha de aplicación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9d630e40-22b3-4eea-a7b3-282d34a52a3b" stretchType="RelativeToBandHeight" mode="Opaque" x="7600" y="0" width="200" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Status]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a314491c-07e1-4314-9a03-8655745580c8" stretchType="RelativeToBandHeight" mode="Opaque" x="7800" y="0" width="2000" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Justificación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3bf636ec-c47a-456d-94de-3b41ca4424bb" stretchType="RelativeToBandHeight" mode="Opaque" x="9800" y="0" width="60" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Considerar?]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f4a122ef-2c32-40cf-94ff-97dd16a6b862" stretchType="RelativeToBandHeight" mode="Opaque" x="1400" y="0" width="50" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Proyecto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ec5084e1-6fac-4f1f-bf83-2ed0b6a9fa20" stretchType="RelativeToBandHeight" mode="Opaque" x="1450" y="0" width="600" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Proyecto Redacción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6e94fcd1-660d-443a-af15-22902fdc57f9" stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="50" height="60" forecolor="#FFFFFF" backcolor="#376091"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Oficio]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="5fcea24f-251c-459c-b70d-d1f7335de362" stretchType="RelativeToBandHeight" x="0" y="60" width="10060" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["No existe información para los parámetros seleccionados."]]></textFieldExpression>
+			</textField>
+		</band>
+	</noData>
+</jasperReport>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subRepEncabezado" language="groovy" pageWidth="592" pageHeight="75" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="592" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="429c0da5-fcda-455f-b04a-9d4a3bbaa9d5">
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.cell.locked" value="false"/>
+	<property name="ireport.zoom" value="2.253944402704733"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<parameter name="RAMO" class="java.lang.String"/>
+	<parameter name="ID_CARATULA" class="java.lang.String"/>
+	<parameter name="IMG_DIR" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT *
+FROM
+(
+    SELECT
+        R.RAMO,
+        R.DESCR,
+        R.ABREVIATURA,
+        (
+            SELECT
+                REVS.DESCR_CORTA||' '||UPPER(REVS.DESCR)||' '||TIS.DESCR CARATULA
+            FROM
+                POA.CARATULA CAR,
+                POA.REVISIONES_CARATULA REVS,
+                POA.TIPO_SESION TIS
+            WHERE
+                CAR.YEAR = $P{YEAR} AND
+                CAR.RAMO = $P{RAMO} AND
+                CAR.ID_CARATULA = $P{ID_CARATULA} AND
+                REVS.REVISION = CAR.NUMERO_SESION AND
+                TIS.CVE_SESION = CAR.TIPO_SESION
+        ) CARATULA,
+        (
+            SELECT
+                CASE WHEN REVSM.DESCR_CORTA IS NOT NULL THEN REVSM.DESCR_CORTA||' '||REVSM.DESCR||' presupuestal ' ELSE ' No Aplica ' END MODIFICACION
+            FROM
+                POA.CARATULA CAR,
+                POA.REVISIONES_CARATULA REVSM,
+                POA.TIPO_SESION TIS
+            WHERE
+                CAR.YEAR = $P{YEAR} AND
+                CAR.RAMO = $P{RAMO} AND
+                CAR.ID_CARATULA = $P{ID_CARATULA} AND
+                REVSM.REVISION (+)= CAR.NUM_MOD_PRES AND
+                TIS.CVE_SESION = CAR.TIPO_SESION
+        ) CARATULAM,
+        (
+            SELECT
+                REVSM.DESCR_CORTA||' '|| 'programática' MODIFICACION
+            FROM
+                POA.CARATULA CAR,
+                POA.REVISIONES_CARATULA REVSM,
+                POA.TIPO_SESION TIS
+            WHERE
+                CAR.YEAR = $P{YEAR} AND
+                CAR.RAMO = $P{RAMO} AND
+                CAR.ID_CARATULA = $P{ID_CARATULA} AND
+                REVSM.REVISION = CAR.NUM_MOD_PROG AND
+                TIS.CVE_SESION = CAR.TIPO_SESION
+        ) CARATULAPROG,
+        (
+	        SELECT
+	            CASE WHEN CAR.TIPO_MODIFICACION = 2 THEN ' - '||TIM.DESCR ELSE ' ' END TIPOMODIFICACIONDESCR
+	        FROM
+	            POA.CARATULA CAR,
+                POA.TIPO_MODIFICACION TIM
+	        WHERE
+	            CAR.YEAR = $P{YEAR} AND
+	            CAR.RAMO = $P{RAMO} AND
+	            CAR.ID_CARATULA = $P{ID_CARATULA} AND
+                TIM.TIPO_MODIFICACION = CAR.TIPO_MODIFICACION
+      ) CARATULATIPOMODIFICACION
+    FROM DGI.RAMOS R
+    WHERE R.RAMO = $P{RAMO}
+    ORDER BY R.RAMO,R.ABREVIATURA
+)
+WHERE  ROWNUM = 1]]>
+	</queryString>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="DESCR" class="java.lang.String"/>
+	<field name="ABREVIATURA" class="java.lang.String"/>
+	<field name="CARATULA" class="java.lang.String"/>
+	<field name="CARATULAM" class="java.lang.String"/>
+	<field name="CARATULAPROG" class="java.lang.String"/>
+	<field name="CARATULATIPOMODIFICACION" class="java.lang.String"/>
+	<variable name="BAKCGROUND" class="java.lang.String" resetType="None" calculation="DistinctCount">
+		<variableExpression><![CDATA[$V{REPORT_COUNT}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<detail>
+		<band height="74" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="1a3a3211-9cf0-4ccf-b78b-25b7ba62da22" x="65" y="31" width="462" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[JUSTIFICACIONES]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="d047860b-d9db-43d2-83d1-10f773cb2031" x="65" y="0" width="462" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="fac754ff-7ecc-4450-abe7-d09f09837c5f" x="65" y="18" width="462" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ABREVIATURA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="4a464fe0-c5c9-4392-bde0-702ba7320e6f" x="65" y="47" width="462" height="13">
+					<printWhenExpression><![CDATA[!$P{ID_CARATULA}.equals("-2") ]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CARATULAM} + " " + $F{CARATULATIPOMODIFICACION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="40b4445c-51e6-432e-bd7b-a3ccbe8bb13f" x="65" y="60" width="462" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["EJERCICIO: "+$P{YEAR}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement uuid="2e991dbb-109b-498a-b3ca-813c05e482ed" x="0" y="0" width="65" height="70"/>
+				<imageExpression><![CDATA[$P{IMG_DIR} + "EDO.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement uuid="025b0fec-e954-4739-9852-aad327b8f6ee" x="527" y="0" width="65" height="70"/>
+				<imageExpression><![CDATA[$P{IMG_DIR} + "EDO.gif"]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+</jasperReport>

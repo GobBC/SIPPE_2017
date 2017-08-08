@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SubRptPresupuesto" language="groovy" pageWidth="752" pageHeight="572" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="752" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="64956415-c2d8-4a04-850a-c9f70096c64a">
+	<property name="ireport.zoom" value="1.100000000000002"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="RAMO" class="java.lang.String"/>
+	<parameter name="PROG" class="java.lang.String"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+	A.GRUPO AS GRUPO,
+	A.DESCR AS DESCR,
+	NVL(A.IMPORTE,0) AS IMPORTE
+FROM
+	(
+		SELECT
+			GPO.GRUPO AS GRUPO,
+			GPO.DESCR AS DESCR,
+			SUM(S_POA_PPTO_AUTORIZADO.ASIGNADO) AS IMPORTE
+		FROM
+			S_POA_PPTO_AUTORIZADO,
+			DGI.PARTIDA ,
+			S_DGI_GRUPOS GPO,
+			S_DGI_SUBGRUPOS SUBGPO,
+			S_DGI_SUBSUBGPO SUBSUBGPO
+		WHERE
+			S_POA_PPTO_AUTORIZADO.YEAR = $P{YEAR}  AND
+			S_POA_PPTO_AUTORIZADO.RAMO = $P{RAMO} AND
+			S_POA_PPTO_AUTORIZADO.PRG = $P{PROG}  AND
+			DGI.PARTIDA.YEAR = S_POA_PPTO_AUTORIZADO.YEAR AND
+			DGI.PARTIDA.PARTIDA = S_POA_PPTO_AUTORIZADO.PARTIDA AND
+			SUBSUBGPO.YEAR = PARTIDA.YEAR AND
+			SUBSUBGPO.SUBSUBGRUPO = PARTIDA.SUBSUBGPO AND
+			SUBGPO.YEAR = SUBSUBGPO.YEAR AND
+			SUBGPO.SUBGRUPO = SUBSUBGPO.SUBGRUPO AND
+			GPO.YEAR = SUBGPO.YEAR AND
+			GPO.GRUPO = SUBGPO.GRUPO
+		GROUP BY
+			GPO.GRUPO,
+			GPO.DESCR
+		ORDER BY
+			GPO.GRUPO
+	) A]]>
+	</queryString>
+	<field name="GRUPO" class="java.lang.String"/>
+	<field name="DESCR" class="java.lang.String"/>
+	<field name="IMPORTE" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="32">
+			<staticText>
+				<reportElement uuid="95d27819-60a7-4e4c-b7a3-43d792e5928f" mode="Opaque" x="0" y="16" width="100" height="16" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CAPÍTULO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b55b3ec6-bda0-484e-b118-85762d058ad0" mode="Opaque" x="100" y="0" width="394" height="16" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRESUPUESTO POR CATEGORÍA PROGRAMÁTICA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2ccd1b62-ed3e-4f36-9e21-802d81cce7a1" mode="Opaque" x="100" y="16" width="394" height="16" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCIÓN CAPÍTULO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8ea6f9fb-baad-4065-8aa4-44a3226b1a6f" mode="Opaque" x="494" y="0" width="175" height="32" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRESUPUESTO AUTORIZADO INICIAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bd9fc032-4f5d-478a-842e-e33413450ecf" mode="Opaque" x="0" y="0" width="100" height="16" backcolor="#CCCCCC"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="4edd1d2b-8d06-4123-9e60-767ca00d2a10" x="0" y="0" width="100" height="14"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GRUPO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="7ba2e70d-d9cd-4828-b20a-7ecad1364f27" x="100" y="0" width="394" height="14"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="64837d0b-895b-4aff-96d7-d37052242987" x="494" y="0" width="175" height="14"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

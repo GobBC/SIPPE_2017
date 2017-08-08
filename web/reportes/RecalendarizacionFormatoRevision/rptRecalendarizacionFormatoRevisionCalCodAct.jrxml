@@ -1,0 +1,1364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptRecalendarizacionFormatoRevisionCalCodAct" language="groovy" pageWidth="211" pageHeight="161" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="211" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d08c2163-aa59-4226-a299-145bee118e5f">
+	<property name="ireport.zoom" value="1.996500000000022"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="78"/>
+	<subDataset name="New Dataset 1" uuid="00758d1d-b59c-4887-b00f-260cf4170944">
+		<queryString language="SQL">
+			<![CDATA[SELECT
+	DECODE('A','A',IMPACT1,IMPHIST1) IMPENE,
+	DECODE('A','A',IMPACT2,IMPHIST2) IMPFEB,
+	DECODE('A','A',IMPACT3,IMPHIST3) IMPMAR,
+	DECODE('A','A',IMPACT4,IMPHIST4) IMPABR,
+	DECODE('A','A',IMPACT5,IMPHIST5) IMPMAY,
+	DECODE('A','A',IMPACT6,IMPHIST6) IMPJUN,
+	DECODE('A','A',IMPACT7,IMPHIST7) IMPJUL,
+	DECODE('A','A',IMPACT8,IMPHIST8) IMPAGO,
+	DECODE('A','A',IMPACT9,IMPHIST9) IMPSEP,
+	DECODE('A','A',IMPACT10,IMPHIST10) IMPOCT,
+	DECODE('A','A',IMPACT11,IMPHIST11) IMPNOV,
+	DECODE('A','A',IMPACT12,IMPHIST12) IMPDIC,
+	DECODE('A','A',TOTALACT,TOTALHIST) TOTALIMP,
+	PPTO.ENE,
+	PPTO.FEB,
+	PPTO.MAR,
+	PPTO.ABR,
+	PPTO.MAY,
+	PPTO.JUN,
+	PPTO.JUL,
+	PPTO.AGO,
+	PPTO.SEP,
+	PPTO.OCT,
+	PPTO.NOV,
+	PPTO.DIC,
+	(
+		PPTO.ENE+
+		PPTO.FEB+
+		PPTO.MAR+
+		PPTO.ABR+
+		PPTO.MAY+
+		PPTO.JUN+
+		PPTO.JUL+
+		PPTO.AGO+
+		PPTO.SEP+
+		PPTO.OCT+
+		PPTO.NOV+
+		PPTO.DIC
+	) TOTALANUAL
+
+FROM
+	SPP.VW_PRESUP_ASIG_MEN  PPTO,
+	(
+		SELECT
+			ACCREQ.YEAR,
+			ACCREQ.RAMO,
+			ACCREQ.PRG,
+			ACCREQ.DEPTO,
+			MET.TIPO_PROY,
+			MET.PROY,
+			ACCREQ.META,
+			ACCREQ.ACCION,
+			ACCREQ.PARTIDA,
+			ACCREQ.FUENTE,
+			ACCREQ.FONDO,
+			ACCREQ.RECURSO,
+			ACCREQ.ENE*ACCREQ.COSTO_UNITARIO IMPACT1,
+			ACCREQ.FEB*ACCREQ.COSTO_UNITARIO IMPACT2,
+			ACCREQ.MAR*ACCREQ.COSTO_UNITARIO IMPACT3,
+			ACCREQ.ABR*ACCREQ.COSTO_UNITARIO IMPACT4,
+			ACCREQ.MAY*ACCREQ.COSTO_UNITARIO IMPACT5,
+			ACCREQ.JUN*ACCREQ.COSTO_UNITARIO IMPACT6,
+			ACCREQ.JUL*ACCREQ.COSTO_UNITARIO IMPACT7,
+			ACCREQ.AGO*ACCREQ.COSTO_UNITARIO IMPACT8,
+			ACCREQ.SEP*ACCREQ.COSTO_UNITARIO IMPACT9,
+			ACCREQ.OCT*ACCREQ.COSTO_UNITARIO IMPACT10,
+			ACCREQ.NOV*ACCREQ.COSTO_UNITARIO IMPACT11,
+			ACCREQ.DIC*ACCREQ.COSTO_UNITARIO IMPACT12,
+			(
+					ACCREQ.ENE*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.FEB*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.MAR*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.ABR*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.MAY*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.JUN*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.JUL*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.AGO*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.SEP*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.OCT*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.NOV*ACCREQ.COSTO_UNITARIO +
+					ACCREQ.DIC*ACCREQ.COSTO_UNITARIO
+			) TOTALACT
+		FROM
+			POA.ACCION_REQ ACCREQ,
+			S_POA_META MET
+		WHERE
+			ACCREQ.YEAR = 2016 AND
+			ACCREQ.RAMO = '02' AND
+			ACCREQ.PRG = '156' AND
+			ACCREQ.DEPTO = 333 AND
+			MET.TIPO_PROY = 'A' AND
+			MET.PROY = 495 AND
+			ACCREQ.META = 20 AND
+			ACCREQ.ACCION = 2 AND
+			ACCREQ.PARTIDA = '33101' AND
+			ACCREQ.FUENTE = '1' AND
+			ACCREQ.FONDO = '01' AND
+			ACCREQ.RECURSO = '16' AND
+			ACCREQ.REQUERIMIENTO = 2 AND
+			MET.YEAR = ACCREQ.YEAR AND
+			MET.RAMO = ACCREQ.RAMO AND
+			MET.PRG = ACCREQ.PRG AND
+			MET.META = ACCREQ.META
+	) ACCREQ,
+	(
+		SELECT
+			HISTACCREQ.YEAR,
+			HISTACCREQ.RAMO,
+			HISTACCREQ.PRG,
+			HISTACCREQ.DEPTO,
+			MET.TIPO_PROY,
+			MET.PROY,
+			HISTACCREQ.META,
+			HISTACCREQ.ACCION,
+			HISTACCREQ.PARTIDA,
+			HISTACCREQ.FUENTE,
+			HISTACCREQ.FONDO,
+			HISTACCREQ.RECURSO,
+			HISTACCREQ.ENE*HISTACCREQ.COSTO_UNITARIO IMPHIST1,
+			HISTACCREQ.FEB*HISTACCREQ.COSTO_UNITARIO IMPHIST2,
+			HISTACCREQ.MAR*HISTACCREQ.COSTO_UNITARIO IMPHIST3,
+			HISTACCREQ.ABR*HISTACCREQ.COSTO_UNITARIO IMPHIST4,
+			HISTACCREQ.MAY*HISTACCREQ.COSTO_UNITARIO IMPHIST5,
+			HISTACCREQ.JUN*HISTACCREQ.COSTO_UNITARIO IMPHIST6,
+			HISTACCREQ.JUL*HISTACCREQ.COSTO_UNITARIO IMPHIST7,
+			HISTACCREQ.AGO*HISTACCREQ.COSTO_UNITARIO IMPHIST8,
+			HISTACCREQ.SEP*HISTACCREQ.COSTO_UNITARIO IMPHIST9,
+			HISTACCREQ.OCT*HISTACCREQ.COSTO_UNITARIO IMPHIST10,
+			HISTACCREQ.NOV*HISTACCREQ.COSTO_UNITARIO IMPHIST11,
+			HISTACCREQ.DIC*HISTACCREQ.COSTO_UNITARIO IMPHIST12,
+			(
+					HISTACCREQ.ENE*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.FEB*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.MAR*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.ABR*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.MAY*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.JUN*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.JUL*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.AGO*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.SEP*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.OCT*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.NOV*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.DIC*HISTACCREQ.COSTO_UNITARIO
+			) TOTALHIST
+		FROM
+			POA.HIST_ACCION_REQ HISTACCREQ,
+			S_POA_META MET
+		WHERE
+			HISTACCREQ.YEAR = 2016 AND
+			HISTACCREQ.RAMO = '02' AND
+			HISTACCREQ.PRG = '156' AND
+			HISTACCREQ.DEPTO = 333 AND
+			MET.TIPO_PROY = 'A' AND
+			MET.PROY = 495 AND
+			HISTACCREQ.META = 20 AND
+			HISTACCREQ.ACCION = 2 AND
+			HISTACCREQ.PARTIDA = '33101' AND
+			HISTACCREQ.FUENTE = '1' AND
+			HISTACCREQ.FONDO = '01' AND
+			HISTACCREQ.RECURSO = '16' AND
+			HISTACCREQ.REQUERIMIENTO = 2 AND
+			MET.YEAR = HISTACCREQ.YEAR AND
+			MET.RAMO = HISTACCREQ.RAMO AND
+			MET.PRG = HISTACCREQ.PRG AND
+			MET.META = HISTACCREQ.META
+	) HISTACCREQ
+WHERE
+	PPTO.YEAR = 2016 AND
+	PPTO.RAMO = '02' AND
+	PPTO.PRG = '156' AND
+	PPTO.DEPTO = 333 AND
+	PPTO.TIPO_PROY = 'A' AND
+	PPTO.PROYECTO = 495 AND
+	PPTO.META = 20 AND
+	PPTO.ACCION = 2 AND
+	PPTO.PARTIDA = '33101' AND
+	PPTO.FUENTE = '1' AND
+	PPTO.FONDO = '01' AND
+	PPTO.RECURSO = '16' AND
+	ACCREQ.YEAR = PPTO.YEAR AND
+	ACCREQ.RAMO = PPTO.RAMO AND
+	ACCREQ.PRG = PPTO.PRG AND
+	ACCREQ.DEPTO = PPTO.DEPTO AND
+	ACCREQ.TIPO_PROY = PPTO.TIPO_PROY AND
+	ACCREQ.PROY = PPTO.PROYECTO AND
+	ACCREQ.META = PPTO.META AND
+	ACCREQ.ACCION = PPTO.ACCION AND
+	ACCREQ.PARTIDA = PPTO.PARTIDA AND
+	ACCREQ.FUENTE = PPTO.FUENTE AND
+	ACCREQ.FONDO = PPTO.FONDO AND
+	ACCREQ.RECURSO = PPTO.RECURSO AND
+	HISTACCREQ.YEAR = PPTO.YEAR AND
+	HISTACCREQ.RAMO = PPTO.RAMO AND
+	HISTACCREQ.PRG = PPTO.PRG AND
+	HISTACCREQ.DEPTO = PPTO.DEPTO AND
+	HISTACCREQ.TIPO_PROY = PPTO.TIPO_PROY AND
+	HISTACCREQ.PROY = PPTO.PROYECTO AND
+	HISTACCREQ.META = PPTO.META AND
+	HISTACCREQ.ACCION = PPTO.ACCION AND
+	HISTACCREQ.PARTIDA = PPTO.PARTIDA AND
+	HISTACCREQ.FUENTE = PPTO.FUENTE AND
+	HISTACCREQ.FONDO = PPTO.FONDO AND
+	HISTACCREQ.RECURSO = PPTO.RECURSO AND
+	HISTACCREQ.YEAR = ACCREQ.YEAR AND
+	HISTACCREQ.RAMO = ACCREQ.RAMO AND
+	HISTACCREQ.PRG = ACCREQ.PRG AND
+	HISTACCREQ.DEPTO = ACCREQ.DEPTO AND
+	HISTACCREQ.TIPO_PROY = ACCREQ.TIPO_PROY AND
+	HISTACCREQ.PROY = ACCREQ.PROY AND
+	HISTACCREQ.META = ACCREQ.META AND
+	HISTACCREQ.ACCION = ACCREQ.ACCION AND
+	HISTACCREQ.PARTIDA = ACCREQ.PARTIDA AND
+	HISTACCREQ.FUENTE = ACCREQ.FUENTE AND
+	HISTACCREQ.FONDO = ACCREQ.FONDO AND
+	HISTACCREQ.RECURSO = ACCREQ.RECURSO]]>
+		</queryString>
+		<field name="IMPENE" class="java.math.BigDecimal"/>
+		<field name="IMPFEB" class="java.math.BigDecimal"/>
+		<field name="IMPMAR" class="java.math.BigDecimal"/>
+		<field name="IMPABR" class="java.math.BigDecimal"/>
+		<field name="IMPMAY" class="java.math.BigDecimal"/>
+		<field name="IMPJUN" class="java.math.BigDecimal"/>
+		<field name="IMPJUL" class="java.math.BigDecimal"/>
+		<field name="IMPAGO" class="java.math.BigDecimal"/>
+		<field name="IMPSEP" class="java.math.BigDecimal"/>
+		<field name="IMPOCT" class="java.math.BigDecimal"/>
+		<field name="IMPNOV" class="java.math.BigDecimal"/>
+		<field name="IMPDIC" class="java.math.BigDecimal"/>
+		<field name="TOTALIMP" class="java.math.BigDecimal"/>
+		<field name="ENE" class="java.math.BigDecimal"/>
+		<field name="FEB" class="java.math.BigDecimal"/>
+		<field name="MAR" class="java.math.BigDecimal"/>
+		<field name="ABR" class="java.math.BigDecimal"/>
+		<field name="MAY" class="java.math.BigDecimal"/>
+		<field name="JUN" class="java.math.BigDecimal"/>
+		<field name="JUL" class="java.math.BigDecimal"/>
+		<field name="AGO" class="java.math.BigDecimal"/>
+		<field name="SEP" class="java.math.BigDecimal"/>
+		<field name="OCT" class="java.math.BigDecimal"/>
+		<field name="NOV" class="java.math.BigDecimal"/>
+		<field name="DIC" class="java.math.BigDecimal"/>
+		<field name="TOTALANUAL" class="java.math.BigDecimal"/>
+		<group name="IMPENE">
+			<groupExpression><![CDATA[$F{IMPENE}]]></groupExpression>
+		</group>
+		<group name="ENE">
+			<groupExpression><![CDATA[$F{ENE}]]></groupExpression>
+		</group>
+	</subDataset>
+	<parameter name="IMG_DIR" class="java.lang.String"/>
+	<parameter name="OFICIO" class="java.lang.Long"/>
+	<parameter name="STATUS" class="java.lang.String"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<parameter name="RAMO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PRG" class="java.lang.String"/>
+	<parameter name="DEPTO" class="java.math.BigDecimal"/>
+	<parameter name="TIPO_PROY" class="java.lang.String"/>
+	<parameter name="PROY" class="java.math.BigDecimal"/>
+	<parameter name="META" class="java.math.BigDecimal"/>
+	<parameter name="ACCION" class="java.math.BigDecimal"/>
+	<parameter name="PARTIDA" class="java.lang.String"/>
+	<parameter name="FUENTE" class="java.lang.String"/>
+	<parameter name="FONDO" class="java.lang.String"/>
+	<parameter name="RECURSO" class="java.lang.String"/>
+	<parameter name="REQUERIMIENTO" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RPT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\desarrollo\\repositorio_local\\POA\\web\\reportes\\RecalendarizacionFormatoRevision\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\desarrollo\\repositorio_local\\POA\\web\\reportes\\RecalendarizacionFormatoRevision\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+	DECODE($P{STATUS},'A',IMPHIST1,IMPACT1) ENEIMP,
+	DECODE($P{STATUS},'A',IMPHIST2,IMPACT2) FEBIMP,
+	DECODE($P{STATUS},'A',IMPHIST3,IMPACT3) MARIMP,
+	DECODE($P{STATUS},'A',IMPHIST4,IMPACT4) ABRIMP,
+	DECODE($P{STATUS},'A',IMPHIST5,IMPACT5) MAYIMP,
+	DECODE($P{STATUS},'A',IMPHIST6,IMPACT6) JUNIMP,
+	DECODE($P{STATUS},'A',IMPHIST7,IMPACT7) JULIMP,
+	DECODE($P{STATUS},'A',IMPHIST8,IMPACT8) AGOIMP,
+	DECODE($P{STATUS},'A',IMPHIST9,IMPACT9) SEPIMP,
+	DECODE($P{STATUS},'A',IMPHIST10,IMPACT10) OCTIMP,
+	DECODE($P{STATUS},'A',IMPHIST11,IMPACT11) NOVIMP,
+	DECODE($P{STATUS},'A',IMPHIST12,IMPACT12) DICIMP,
+	DECODE($P{STATUS},'A',TOTALHIST,TOTALACT) TOTALIMP
+FROM
+	(
+		SELECT
+			ACCREQ.YEAR,
+			ACCREQ.RAMO,
+			ACCREQ.PRG,
+			ACCREQ.DEPTO,
+			MET.TIPO_PROY,
+			MET.PROY,
+			ACCREQ.META,
+			ACCREQ.ACCION,
+			ACCREQ.PARTIDA,
+			ACCREQ.FUENTE,
+			ACCREQ.FONDO,
+			ACCREQ.RECURSO,
+			ACCREQ.REQUERIMIENTO,
+			ACCREQ.ENE*ACCREQ.COSTO_UNITARIO IMPACT1,
+			ACCREQ.FEB*ACCREQ.COSTO_UNITARIO IMPACT2,
+			ACCREQ.MAR*ACCREQ.COSTO_UNITARIO IMPACT3,
+			ACCREQ.ABR*ACCREQ.COSTO_UNITARIO IMPACT4,
+			ACCREQ.MAY*ACCREQ.COSTO_UNITARIO IMPACT5,
+			ACCREQ.JUN*ACCREQ.COSTO_UNITARIO IMPACT6,
+			ACCREQ.JUL*ACCREQ.COSTO_UNITARIO IMPACT7,
+			ACCREQ.AGO*ACCREQ.COSTO_UNITARIO IMPACT8,
+			ACCREQ.SEP*ACCREQ.COSTO_UNITARIO IMPACT9,
+			ACCREQ.OCT*ACCREQ.COSTO_UNITARIO IMPACT10,
+			ACCREQ.NOV*ACCREQ.COSTO_UNITARIO IMPACT11,
+			ACCREQ.DIC*ACCREQ.COSTO_UNITARIO IMPACT12,
+			(
+				ACCREQ.ENE*ACCREQ.COSTO_UNITARIO +
+				ACCREQ.FEB*ACCREQ.COSTO_UNITARIO +
+				ACCREQ.MAR*ACCREQ.COSTO_UNITARIO +
+				ACCREQ.ABR*ACCREQ.COSTO_UNITARIO +
+				ACCREQ.MAY*ACCREQ.COSTO_UNITARIO +
+				ACCREQ.JUN*ACCREQ.COSTO_UNITARIO +
+				ACCREQ.JUL*ACCREQ.COSTO_UNITARIO +
+				ACCREQ.AGO*ACCREQ.COSTO_UNITARIO +
+				ACCREQ.SEP*ACCREQ.COSTO_UNITARIO +
+				ACCREQ.OCT*ACCREQ.COSTO_UNITARIO +
+				ACCREQ.NOV*ACCREQ.COSTO_UNITARIO +
+				ACCREQ.DIC*ACCREQ.COSTO_UNITARIO
+			) TOTALACT
+		FROM
+			POA.ACCION_REQ ACCREQ,
+			S_POA_META MET
+		WHERE
+			ACCREQ.YEAR = $P{YEAR} AND
+			ACCREQ.RAMO = $P{RAMO} AND
+			ACCREQ.PRG = $P{PRG} AND
+			ACCREQ.DEPTO = $P{DEPTO} AND
+			MET.TIPO_PROY = $P{TIPO_PROY} AND
+			MET.PROY = $P{PROY} AND
+			ACCREQ.META = $P{META} AND
+			ACCREQ.ACCION = $P{ACCION} AND
+			ACCREQ.PARTIDA = $P{PARTIDA} AND
+			ACCREQ.FUENTE = $P{FUENTE} AND
+			ACCREQ.FONDO = $P{FONDO} AND
+			ACCREQ.RECURSO = $P{RECURSO} AND
+			ACCREQ.REQUERIMIENTO = $P{REQUERIMIENTO} AND
+			MET.YEAR = ACCREQ.YEAR AND
+			MET.RAMO = ACCREQ.RAMO AND
+			MET.PRG = ACCREQ.PRG AND
+			MET.META = ACCREQ.META
+	) ACCREQ,
+	(
+		SELECT
+			HISTACCREQ.OFICIO,
+			HISTACCREQ.YEAR,
+			HISTACCREQ.RAMO,
+			HISTACCREQ.PRG,
+			HISTACCREQ.DEPTO,
+			MET.TIPO_PROY,
+			MET.PROY,
+			HISTACCREQ.META,
+			HISTACCREQ.ACCION,
+			HISTACCREQ.PARTIDA,
+			HISTACCREQ.FUENTE,
+			HISTACCREQ.FONDO,
+			HISTACCREQ.RECURSO,
+			HISTACCREQ.REQUERIMIENTO,
+			HISTACCREQ.ENE*HISTACCREQ.COSTO_UNITARIO IMPHIST1,
+			HISTACCREQ.FEB*HISTACCREQ.COSTO_UNITARIO IMPHIST2,
+			HISTACCREQ.MAR*HISTACCREQ.COSTO_UNITARIO IMPHIST3,
+			HISTACCREQ.ABR*HISTACCREQ.COSTO_UNITARIO IMPHIST4,
+			HISTACCREQ.MAY*HISTACCREQ.COSTO_UNITARIO IMPHIST5,
+			HISTACCREQ.JUN*HISTACCREQ.COSTO_UNITARIO IMPHIST6,
+			HISTACCREQ.JUL*HISTACCREQ.COSTO_UNITARIO IMPHIST7,
+			HISTACCREQ.AGO*HISTACCREQ.COSTO_UNITARIO IMPHIST8,
+			HISTACCREQ.SEP*HISTACCREQ.COSTO_UNITARIO IMPHIST9,
+			HISTACCREQ.OCT*HISTACCREQ.COSTO_UNITARIO IMPHIST10,
+			HISTACCREQ.NOV*HISTACCREQ.COSTO_UNITARIO IMPHIST11,
+			HISTACCREQ.DIC*HISTACCREQ.COSTO_UNITARIO IMPHIST12,
+			(
+					HISTACCREQ.ENE*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.FEB*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.MAR*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.ABR*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.MAY*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.JUN*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.JUL*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.AGO*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.SEP*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.OCT*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.NOV*HISTACCREQ.COSTO_UNITARIO +
+					HISTACCREQ.DIC*HISTACCREQ.COSTO_UNITARIO
+			) TOTALHIST
+		FROM
+			POA.HIST_ACCION_REQ HISTACCREQ,
+			S_POA_META MET
+		WHERE
+			HISTACCREQ.OFICIO = $P{OFICIO} AND
+			HISTACCREQ.YEAR = $P{YEAR} AND
+			HISTACCREQ.RAMO = $P{RAMO} AND
+			HISTACCREQ.PRG = $P{PRG} AND
+			HISTACCREQ.DEPTO = $P{DEPTO} AND
+			MET.TIPO_PROY = $P{TIPO_PROY} AND
+			MET.PROY = $P{PROY} AND
+			HISTACCREQ.META = $P{META} AND
+			HISTACCREQ.ACCION = $P{ACCION} AND
+			HISTACCREQ.PARTIDA = $P{PARTIDA} AND
+			HISTACCREQ.FUENTE = $P{FUENTE} AND
+			HISTACCREQ.FONDO = $P{FONDO} AND
+			HISTACCREQ.RECURSO = $P{RECURSO} AND
+			HISTACCREQ.REQUERIMIENTO = $P{REQUERIMIENTO} AND
+			MET.YEAR = HISTACCREQ.YEAR AND
+			MET.RAMO = HISTACCREQ.RAMO AND
+			MET.PRG = HISTACCREQ.PRG AND
+			MET.META = HISTACCREQ.META
+	) HISTACCREQ
+WHERE
+	ACCREQ.REQUERIMIENTO = $P{REQUERIMIENTO} AND
+	ACCREQ.YEAR = $P{YEAR} AND
+	ACCREQ.RAMO = $P{RAMO} AND
+	ACCREQ.PRG = $P{PRG} AND
+	ACCREQ.DEPTO = $P{DEPTO} AND
+	ACCREQ.TIPO_PROY = $P{TIPO_PROY} AND
+	ACCREQ.PROY = $P{PROY} AND
+	ACCREQ.META = $P{META} AND
+	ACCREQ.ACCION = $P{ACCION} AND
+	ACCREQ.PARTIDA = $P{PARTIDA} AND
+	ACCREQ.FUENTE = $P{FUENTE} AND
+	ACCREQ.FONDO = $P{FONDO}AND
+	ACCREQ.RECURSO = $P{RECURSO} AND
+
+	HISTACCREQ.REQUERIMIENTO = $P{REQUERIMIENTO} AND
+	HISTACCREQ.OFICIO = $P{OFICIO}  AND
+	HISTACCREQ.YEAR = $P{YEAR} AND
+	HISTACCREQ.RAMO = $P{RAMO} AND
+	HISTACCREQ.PRG = $P{PRG} AND
+	HISTACCREQ.DEPTO = $P{DEPTO} AND
+	HISTACCREQ.TIPO_PROY = $P{TIPO_PROY} AND
+	HISTACCREQ.PROY = $P{PROY} AND
+	HISTACCREQ.META = $P{META} AND
+	HISTACCREQ.ACCION = $P{ACCION} AND
+	HISTACCREQ.PARTIDA = $P{PARTIDA} AND
+	HISTACCREQ.FUENTE = $P{FUENTE} AND
+	HISTACCREQ.FONDO = $P{FONDO} AND
+	HISTACCREQ.RECURSO = $P{RECURSO}]]>
+	</queryString>
+	<field name="ENEIMP" class="java.math.BigDecimal"/>
+	<field name="FEBIMP" class="java.math.BigDecimal"/>
+	<field name="MARIMP" class="java.math.BigDecimal"/>
+	<field name="ABRIMP" class="java.math.BigDecimal"/>
+	<field name="MAYIMP" class="java.math.BigDecimal"/>
+	<field name="JUNIMP" class="java.math.BigDecimal"/>
+	<field name="JULIMP" class="java.math.BigDecimal"/>
+	<field name="AGOIMP" class="java.math.BigDecimal"/>
+	<field name="SEPIMP" class="java.math.BigDecimal"/>
+	<field name="OCTIMP" class="java.math.BigDecimal"/>
+	<field name="NOVIMP" class="java.math.BigDecimal"/>
+	<field name="DICIMP" class="java.math.BigDecimal"/>
+	<field name="TOTALIMP" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="161">
+			<staticText>
+				<reportElement uuid="bbe71d88-f0ff-45be-a973-bdee1d502f38" mode="Opaque" x="0" y="0" width="210" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CALENDARIZACIÓN CÓDIGO ACTUAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a4f51571-0d18-4e4d-9974-58252cd7d6e2" mode="Opaque" x="0" y="10" width="70" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c69e8e4f-6ec5-47be-9066-b58d3a679535" mode="Opaque" x="70" y="10" width="70" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[IMPORTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9928df78-caad-4ba6-8486-4a829d0b7000" mode="Opaque" x="140" y="10" width="70" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PPTO.ANUAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="edb07eab-a27a-4840-a469-e559f4cb621f" mode="Opaque" x="140" y="20" width="70" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[(DEPTO-PARTIDA)]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="7436fe0b-5572-404f-b04b-f1915f629eeb" x="70" y="140" width="70" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DICIMP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="7495eb2e-e4db-4564-aa7f-2bc810f23756" x="70" y="40" width="70" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FEBIMP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="4d2ee739-5c42-4e13-b7ab-76c14573a632" x="70" y="120" width="70" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OCTIMP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="0e02a091-0cf1-45b2-a2f2-359130978431" x="70" y="90" width="70" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{JULIMP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="c2ff3c09-aba1-44eb-a79c-e2df70777db0" x="70" y="30" width="70" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ENEIMP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="3a7af241-3208-472e-a0b6-f9b19310b638" x="70" y="110" width="70" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SEPIMP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="72145307-3663-46bd-befb-d109e308faef" x="70" y="130" width="70" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOVIMP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="e044363f-43fb-41ce-ad1b-bf2d8f3e86ca" x="70" y="100" width="70" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AGOIMP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="98f59520-8caa-40f8-8750-0c791cb6c99c" x="70" y="50" width="70" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MARIMP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="f7c68322-08c6-4862-b624-294535a07c19" x="70" y="70" width="70" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MAYIMP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="32b1dfc6-756e-4a04-9752-60f85b086d89" x="70" y="60" width="70" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ABRIMP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="1bbf6689-c20b-4246-877e-fcb7c0aa8523" x="70" y="80" width="70" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{JUNIMP}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="173484b5-aa61-47bc-95a6-88341ef70e34" mode="Transparent" x="0" y="30" width="70" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ENERO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="38fc73f8-da91-44bd-bfdc-973855c11e56" mode="Transparent" x="0" y="40" width="70" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FEBRERO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3f509d9d-b240-4b67-8e91-f9f3c98f1900" mode="Transparent" x="0" y="50" width="70" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MARZO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9d408790-65f3-47ca-a31a-12c5ff3d30b1" mode="Transparent" x="0" y="60" width="70" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ABRIL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="744eb27b-0edb-4720-b2f6-765dc4d1120d" mode="Transparent" x="0" y="70" width="70" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MAYO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="048fa299-a6d2-4bf6-b3bd-f068bb21f1da" mode="Transparent" x="0" y="80" width="70" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[JUNIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f0d19217-73fb-4fa1-8a13-c0dbc0a701cb" mode="Transparent" x="0" y="90" width="70" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[JULIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="61ef5a89-dbe3-41e4-9c7f-1cf069fc2c70" mode="Transparent" x="0" y="100" width="70" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AGOSTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f6dac911-79ec-4218-9afe-706199e096b5" mode="Transparent" x="0" y="110" width="70" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SEPTIEMBRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5c510525-3e1f-4989-8762-e38ccea242c6" mode="Transparent" x="0" y="120" width="70" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[OCTUBRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2493206d-2436-4f23-9c65-b827a9d81f46" mode="Transparent" x="0" y="130" width="70" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOVIEMBRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="144a82f7-db92-4a17-b176-9e749f0b2861" mode="Transparent" x="0" y="140" width="70" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DICIEMBRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9160343c-1c69-4e47-b645-e4f7fc14984d" mode="Opaque" x="0" y="150" width="70" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="af43c7c0-c0d3-42ed-ad12-c5c3be8892ee" mode="Opaque" x="70" y="150" width="70" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTALIMP}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement uuid="ea0c6c41-5442-4240-93fb-c561fb4056b4" x="140" y="30" width="71" height="131"/>
+				<subreportParameter name="PRG">
+					<subreportParameterExpression><![CDATA[$P{PRG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DEPTO">
+					<subreportParameterExpression><![CDATA[$P{DEPTO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARTIDA">
+					<subreportParameterExpression><![CDATA[$P{PARTIDA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMG_DIR">
+					<subreportParameterExpression><![CDATA[$P{IMG_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$P{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "rptRecalendarizacionFormatoRevisionPptoAnualPartida.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<noData>
+		<band height="161">
+			<staticText>
+				<reportElement uuid="22afb3d1-0933-42f2-adbd-b2c41caf253a" mode="Transparent" x="0" y="140" width="70" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DICIEMBRE]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c75359a3-efef-4311-a29b-668cca5dc131" x="70" y="140" width="70" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[0]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="3615a08e-beb8-4901-94c1-eb58cafe3eaf" mode="Opaque" x="70" y="150" width="70" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[0]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="8f313bdb-15fc-47b2-84ac-47817b61549c" x="70" y="100" width="70" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[0]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="5b049abf-03fb-425d-8c1e-909af4b02072" mode="Transparent" x="0" y="110" width="70" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SEPTIEMBRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4dc5e996-f535-46bb-9762-6c738d43b35b" mode="Opaque" x="140" y="10" width="70" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PPTO.ANUAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6c9c4a99-4963-45f5-a260-fb4395fe04fd" mode="Opaque" x="140" y="20" width="70" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[(DEPTO-PARTIDA)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4e560f21-b652-4597-86c8-9e91041eefca" mode="Opaque" x="0" y="10" width="70" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="497a8d3a-1cc6-4ebe-9f81-c1c66e2d3839" mode="Opaque" x="0" y="0" width="210" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CALENDARIZACIÓN CÓDIGO ACTUAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="fffb1c06-2173-40ff-8133-a126de040b4f" mode="Transparent" x="0" y="40" width="70" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FEBRERO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ff08312c-e883-43c8-93cc-b891629573a0" mode="Transparent" x="0" y="90" width="70" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[JULIO]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="cb85f008-afbb-4309-bd14-c0ae4093e382" x="70" y="120" width="70" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[0]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="8d06d305-3ab0-4000-adf4-fe1d53bc7c6e" mode="Opaque" x="0" y="150" width="70" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="39217561-5815-4f48-a67d-8643f6a64876" x="70" y="50" width="70" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[0]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="d81ce506-7770-4ad6-bbea-9d23a5044d1b" mode="Transparent" x="0" y="100" width="70" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AGOSTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3b870bc5-619a-42b4-b77e-0ce676515b96" mode="Transparent" x="0" y="60" width="70" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ABRIL]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="9ed62168-fb5c-41a3-8854-96a212ce8b3e" x="70" y="80" width="70" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[0]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="307868fb-a167-4e0b-8a8e-d851f766842d" x="70" y="110" width="70" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[0]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="d5633642-938d-4b54-b402-923628a65fe2" x="70" y="60" width="70" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[0]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="fc0f931d-bc24-45a2-b5bf-a6d63292d651" x="70" y="70" width="70" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[0]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="169c9b1f-8d96-438d-a2b2-b5bc64b98d24" mode="Opaque" x="70" y="10" width="70" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[IMPORTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="31f1e8ec-2109-4c14-aa14-83693bb54121" mode="Transparent" x="0" y="70" width="70" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MAYO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="deb288f4-815b-4520-9069-3cac68ab7dc6" mode="Transparent" x="0" y="80" width="70" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[JUNIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="138704ee-2918-41e6-bc58-75c1c044f3f4" mode="Transparent" x="0" y="120" width="70" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[OCTUBRE]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="5c152a7b-053c-4824-805b-762049f2e45b" x="70" y="130" width="70" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[0]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="e6308bb1-7896-4366-a7c2-0d7c76cd8893" mode="Transparent" x="0" y="30" width="70" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ENERO]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="a0fd7851-a056-4f71-bb6e-fd80546ee978" x="70" y="30" width="70" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[0]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="99bdb7c3-19b8-43af-b76f-b8daffe67904" mode="Transparent" x="0" y="50" width="70" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MARZO]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="50bdc56a-e90b-4620-bd0c-998f74f09ffe" x="70" y="90" width="70" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[0]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="df6893cc-09b0-44b1-b0d6-613faedf39e6" mode="Transparent" x="0" y="130" width="70" height="10" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOVIEMBRE]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="766d54be-6d19-46d8-96cf-6190a7316657" x="70" y="40" width="70" height="10"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[0]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement uuid="03c44540-8639-4d17-b68e-15fb6d162f58" x="140" y="30" width="71" height="131"/>
+				<subreportParameter name="PRG">
+					<subreportParameterExpression><![CDATA[$P{PRG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PARTIDA">
+					<subreportParameterExpression><![CDATA[$P{PARTIDA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DEPTO">
+					<subreportParameterExpression><![CDATA[$P{DEPTO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMG_DIR">
+					<subreportParameterExpression><![CDATA[$P{IMG_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$P{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "rptRecalendarizacionFormatoRevisionPptoAnualPartida.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</noData>
+</jasperReport>

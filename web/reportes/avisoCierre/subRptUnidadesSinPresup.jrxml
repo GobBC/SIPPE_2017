@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subRptUnidadesSinPresup" language="groovy" pageWidth="758" pageHeight="752" whenNoDataType="NoDataSection" columnWidth="758" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="66ea01c5-8362-4919-9dff-156835d3766f">
+	<property name="ireport.zoom" value="1.1"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select distinct r.ramo||' '||r.descr as ramo,
+       d.depto||' '||d.descr as depto
+from dgi.dependencia d,
+     S_POA_CODPROG cp,
+     dgi.ramos r
+where d.ramo=cp.ramo and
+      d.depto=cp.depto and
+      d.year=cp.year and
+      cp.year= $P{YEAR} and
+      r.ramo=cp.ramo and
+      r.year=cp.year and
+      cp.ramo in(select ur.ramo
+                from POA.VW_ACC_USR_RAMO ur
+                where ur.app_login= $P{USUARIO} and
+                      ur.year= $P{YEAR}
+               ) and
+      not exists(select 1 from S_POA_ACCION_REQ ar where ar.ramo=cp.ramo and ar.depto=cp.depto and ar.year=cp.year)
+ORDER BY ramo, depto]]>
+	</queryString>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="DEPTO" class="java.lang.String"/>
+	<group name="RAMO">
+		<groupExpression><![CDATA[$F{RAMO}]]></groupExpression>
+		<groupHeader>
+			<band height="25">
+				<staticText>
+					<reportElement uuid="a136c6a1-0a15-43f0-ace8-cc7e8c06dc8a" x="0" y="0" width="46" height="20"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<text><![CDATA[Ramo:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="0dce913c-460a-4a34-8182-c718529cd1b3" stretchType="RelativeToBandHeight" x="46" y="0" width="712" height="20"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{RAMO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="30" splitType="Stretch">
+			<textField>
+				<reportElement uuid="1f0ce29c-cd6c-4da9-994a-7bb0b0782a92" mode="Opaque" x="0" y="5" width="758" height="20" forecolor="#FFFFFF" backcolor="#02A3DF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Unidades Ejecutoras sin Presupuestar " + $P{YEAR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="e048ac2d-3492-48ee-9d4f-d705a35930c2" x="46" y="0" width="20" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="1a43c711-8890-4441-9293-ca3f7fc05536" x="66" y="0" width="692" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DEPTO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="22" splitType="Stretch"/>
+	</summary>
+	<noData>
+		<band height="30">
+			<textField>
+				<reportElement uuid="2a8951d8-4925-4178-869f-271add28dfac" mode="Opaque" x="0" y="5" width="758" height="20" forecolor="#FFFFFF" backcolor="#02A3DF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Unidades Ejecutoras sin Presupuestar " + $P{YEAR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</noData>
+</jasperReport>

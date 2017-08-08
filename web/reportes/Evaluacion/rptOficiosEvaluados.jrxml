@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptOficiosEvaluados" language="groovy" pageWidth="848" pageHeight="612" orientation="Landscape" columnWidth="808" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="49ff78de-9dae-4eac-96cb-0d0f1c457204">
+	<property name="ireport.zoom" value="1.6105100000000014"/>
+	<property name="ireport.x" value="24"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="YEAR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RPT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IMG_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\aplicacionesJava\\POA\\web\\reportes\\Evaluacion\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    R.RAMO,
+    R.RAMO||' '||R.DESCR RDESC,
+    BE.IDENTIFICADOR,
+    TO_CHAR(BE.FECHA_EVALUACION, 'DD/MM/YYYY HH:MM') FECHA_EVALUACION,
+    BE.APP_LOGIN,
+    P.SECRETARIA,
+    P.GOBIERNO
+FROM
+    POA.BITACORA_EVALUACION BE,
+    POA.MOVOFICIOS M,
+    DGI.PARAMETROS P,
+    DGI.DGI_USR U,
+    DGI.RAMOS R
+WHERE
+    R.YEAR = 2017
+    AND M.OFICIO = BE.IDENTIFICADOR
+    AND EXTRACT(YEAR FROM M.FECHAELAB) = R.YEAR
+    AND U.SYS_CLAVE = 1
+    AND U.APP_LOGIN = TRIM(M.APP_LOGIN)
+    AND U.RAMO = R.RAMO
+ORDER BY R.RAMO, M.OFICIO]]>
+	</queryString>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="RDESC" class="java.lang.String"/>
+	<field name="IDENTIFICADOR" class="java.math.BigDecimal"/>
+	<field name="FECHA_EVALUACION" class="java.lang.String"/>
+	<field name="APP_LOGIN" class="java.lang.String"/>
+	<field name="SECRETARIA" class="java.lang.String"/>
+	<field name="GOBIERNO" class="java.lang.String"/>
+	<group name="RAMO">
+		<groupExpression><![CDATA[$F{RAMO}]]></groupExpression>
+		<groupHeader>
+			<band height="54">
+				<staticText>
+					<reportElement uuid="f87cc9f0-3481-4310-ab50-65735aa9f185" x="0" y="4" width="41" height="20"/>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Ramo:]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="947eaaec-91f2-4ee0-9340-6d00334dab0e" x="41" y="4" width="767" height="20"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{RDESC}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="e96f5cc6-136b-4518-84ae-c2bcd13a6ab4" mode="Opaque" x="0" y="30" width="58" height="24" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Oficio]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="406ca97f-8be9-4344-b462-ef10b3a674e3" mode="Opaque" x="58" y="30" width="150" height="12" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Vo. bo. de Evaluación]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="d838ce92-f9a5-4378-a2ba-aa35038a5e71" mode="Opaque" x="208" y="30" width="150" height="12" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[1ra. revisión Planeación]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="cbee8966-29f3-46ab-8f95-f6943db864ad" mode="Opaque" x="358" y="30" width="150" height="12" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[2da. revisión Planeación]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="4d2a9592-c8be-493b-ab94-6ed7b28670e4" mode="Opaque" x="508" y="30" width="150" height="12" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Autorización Planeación]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="5183e699-68fe-41ff-92b7-a036addf3741" mode="Opaque" x="58" y="42" width="75" height="12" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+					<text><![CDATA[Usuario]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="af1fc96d-e400-4132-9d99-ad4c1c5154fd" mode="Opaque" x="133" y="42" width="75" height="12" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+					<text><![CDATA[Fecha]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="fc7a779d-84de-4c46-ad88-cddd45c30a85" mode="Opaque" x="658" y="30" width="150" height="12" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Autorización Presupuesto]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="23f76021-eaa8-4e34-bf4b-a9821503b64c" mode="Opaque" x="208" y="42" width="75" height="12" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+					<text><![CDATA[Usuario]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="02111058-c51e-4bb7-93f6-4e42ce111637" mode="Opaque" x="283" y="42" width="75" height="12" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+					<text><![CDATA[Fecha]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="99452e89-4c22-47c5-bec6-55c2b8b739fe" mode="Opaque" x="358" y="42" width="75" height="12" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+					<text><![CDATA[Usuario]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="4e440142-fe6b-4b7d-88de-c15b13ad9ea6" mode="Opaque" x="433" y="42" width="75" height="12" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+					<text><![CDATA[Fecha]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="9d682935-1ab4-480c-95a2-2cc2e2617057" mode="Opaque" x="508" y="42" width="75" height="12" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+					<text><![CDATA[Usuario]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="6edde7af-5167-49c9-baab-f74c3ef0dff4" mode="Opaque" x="583" y="42" width="75" height="12" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+					<text><![CDATA[Fecha]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="ebb480f0-60c1-4e5e-ae9f-6c394efe204f" mode="Opaque" x="658" y="42" width="75" height="12" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+					<text><![CDATA[Usuario]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="f72b7042-5d4d-408b-9aaa-a9afb1d6c074" mode="Opaque" x="733" y="42" width="75" height="12" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9"/>
+					</textElement>
+					<text><![CDATA[Fecha]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<title>
+		<band height="66" splitType="Stretch">
+			<textField>
+				<reportElement uuid="4ec17fcf-d5f2-4da9-9e1a-d41ab01d5822" x="0" y="5" width="808" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GOBIERNO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="167ddbb3-adbe-4c9b-bde9-7593fff86574" x="0" y="27" width="808" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SECRETARIA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="eb3a5c56-c568-4f11-84c6-f3c7dacc037c" x="0" y="49" width="808" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Oficios evaluados Ejercicio " + $P{YEAR}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement uuid="5f4a0a83-df7d-4979-ad0a-5a210b5d3fee" x="0" y="-1" width="66" height="59"/>
+				<imageExpression><![CDATA[$P{IMG_DIR} + "EDO.gif"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField>
+				<reportElement uuid="d1db4b6e-1422-4707-8388-e84034d46595" x="58" y="0" width="75" height="12"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{APP_LOGIN}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="86dd6bef-2804-4d8b-b290-1a02f8a4fd7d" x="133" y="0" width="75" height="12"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_EVALUACION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="49092d4d-4650-48f3-a6ab-49eb5aa4f43e" x="0" y="0" width="58" height="12"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IDENTIFICADOR}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement uuid="838b2c6c-7e0e-465c-8401-a44a2013e933" x="208" y="0" width="150" height="12"/>
+				<subreportParameter name="OFICIO">
+					<subreportParameterExpression><![CDATA[$F{IDENTIFICADOR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_FLUJO">
+					<subreportParameterExpression><![CDATA[4]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "rptOficiosEvaluadosAutorizacion.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement uuid="27fc9a18-ba09-4b11-8641-34f0e2f406e0" x="358" y="0" width="150" height="12"/>
+				<subreportParameter name="OFICIO">
+					<subreportParameterExpression><![CDATA[$F{IDENTIFICADOR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_FLUJO">
+					<subreportParameterExpression><![CDATA[1]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "rptOficiosEvaluadosAutorizacion.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement uuid="665f5363-74b6-4521-8798-be7415cb9386" x="508" y="0" width="150" height="12"/>
+				<subreportParameter name="OFICIO">
+					<subreportParameterExpression><![CDATA[$F{IDENTIFICADOR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_FLUJO">
+					<subreportParameterExpression><![CDATA[2]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "rptOficiosEvaluadosAutorizacion.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement uuid="b7dc3197-8bb0-44c3-89f8-9a3f70c44f47" x="658" y="0" width="150" height="12"/>
+				<subreportParameter name="OFICIO">
+					<subreportParameterExpression><![CDATA[$F{IDENTIFICADOR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_FLUJO">
+					<subreportParameterExpression><![CDATA[3]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "rptOficiosEvaluadosAutorizacion.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="35efca93-ddf7-4838-ac78-952c8eff2279" x="0" y="0" width="112" height="20"/>
+				<textElement/>
+				<text><![CDATA[<rptOficiosEvaluados>]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="2584ed06-15c8-404f-9293-42f2fd7331f9" x="688" y="0" width="80" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement uuid="6a0cd70c-a0d2-44e5-aa5f-6877144df8e9" x="768" y="0" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy h.mm a">
+				<reportElement uuid="9115ced9-63c8-4271-a344-e745b8b6d826" x="333" y="1" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subRptMetasSinCalendarizar" language="groovy" pageWidth="758" pageHeight="752" whenNoDataType="NoDataSection" columnWidth="758" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="8ab292c2-a085-4a8b-a457-ad9abab9e180">
+	<property name="ireport.zoom" value="1.1"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select r.ramo||'-'||r.descr as ramo,
+       m.meta,
+       m.descr
+from S_POA_META m,
+     dgi.ramos r
+where r.ramo=m.ramo and
+      r.year=m.year and
+      m.year= $P{YEAR} and
+      m.ramo in(select ur.ramo
+                from POA.VW_ACC_USR_RAMO ur
+                where ur.app_login= $P{USUARIO} and
+                      ur.year = $P{YEAR}
+                ) and
+      not exists(select 1 from dgi.estimacion e where e.ramo=m.ramo and e.year=m.year and e.meta=m.meta and e.valor>0)]]>
+	</queryString>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="META" class="java.math.BigDecimal"/>
+	<field name="DESCR" class="java.lang.String"/>
+	<group name="RAMO">
+		<groupExpression><![CDATA[$F{RAMO}]]></groupExpression>
+		<groupHeader>
+			<band height="25">
+				<staticText>
+					<reportElement uuid="dcdefe93-0d4a-44ad-a1da-03c6771f9e22" x="0" y="0" width="46" height="20"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<text><![CDATA[Ramo:]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="5be51fa7-7a0e-4521-8fa1-52fd14e45c65" x="46" y="0" width="712" height="20"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{RAMO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="META">
+		<groupExpression><![CDATA[$F{META}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="30" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="5bfbae75-92a6-45c3-82c7-74b5e2a08a68" mode="Opaque" x="0" y="6" width="758" height="20" forecolor="#FFFFFF" backcolor="#02A3DF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Metas sin Calendarización Mensual]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="25" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="f004eefe-3c84-4a7b-893f-a497f8af29e7" stretchType="RelativeToBandHeight" x="23" y="0" width="735" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{META}+"-"+$F{DESCR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+	<noData>
+		<band height="31">
+			<staticText>
+				<reportElement uuid="3276b586-4566-4ed8-860d-b3eb0d16aab9" mode="Opaque" x="0" y="5" width="758" height="20" forecolor="#FFFFFF" backcolor="#02A3DF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Metas sin Calendarización Mensual]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>

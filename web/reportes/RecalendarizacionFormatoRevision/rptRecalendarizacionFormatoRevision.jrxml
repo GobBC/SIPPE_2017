@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptRecalendarizacionFormatoRevision" language="groovy" pageWidth="792" pageHeight="530" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d08c2163-aa59-4226-a299-145bee118e5f">
+	<property name="ireport.zoom" value="2.1435888100000073"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="883"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Table Dataset 1" uuid="f35a429f-5fca-46f3-9a38-51cb2470a5e1"/>
+	<parameter name="IMG_DIR" class="java.lang.String"/>
+	<parameter name="OFICIO" class="java.lang.Long"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\desarrollo\\repositorio_local\\POA\\web\\reportes\\RecalendarizacionFormatoRevision\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RPT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\desarrollo\\repositorio_local\\POA\\web\\reportes\\RecalendarizacionFormatoRevision\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+	MOVS.OFICIO,
+	MOVSLIST.RAMO,
+	MOVS.STATUS,
+	PARM.GOBIERNO,
+	PARM.SECRETARIA,
+	SYSDATE FECHA
+FROM
+	POA.MOVOFICIOS MOVS,
+	(
+		SELECT
+			ALLMOVSLIST.OFICIO,
+			ALLMOVSLIST.YEAR,
+			ALLMOVSLIST.RAMO,
+			ALLMOVSLIST.PRG,
+			ALLMOVSLIST.META,
+			ALLMOVSLIST.ACCION,
+			ALLMOVSLIST.TIPO_PROY,
+			ALLMOVSLIST.PROY,
+			ALLMOVSLIST.DEPTO
+		FROM
+			(
+				SELECT
+					MOVMET.OFICIO,
+					MET.YEAR,
+					MET.RAMO,
+					MET.PRG,
+					MET.META,
+					0 ACCION,
+					MET.TIPO_PROY,
+					MET.PROY,
+					MET.DEPTO
+				FROM
+					POA.MOVOFICIOS_ESTIMACION MOVMET,
+					S_POA_META MET
+				WHERE
+					MOVMET.NVA_CREACION = 'N' AND
+					MOVMET.META > 0 AND
+					MET.YEAR = MOVMET.YEAR AND
+					MET.RAMO = MOVMET.RAMO AND
+					MET.META = MOVMET.META
+
+				UNION ALL
+
+				SELECT
+					MOVACC.OFICIO,
+					MET.YEAR,
+					MET.RAMO,
+					MET.PRG,
+					MET.META,
+					MOVACC.ACCION,
+					MET.TIPO_PROY,
+					MET.PROY,
+					MET.DEPTO
+				FROM
+					POA.MOVOFICIOS_ACCION_ESTIMACION MOVACC,
+					S_POA_META  MET
+				WHERE
+					MOVACC.NVA_CREACION = 'N' AND
+					MOVACC.ACCION > 0 AND
+					MET.YEAR = MOVACC.YEAR AND
+					MET.RAMO = MOVACC.RAMO AND
+					MET.META = MOVACC.META
+
+				UNION ALL
+
+				SELECT
+					MOVACCREQ.OFICIO,
+					MET.YEAR,
+					MET.RAMO,
+					MET.PRG,
+					MET.META,
+					MOVACCREQ.ACCION,
+					MET.TIPO_PROY,
+					MET.PROY,
+					MET.DEPTO
+				FROM
+					POA.MOVOFICIOS_ACCION_REQ MOVACCREQ,
+					S_POA_META  MET
+				WHERE
+					MOVACCREQ.NVA_CREACION = 'N' AND
+					MOVACCREQ.ACCION > 0 AND
+					MET.YEAR = MOVACCREQ.YEAR AND
+					MET.RAMO = MOVACCREQ.RAMO AND
+					MET.META = MOVACCREQ.META
+
+			) ALLMOVSLIST
+		GROUP BY
+			ALLMOVSLIST.OFICIO,
+			ALLMOVSLIST.YEAR,
+			ALLMOVSLIST.RAMO,
+			ALLMOVSLIST.PRG,
+			ALLMOVSLIST.META,
+			ALLMOVSLIST.ACCION,
+			ALLMOVSLIST.TIPO_PROY,
+			ALLMOVSLIST.PROY,
+			ALLMOVSLIST.DEPTO
+		ORDER BY
+			ALLMOVSLIST.OFICIO,
+			ALLMOVSLIST.YEAR,
+			ALLMOVSLIST.RAMO,
+			ALLMOVSLIST.PRG,
+			ALLMOVSLIST.META,
+			ALLMOVSLIST.ACCION,
+			ALLMOVSLIST.TIPO_PROY,
+			ALLMOVSLIST.PROY,
+			ALLMOVSLIST.DEPTO
+	) MOVSLIST,
+	DGI.PARAMETROS PARM,
+	S_POA_PROGRAMA PRG,
+	S_POA_VW_SP_PROY_ACT PROYACT
+
+WHERE
+	EXTRACT(YEAR FROM MOVS.FECHAELAB) = $P{YEAR} AND
+	MOVS.TIPOMOV = 'C' AND
+	MOVS.OFICIO = $P{OFICIO} AND
+	MOVSLIST.OFICIO = MOVS.OFICIO AND
+
+	PRG.YEAR = MOVSLIST.YEAR AND
+	PRG.PRG = MOVSLIST.PRG AND
+
+	PROYACT.YEAR = MOVSLIST.YEAR AND
+	PROYACT.TIPO_PROY = MOVSLIST.TIPO_PROY AND
+	PROYACT.PROY = MOVSLIST.PROY
+
+GROUP BY
+	MOVS.OFICIO,
+	MOVSLIST.RAMO,
+	MOVS.STATUS,
+	PARM.GOBIERNO,
+	PARM.SECRETARIA
+
+ORDER BY
+	MOVS.OFICIO,
+	MOVSLIST.RAMO,
+	MOVS.STATUS,
+	PARM.GOBIERNO,
+	PARM.SECRETARIA]]>
+	</queryString>
+	<field name="OFICIO" class="java.lang.Long"/>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="STATUS" class="java.lang.String"/>
+	<field name="GOBIERNO" class="java.lang.String"/>
+	<field name="SECRETARIA" class="java.lang.String"/>
+	<field name="FECHA" class="java.sql.Timestamp"/>
+	<group name="OFICIO">
+		<groupExpression><![CDATA[$F{OFICIO}]]></groupExpression>
+	</group>
+	<group name="RAMO">
+		<groupExpression><![CDATA[$F{RAMO}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="145">
+			<image>
+				<reportElement uuid="531c4172-6679-4222-af91-374efa9181a9" x="0" y="0" width="65" height="67"/>
+				<imageExpression><![CDATA[$P{IMG_DIR} + "EDO.gif"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement uuid="22a4fc4b-768a-456d-b7b4-bbd31e00a02e" x="65" y="0" width="622" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GOBIERNO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="8b3215e6-f547-4067-922b-88c140249efb" x="65" y="20" width="622" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SECRETARIA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="5e7cc2b3-4cd3-4021-9a97-b29bd0e6f76d" x="65" y="40" width="628" height="15"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA["SOLICITUD DE RECALENDARIZACIÓN PRESUPUESTAL"]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement uuid="a8ea4a5c-5524-4efd-8196-f8e4e6c1ece2" x="0" y="69" width="752" height="71"/>
+				<subreportParameter name="OFICIO">
+					<subreportParameterExpression><![CDATA[$F{OFICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMG_DIR">
+					<subreportParameterExpression><![CDATA[$P{IMG_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "rptRecalendarizacionFormatoRevisionDescrMov.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="327">
+			<subreport>
+				<reportElement uuid="ab433b2d-bb11-4d46-910f-cabd5ecc7992" x="0" y="0" width="752" height="325" isRemoveLineWhenBlank="true"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="OFICIO">
+					<subreportParameterExpression><![CDATA[$F{OFICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMG_DIR">
+					<subreportParameterExpression><![CDATA[$P{IMG_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="STATUS">
+					<subreportParameterExpression><![CDATA[$F{STATUS}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "rptRecalendarizacionFormatoRevisionListReq.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="32">
+			<subreport>
+				<reportElement uuid="8d27e174-f1c1-4ced-953b-bd0924a42dba" x="0" y="0" width="752" height="28" isRemoveLineWhenBlank="true"/>
+				<subreportParameter name="OFICIO">
+					<subreportParameterExpression><![CDATA[$P{OFICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMG_DIR">
+					<subreportParameterExpression><![CDATA[$P{IMG_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "rptRecalendarizacionFormatoRevisionImpacto.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="18" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="4f258745-17de-4116-8ef1-3a2e776adccf" x="0" y="0" width="182" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[<rptRecalendarizacionFormatoRevision>]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy h:mm a">
+				<reportElement uuid="75db77f0-3883-4e18-a6e0-e85fe989aa3c" x="1" y="0" width="751" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement uuid="cf731adb-d148-4a65-978a-827a5fde502a" x="712" y="0" width="40" height="18"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[" " + ($V{PAGE_NUMBER}>1? ($V{PAGE_NUMBER}-1):$V{PAGE_NUMBER} )]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="0d176f26-ce36-4039-a9e7-37db26fc621d" x="632" y="0" width="80" height="18"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

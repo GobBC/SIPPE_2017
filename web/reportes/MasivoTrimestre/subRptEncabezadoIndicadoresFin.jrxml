@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subRptEncabezadoIndicadoresFin" language="groovy" pageWidth="727" pageHeight="18" whenNoDataType="AllSectionsNoDetail" columnWidth="727" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="24e50e99-eb24-4094-b61c-eb323237ffee">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="731"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<columnHeader>
+		<band height="18">
+			<staticText>
+				<reportElement uuid="d25800f5-99af-4519-b356-edb7b82f33b3" mode="Opaque" x="0" y="0" width="179" height="16" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INDICADOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="08da4c8f-09d7-4288-84da-910af7141e3c" mode="Opaque" x="191" y="0" width="210" height="16" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[QUÉ MIDE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8e6cea58-2e6b-473a-acab-582d9b2a96b5" mode="Opaque" x="411" y="0" width="306" height="16" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ACTUALIZACIÓN]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+</jasperReport>

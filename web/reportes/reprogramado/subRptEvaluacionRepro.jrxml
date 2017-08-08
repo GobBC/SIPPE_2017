@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subRptEvaluacionRepro" language="groovy" pageWidth="230" pageHeight="25" orientation="Landscape" columnWidth="230" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="2a8bf936-584d-44ce-8df6-616f8d8a9ade">
+	<property name="ireport.zoom" value="1.1000000000000005"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<parameter name="META" class="java.math.BigDecimal"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<parameter name="RAMO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT 14,1,DGI.ESTIMACION_PERIODO.EVALUACION,
+DECODE(MET.CALCULO,'AC',NVL(NVL(B.VALOR,0),0),DECODE(MET.CALCULO,'MI',NVL(MIN(B.VALOR),0),NVL(MAX(B.VALOR),0))) AS VALOR,
+MET.DESCR AS META_DESC,
+MED.DESCR AS UNIDAD_DESC,
+(DECODE(MET.CALCULO,'AC',NVL(SUM(NVL(A.VALOR_ANUAL,0))/3,0),DECODE(MET.CALCULO,'MI',MIN(A.VALOR_ANUAL),MAX(A.VALOR_ANUAL)))) AS VALOR_ANUAL,
+MET.CALCULO,
+MET.META
+
+FROM
+        (
+        SELECT
+        DECODE(MET.CALCULO,'AC',NVL(SUM(NVL(POA.MOVOFICIOS_ESTIMACION.VALOR,0)),0),DECODE(MET.CALCULO,'MI',MIN(POA.MOVOFICIOS_ESTIMACION.VALOR),MAX(POA.MOVOFICIOS_ESTIMACION.VALOR))) AS VALOR_ANUAL
+        FROM
+        POA.MOVOFICIOS_ESTIMACION,
+        POA.MOVOFICIOS_META MET,
+        DGI.ESTIMACION_PERIODO
+        WHERE
+        ( POA.MOVOFICIOS_ESTIMACION.meta (+) = MET.META) and
+        ( POA.MOVOFICIOS_ESTIMACION.ramo (+) = MET.RAMO) and
+        ( POA.MOVOFICIOS_ESTIMACION.year (+) = MET.YEAR) and
+        ( POA.MOVOFICIOS_ESTIMACION.PERIODO = DGI.ESTIMACION_PERIODO.PERIODO) AND
+        POA.MOVOFICIOS_ESTIMACION.VALOR <> 0 and
+        ( ( MET.RAMO = $P{RAMO}) AND
+        ( MET.YEAR =  $P{YEAR}) AND
+        ( MET.META = $P{META}))
+
+
+        GROUP BY
+        DGI.ESTIMACION_PERIODO.EVALUACION,
+        MET.META,
+        MET.CALCULO
+
+        ORDER BY
+        MET.META,
+        DGI.ESTIMACION_PERIODO.EVALUACION ) A,
+        (SELECT DGI.ESTIMACION_PERIODO.EVALUACION,
+            DECODE(MET.CALCULO,'AC',NVL(SUM(NVL(POA.MOVOFICIOS_ESTIMACION.VALOR,0)),0),DECODE(MET.CALCULO,'MI',MIN(POA.MOVOFICIOS_ESTIMACION.VALOR),MAX(POA.MOVOFICIOS_ESTIMACION.VALOR))) AS VALOR
+        FROM
+            POA.MOVOFICIOS_ESTIMACION,
+            POA.MOVOFICIOS_META MET,
+            DGI.ESTIMACION_PERIODO
+        WHERE
+            ( POA.MOVOFICIOS_ESTIMACION.meta (+) = MET.META) and
+            ( POA.MOVOFICIOS_ESTIMACION.ramo (+) = MET.RAMO) and
+            ( POA.MOVOFICIOS_ESTIMACION.year (+) = MET.YEAR) and
+            ( POA.MOVOFICIOS_ESTIMACION.PERIODO = DGI.ESTIMACION_PERIODO.PERIODO) AND
+                   POA.MOVOFICIOS_ESTIMACION.VALOR <> 0 and
+            ( ( MET.RAMO = $P{RAMO} ) AND
+            ( MET.YEAR = $P{YEAR} ) AND
+            ( MET.META = $P{META}) )
+        GROUP BY
+            DGI.ESTIMACION_PERIODO.EVALUACION,
+            MET.META,
+            MET.CALCULO
+
+        ORDER BY
+            MET.META,
+            DGI.ESTIMACION_PERIODO.EVALUACION) B,
+
+        POA.MOVOFICIOS_ESTIMACION,
+        POA.MOVOFICIOS_META MET,
+        S_POA_MEDIDA_META MED,
+        DGI.ESTIMACION_PERIODO
+
+WHERE
+( MET.RAMO = $P{RAMO} ) AND
+( MET.YEAR = $P{YEAR}) AND
+( MET.META =$P{META}) AND
+B.EVALUACION(+)=DGI.ESTIMACION_PERIODO.EVALUACION AND
+POA.MOVOFICIOS_ESTIMACION.meta (+) = MET.META and
+POA.MOVOFICIOS_ESTIMACION.ramo (+) = MET.RAMO and
+POA.MOVOFICIOS_ESTIMACION.year (+) = MET.YEAR and
+MED.MEDIDA = MET.CVE_MEDIDA and
+MED.YEAR = MET.YEAR  and
+POA.MOVOFICIOS_ESTIMACION.PERIODO = DGI.ESTIMACION_PERIODO.PERIODO
+
+GROUP BY
+DGI.ESTIMACION_PERIODO.EVALUACION,
+MET.META,
+MET.DESCR,
+MET.CALCULO,
+MED.DESCR,
+B.VALOR
+
+ORDER BY
+MET.META,
+DGI.ESTIMACION_PERIODO.EVALUACION]]>
+	</queryString>
+	<field name="14" class="java.math.BigDecimal"/>
+	<field name="1" class="java.math.BigDecimal"/>
+	<field name="EVALUACION" class="java.math.BigDecimal"/>
+	<field name="VALOR" class="java.math.BigDecimal"/>
+	<field name="META_DESC" class="java.lang.String"/>
+	<field name="UNIDAD_DESC" class="java.lang.String"/>
+	<field name="VALOR_ANUAL" class="java.math.BigDecimal"/>
+	<field name="CALCULO" class="java.lang.String"/>
+	<field name="META" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<summary>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="cfddbace-1795-449a-8dd7-70c84ef05347" stretchType="RelativeToBandHeight" x="0" y="0" width="61" height="8"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font size="6" isBold="false" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VALOR_ANUAL}]]></textFieldExpression>
+			</textField>
+			<crosstab isRepeatRowHeaders="false">
+				<reportElement uuid="a1476c17-c6bd-418b-a703-0435f190f97d" x="61" y="0" width="168" height="20"/>
+				<rowGroup name="14" width="6">
+					<bucket class="java.math.BigDecimal">
+						<bucketExpression><![CDATA[$F{14}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#F0F8FF" mode="Transparent"/>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="EVALUACION" height="11">
+					<bucket class="java.math.BigDecimal">
+						<bucketExpression><![CDATA[$F{EVALUACION}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#F0F8FF" mode="Transparent">
+							<textField>
+								<reportElement uuid="1a985397-e831-4c3b-9401-1b26ad97ab4d" style="Crosstab Data Text" x="0" y="1" width="40" height="8"/>
+								<box>
+									<topPen lineWidth="0.5"/>
+									<leftPen lineWidth="0.5"/>
+									<bottomPen lineWidth="0.5"/>
+									<rightPen lineWidth="0.5"/>
+								</box>
+								<textElement verticalAlignment="Top">
+									<font size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{EVALUACION}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="VALORMeasure" class="java.math.BigDecimal">
+					<measureExpression><![CDATA[$F{VALOR}]]></measureExpression>
+				</measure>
+				<crosstabCell width="40" height="10">
+					<cellContents>
+						<textField>
+							<reportElement uuid="d358c2b9-dd8d-480b-a1f0-3764497728ea" style="Crosstab Data Text" x="0" y="0" width="40" height="8"/>
+							<textElement verticalAlignment="Top">
+								<font size="6"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{VALORMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="25" rowTotalGroup="14">
+					<cellContents backcolor="#BFE1FF" mode="Transparent">
+						<textField>
+							<reportElement uuid="47f954c8-18ea-4c8a-aa8b-9d1e1d581231" style="Crosstab Data Text" x="0" y="0" width="25" height="25" forecolor="#00CC00"/>
+							<textElement/>
+							<textFieldExpression><![CDATA[$V{VALORMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" columnTotalGroup="EVALUACION">
+					<cellContents backcolor="#BFE1FF" mode="Transparent">
+						<textField>
+							<reportElement uuid="7138e3a2-06ac-4e9d-8923-57303b2390dd" style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement/>
+							<textFieldExpression><![CDATA[$V{VALORMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup="14" columnTotalGroup="EVALUACION">
+					<cellContents backcolor="#BFE1FF" mode="Transparent">
+						<textField>
+							<reportElement uuid="5114a4ef-4975-467e-8256-f8c5e9df8ca5" style="Crosstab Data Text" x="0" y="0" width="25" height="25"/>
+							<textElement/>
+							<textFieldExpression><![CDATA[$V{VALORMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+			</crosstab>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptAmpliacionesBitFechaAut" language="groovy" pageWidth="100" pageHeight="20" columnWidth="100" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="721dcbf2-115f-45e6-b327-98e9b336969a">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="OFICIO" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[SELECT TO_CHAR(MAX(FECHAAUT),'DD/MM/YYYY') AS FECHAAUT
+FROM
+POA.BITMOVTOS
+WHERE
+OFICIO=$P{OFICIO}]]>
+	</queryString>
+	<field name="FECHAAUT" class="java.lang.String"/>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="500d3b03-02bd-476c-b886-7a1130d601d2" x="1" y="0" width="99" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{FECHAAUT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

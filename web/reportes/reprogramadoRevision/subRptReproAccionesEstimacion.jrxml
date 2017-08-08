@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subRptReproAccionesEstimacion" language="groovy" pageWidth="360" pageHeight="54" orientation="Landscape" columnWidth="360" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="53bbccee-89bb-474a-9e03-a9ce11001e8f">
+	<property name="ireport.zoom" value="1.9487171000000014"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="OFICIO" class="java.lang.String"/>
+	<parameter name="RAMO" class="java.lang.String"/>
+	<parameter name="META" class="java.lang.String"/>
+	<parameter name="ACCION" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+	NVL(ENE,0) IMP1,
+	NVL(FEB,0) IMP2,
+	NVL(MAR,0) IMP3,
+	NVL(ABR,0) IMP4,
+	NVL(MAY,0) IMP5,
+	NVL(JUN,0) IMP6,
+	NVL(JUL,0) IMP7,
+	NVL(AGO,0) IMP8,
+	NVL(SEP,0) IMP9,
+	NVL(OCT,0) IMP10,
+	NVL(NOV,0) IMP11,
+	NVL(DIC,0) IMP12
+FROM
+	(
+		SELECT
+			PERIODO,
+			VALOR,META
+		FROM
+			POA.MOVOFICIOS_ACCION_ESTIMACION
+		WHERE
+            OFICIO = $P{OFICIO} AND
+			RAMO = $P{RAMO} AND
+			META = $P{META} AND
+            ACCION = $P{ACCION}
+	 )
+PIVOT
+	(
+		SUM(NVL(VALOR,0))
+		FOR PERIODO IN(1 ENE, 2 FEB, 3 MAR, 4 ABR, 5 MAY, 6 JUN, 7 JUL, 8 AGO, 9 SEP, 10 OCT, 11 NOV, 12 DIC)
+	)]]>
+	</queryString>
+	<field name="IMP1" class="java.math.BigDecimal"/>
+	<field name="IMP2" class="java.math.BigDecimal"/>
+	<field name="IMP3" class="java.math.BigDecimal"/>
+	<field name="IMP4" class="java.math.BigDecimal"/>
+	<field name="IMP5" class="java.math.BigDecimal"/>
+	<field name="IMP6" class="java.math.BigDecimal"/>
+	<field name="IMP7" class="java.math.BigDecimal"/>
+	<field name="IMP8" class="java.math.BigDecimal"/>
+	<field name="IMP9" class="java.math.BigDecimal"/>
+	<field name="IMP10" class="java.math.BigDecimal"/>
+	<field name="IMP11" class="java.math.BigDecimal"/>
+	<field name="IMP12" class="java.math.BigDecimal"/>
+	<detail>
+		<band height="54" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="26582743-4215-4948-9533-6a575b5b6665" stretchType="RelativeToBandHeight" x="0" y="36" width="30" height="18"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Marzo]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="cf47ac56-8a1f-47cb-b309-b6014c5c1509" stretchType="RelativeToBandHeight" x="120" y="18" width="60" height="18"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP5}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="afc96b3f-20b4-42f2-93f3-5ea38ebcb14d" stretchType="RelativeToBandHeight" x="180" y="18" width="30" height="18"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Agosto]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="655a2e67-6e8f-4b3d-98fc-b34629167646" stretchType="RelativeToBandHeight" x="210" y="36" width="60" height="18"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP9}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="80d0e070-0479-4ee8-95de-dab23f7e8cd2" stretchType="RelativeToBandHeight" x="210" y="18" width="60" height="18"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP8}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="13796299-2835-4289-921f-186190aa7955" stretchType="RelativeToBandHeight" x="180" y="0" width="30" height="18"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Julio]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="2174b8f0-d999-48f2-a701-175448a49ca3" stretchType="RelativeToBandHeight" x="30" y="18" width="60" height="18"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP2}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="fa2ef980-bb75-4fcf-835a-68c90c470cc2" stretchType="RelativeToBandHeight" x="270" y="0" width="30" height="18"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Octubre]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="63c3573e-4763-4795-8d62-b8ab0d5fa310" stretchType="RelativeToBandHeight" x="120" y="0" width="60" height="18"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP4}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="8957ec07-cc91-42c2-8d01-226a2d994d06" stretchType="RelativeToBandHeight" x="90" y="18" width="30" height="18"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Mayo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4da49e7f-e25e-40f5-b667-6cd4f06e27a8" stretchType="RelativeToBandHeight" x="0" y="18" width="30" height="18"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Febrero]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="8daf2bf9-b809-4f77-bb00-faf287203ded" stretchType="RelativeToBandHeight" x="30" y="0" width="60" height="18"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="e02ce9e5-2465-4f61-96d2-c9222cfe8ee9" stretchType="RelativeToBandHeight" x="270" y="18" width="30" height="18"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nov.]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="0b7f0c3d-e92d-4d8f-b2cf-385f26a62b3d" stretchType="RelativeToBandHeight" x="30" y="36" width="60" height="18"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP3}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="df59ab39-ea8b-48f2-b452-28f136252dee" stretchType="RelativeToBandHeight" x="270" y="36" width="30" height="18"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dic.]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="1c8830df-fcf1-437f-972d-e69fad59e4ca" stretchType="RelativeToBandHeight" x="210" y="0" width="60" height="18"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP7}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="5140b8ee-67de-413a-ba9e-d33f584bdaf6" stretchType="RelativeToBandHeight" x="300" y="0" width="60" height="18"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP10}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="d2da67eb-881a-4422-b832-332a471e4cc4" stretchType="RelativeToBandHeight" x="300" y="36" width="60" height="18"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP12}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="838a82ba-a1bd-4d85-aa9a-44dbd89326ad" stretchType="RelativeToBandHeight" x="90" y="36" width="30" height="18"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Junio]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="81e1ee1d-dda7-44b6-9139-6d25d3bbf286" stretchType="RelativeToBandHeight" x="300" y="18" width="60" height="18"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP11}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="5f9d2449-1a0b-4df5-a4e7-0774452619f1" stretchType="RelativeToBandHeight" x="0" y="0" width="30" height="18"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Enero]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="03ae5831-68ad-4c74-aaae-34774c4415e4" stretchType="RelativeToBandHeight" x="180" y="36" width="30" height="18"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sept.]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="b74cb615-b66b-4028-9271-42bdb99f61b0" stretchType="RelativeToBandHeight" x="120" y="36" width="60" height="18"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMP6}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="83d7e84d-c3c8-4626-ab03-33ec425ceb9c" stretchType="RelativeToBandHeight" x="90" y="0" width="30" height="18"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Abril]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

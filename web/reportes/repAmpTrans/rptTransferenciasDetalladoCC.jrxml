@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptTransferenciasDetallado" language="groovy" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="d08c2163-aa59-4226-a299-145bee118e5f">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="194"/>
+	<property name="ireport.y" value="83"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Table Dataset 1" uuid="f35a429f-5fca-46f3-9a38-51cb2470a5e1"/>
+	<parameter name="IMG_DIR" class="java.lang.String"/>
+	<parameter name="OFICIO" class="java.lang.Long"/>
+	<parameter name="TIPO" class="java.lang.String"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\desarrollo\\repositorio_local\\POA_RKL\\trunk\\POA\\web\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ESTATUS" class="java.lang.String"/>
+	<parameter name="RPT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\desarrollo\\repositorio_local\\POA_RKL\\trunk\\POA\\web\\reportes\\repAmpTrans\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TIPOFICIO" class="java.lang.String"/>
+	<parameter name="CODIGOCOMPLETO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT OFI.CONSEC,
+       TRAN.RAMO,
+        TRAN.PRG ,
+        TRAN.DEPTO,
+        TRAN.PARTIDA,
+        MAX(TRAN.IMPTE) as importetran,
+         REC.RAMO AS RAMO_REC,
+         REC.PRG AS PRG_REC,
+         REC.DEPTO AS DEPTO_REC,
+         REC.PARTIDA AS PARTIDA_REC,
+         SUM(REC.IMPTE) as importerec,
+         PARTIDA_A.DESCR as descrtran,
+         PARAM.GOBIERNO,
+         PARAM.SECRETARIA,
+         rpad(PARTIDA_B.DESCR,60 ) as descrrec,
+        TRAN.STATUS,
+         MOVS.FECPPTO  ,
+			PARAM.LOGO,
+
+TRAN.RAMO||'-'||TRAN.PRG||'-'||TRAN.DEPTO||'-'||TRAN.PARTIDA AS CODTRAN_CORTO,
+REC.RAMO||'-'||REC.PRG||'-'||REC.DEPTO||'-'||REC.PARTIDA AS CODREC_CORTO,
+	DBMS_LOB.substr(MOVS.JUSTIFICACION, DBMS_LOB.getlength(MOVS.JUSTIFICACION), 1) as JUSTIFICACION
+    FROM DGI.OFICONS OFI,
+         SPP.TRANSFERENCIAS TRAN,
+         SPP.TRANSFREC REC,
+         DGI.PARTIDA PARTIDA_A,
+         DGI.PARTIDA PARTIDA_B,
+         DGI.PARAMETROS PARAM,
+         POA.MOVOFICIOS MOVS,
+	S_DGI_PARAM_LONG_COD PLC
+   WHERE (TRAN.OFICIO = OFI.OFICIO ) and
+         ( REC.OFICIO =TRAN.OFICIO ) and
+         ( REC.CONSEC =TRAN.CONSEC ) and
+         (TRAN.PARTIDA = PARTIDA_A.PARTIDA ) and
+         ( REC.PARTIDA = PARTIDA_B.PARTIDA ) and
+         ( OFI.CONSEC =TRAN.CONSEC ) and
+         (TRAN.OFICIO = MOVS.OFICIO ) and
+         ( PARTIDA_A.YEAR = PARTIDA_B.YEAR ) and
+         ( ( OFI.OFICIO = $P{OFICIO} ) AND
+         ( OFI.TIPO = $P{TIPOFICIO} )) AND
+         PARTIDA_A.YEAR =$P{YEAR} AND
+	PLC.YEAR = PARTIDA_A.YEAR
+AND  (LENGTH(NVL($P{TIPOFICIO},'00'))=1 )
+    GROUP BY
+         OFI.CONSEC,
+        TRAN.RAMO,
+        TRAN.PRG ,
+        TRAN.DEPTO,
+        TRAN.PARTIDA,
+         REC.RAMO,
+         REC.PRG ,
+         REC.DEPTO,
+         REC.PARTIDA,
+         PARTIDA_A.DESCR,
+         PARAM.GOBIERNO,
+         PARAM.SECRETARIA,
+         rpad(PARTIDA_B.DESCR,60 ),
+        TRAN.STATUS,
+         MOVS.FECPPTO  ,
+			PARAM.LOGO,
+		TRAN.RAMO||'-'||TRAN.PRG||'-'||TRAN.DEPTO||'-'||TRAN.PARTIDA ,
+REC.RAMO||'-'||REC.PRG||'-'||REC.DEPTO||'-'||REC.PARTIDA,
+	DBMS_LOB.substr(MOVS.JUSTIFICACION, DBMS_LOB.getlength(MOVS.JUSTIFICACION), 1)
+
+
+UNION
+
+SELECT TRAN.CONSEC AS CONSEC,
+       TRAN.RAMO,
+        TRAN.PRG ,
+        TRAN.DEPTO,
+        TRAN.PARTIDA,
+        MAX(TRAN.IMPTE) as importetran,
+         REC.RAMO AS RAMO_REC,
+         REC.PRG AS PRG_REC,
+         REC.DEPTO AS DEPTO_REC,
+         REC.PARTIDA AS PARTIDA_REC,
+         SUM(REC.IMPTE) as importerec,
+         PARTIDA_A.DESCR as descrtran,
+         PARAM.GOBIERNO,
+         PARAM.SECRETARIA,
+         rpad(PARTIDA_B.DESCR,60 ) as descrrec,
+        TRAN.STATUS,
+         MOVS.FECPPTO  ,
+			PARAM.LOGO,
+
+TRAN.RAMO||'-'||TRAN.PRG||'-'||TRAN.DEPTO||'-'||TRAN.PARTIDA AS CODTRAN_CORTO,
+REC.RAMO||'-'||REC.PRG||'-'||REC.DEPTO||'-'||REC.PARTIDA AS CODREC_CORTO,
+	DBMS_LOB.substr(MOVS.JUSTIFICACION, DBMS_LOB.getlength(MOVS.JUSTIFICACION), 1) as JUSTIFICACION
+    FROM
+         SPP.TRANSFERENCIAS TRAN,
+         SPP.TRANSFREC REC,
+         DGI.PARTIDA PARTIDA_A,
+         DGI.PARTIDA PARTIDA_B,
+         DGI.PARAMETROS PARAM,
+         POA.MOVOFICIOS MOVS,
+	S_DGI_PARAM_LONG_COD PLC
+   WHERE ( REC.OFICIO =TRAN.OFICIO ) and
+         ( REC.CONSEC =TRAN.CONSEC ) and
+         (TRAN.PARTIDA = PARTIDA_A.PARTIDA ) and
+         ( REC.PARTIDA = PARTIDA_B.PARTIDA ) and
+         (TRAN.OFICIO = MOVS.OFICIO ) and
+         ( PARTIDA_A.YEAR = PARTIDA_B.YEAR ) and
+         TRAN.OFICIO=$P{OFICIO} AND
+         PARTIDA_A.YEAR =$P{YEAR} AND
+	PLC.YEAR = PARTIDA_A.YEAR
+    AND  (LENGTH(NVL($P{TIPOFICIO},'00'))>1 )
+    GROUP BY
+          TRAN.CONSEC ,
+        TRAN.RAMO,
+        TRAN.PRG ,
+        TRAN.DEPTO,
+        TRAN.PARTIDA,
+         REC.RAMO,
+         REC.PRG ,
+         REC.DEPTO,
+         REC.PARTIDA,
+         PARTIDA_A.DESCR,
+         PARAM.GOBIERNO,
+         PARAM.SECRETARIA,
+         rpad(PARTIDA_B.DESCR,60 ),
+        TRAN.STATUS,
+         MOVS.FECPPTO  ,
+			PARAM.LOGO,
+		TRAN.RAMO||'-'||TRAN.PRG||'-'||TRAN.DEPTO||'-'||TRAN.PARTIDA ,
+REC.RAMO||'-'||REC.PRG||'-'||REC.DEPTO||'-'||REC.PARTIDA,
+	DBMS_LOB.substr(MOVS.JUSTIFICACION, DBMS_LOB.getlength(MOVS.JUSTIFICACION), 1)]]>
+	</queryString>
+	<field name="CONSEC" class="java.math.BigDecimal"/>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="PRG" class="java.lang.String"/>
+	<field name="DEPTO" class="java.lang.String"/>
+	<field name="PARTIDA" class="java.lang.String"/>
+	<field name="IMPORTETRAN" class="java.math.BigDecimal"/>
+	<field name="RAMO_REC" class="java.lang.String"/>
+	<field name="PRG_REC" class="java.lang.String"/>
+	<field name="DEPTO_REC" class="java.lang.String"/>
+	<field name="PARTIDA_REC" class="java.lang.String"/>
+	<field name="IMPORTEREC" class="java.math.BigDecimal"/>
+	<field name="DESCRTRAN" class="java.lang.String"/>
+	<field name="GOBIERNO" class="java.lang.String"/>
+	<field name="SECRETARIA" class="java.lang.String"/>
+	<field name="DESCRREC" class="java.lang.String"/>
+	<field name="STATUS" class="java.lang.String"/>
+	<field name="FECPPTO" class="java.sql.Timestamp"/>
+	<field name="LOGO" class="java.lang.String"/>
+	<field name="CODTRAN_CORTO" class="java.lang.String"/>
+	<field name="CODREC_CORTO" class="java.lang.String"/>
+	<field name="JUSTIFICACION" class="java.lang.String"/>
+	<sortField name="CONSEC"/>
+	<variable name="IMPORTEREC_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTEREC}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTETRAN_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTETRAN}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTEREC_2" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTEREC}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTETRAN_2" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTETRAN}]]></variableExpression>
+	</variable>
+	<group name="consec">
+		<groupExpression><![CDATA[$F{CONSEC}]]></groupExpression>
+		<groupHeader>
+			<band height="26" splitType="Stretch">
+				<textField pattern="&lt;style forecolor=&quot;red&quot;&gt;¤(#,##0.00)&lt;/style&gt;" isBlankWhenNull="true">
+					<reportElement uuid="c8b11625-2932-4fd0-8cf9-3386da69c2ef" x="262" y="4" width="75" height="20"/>
+					<textElement textAlignment="Right" markup="styled">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{IMPORTETRAN}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="b8b22ea8-e07b-47ee-8bba-066e06b5d6ba" stretchType="RelativeToTallestObject" x="342" y="4" width="228" height="20"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESCRTRAN}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="041a8a6b-8c22-46f0-a333-9a8f74325d0d" x="11" y="4" width="52" height="20"/>
+					<textElement textAlignment="Center">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{TIPOFICIO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="73fe6cbb-e6e5-4368-b7a3-bf030bc99e49" x="100" y="4" width="157" height="20"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CODTRAN_CORTO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="198fb00c-7150-4cc7-ad4c-fd39963669e3" x="64" y="4" width="36" height="20"/>
+					<textElement textAlignment="Center">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CONSEC}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="189">
+			<textField>
+				<reportElement uuid="1b5cb975-d6f8-46a0-a4dc-9cb5a02fe8c4" x="4" y="79" width="567" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{STATUS}.equals('C') || $F{STATUS}.equals('R') || $F{STATUS}.equals('M')
+    ?"<FOLIO CANCELADO>":( $F{STATUS}.equals('A')? "<AUTORIZADO>": "<SIN AFECTACION A PRESUPUESTO>"))]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="78c2c8d1-f827-4cf8-96ca-fe2f225b94b2" x="70" y="0" width="429" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GOBIERNO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="5f5a910b-9768-44bf-99aa-6d087bb1b1d8" x="70" y="20" width="429" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SECRETARIA}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="3b651214-d8a4-4f8f-8268-693f81bc0d29" x="2" y="78" width="569" height="1"/>
+			</line>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement uuid="58b6077c-f671-48f9-994e-61f8b829195c" stretchType="RelativeToBandHeight" x="0" y="0" width="67" height="56"/>
+				<imageExpression><![CDATA[$P{IMG_DIR}+"EDO.gif"]]></imageExpression>
+			</image>
+			<elementGroup/>
+			<elementGroup/>
+			<elementGroup/>
+			<elementGroup/>
+			<elementGroup>
+				<elementGroup/>
+			</elementGroup>
+			<elementGroup/>
+			<elementGroup/>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="fffeb213-d7b3-455f-b091-f037bc24cfd8" x="472" y="58" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="609b5493-cf8f-4214-834d-3888c74e81da" x="11" y="99" width="59" height="20"/>
+				<textElement markup="none">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="516a9cca-75ee-4f72-877a-64f969158172" x="11" y="156" width="52" height="20"/>
+				<textElement markup="none">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MOV.]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="8fe3246b-7313-452f-875c-6bca3cfc70c4" x="2" y="187" width="569" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="b3b51e6c-5c95-49c7-a322-2b6eb4bfe569" x="105" y="139" width="157" height="17"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CODIGO TRANSFIERE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="46f6f164-7428-4b48-b141-005fffb5ca5f" x="262" y="156" width="77" height="20"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[IMPORTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="606ea8cb-c561-4689-a62f-ede37b747a01" x="339" y="156" width="232" height="20"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCION]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="1980357b-687d-4f17-8d19-f6d17b21590f" x="70" y="99" width="79" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{FECPPTO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="6ce55725-f993-40e0-b75b-fb61dad1f983" x="64" y="156" width="40" height="20"/>
+				<textElement markup="none">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONS.]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="65cf8142-cf30-4b0d-aa31-0d0eb6bc06d8" x="105" y="156" width="157" height="30"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CÓDIGO RECIBE\nRA-PR-DEP-PAR"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="f526a934-925c-4fd6-95e7-46ab31a9cd99" x="70" y="40" width="429" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{TIPOFICIO}.equals('A')?"Solicitud de Autorización":($P{TIPOFICIO}.equals('V')?"Aviso de Modificación":($P{TIPOFICIO}.equals('U')?"Solicitud Movimientos Automaticos":"")))]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="eafbd61b-aa6b-4309-af77-4132be26ca03" x="11" y="79" width="59" height="20"/>
+				<textElement markup="none">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FOLIO #]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="f0db9971-4035-43ea-ab10-6c172805c7d5" x="70" y="79" width="79" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{OFICIO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="24" splitType="Stretch">
+			<textField>
+				<reportElement uuid="0d0a0a2e-6391-4813-b6ef-fcfb13c14d1a" x="105" y="0" width="157" height="20" forecolor="#333333"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CODREC_CORTO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="&lt;style forecolor=&quot;black&quot;&gt;¤#,##0.00&lt;/style&gt;;&lt;style forecolor=&quot;red&quot;&gt;¤(#,##0.00)&lt;/style&gt;" isBlankWhenNull="true">
+				<reportElement uuid="e89cafed-5263-45c1-9adc-0c01e8ef9837" x="262" y="0" width="75" height="20" forecolor="#333333"/>
+				<textElement textAlignment="Right" markup="styled">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTEREC}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="56f98272-8c5d-4cce-a333-25b37cd12837" stretchType="RelativeToTallestObject" x="342" y="0" width="228" height="20" forecolor="#333333"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCRREC}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="18" splitType="Stretch">
+			<line>
+				<reportElement uuid="14384326-65ae-4666-91b9-2e968419c11a" x="1" y="2" width="569" height="1"/>
+			</line>
+			<textField evaluationTime="Report">
+				<reportElement uuid="3b02f55a-e207-4cfa-8950-d2096a25a095" x="539" y="5" width="31" height="10"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" de " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="8dbb6c57-25ff-4cac-aebe-f8eaa0af6c0f" x="496" y="5" width="43" height="10"/>
+				<textElement textAlignment="Right">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement uuid="76c669b9-f019-41a6-ab9c-0777c5fec37e" x="1" y="5" width="146" height="10"/>
+				<textElement textAlignment="Center">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["rptTransferenciasDetalladoCC"]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement uuid="f268e53d-217c-4286-a0e9-271659397c18" x="214" y="2" width="128" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="63" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="5afd1690-7292-4f50-b5b4-fbe1f9681a32" stretchType="RelativeToBandHeight" x="1" y="45" width="566" height="17"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA[$F{JUSTIFICACION}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f82d5e60-6d41-4658-8ce5-e31ba110c52f" x="1" y="30" width="100" height="15"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[JUSTIFICACIÓN:]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="eaca0a02-dec8-4898-ab9c-60176ae7d475" x="-1" y="45" width="569" height="1"/>
+			</line>
+			<textField pattern="&lt;style forecolor=&quot;black&quot;&gt;¤#,##0.00&lt;/style&gt;;&lt;style forecolor=&quot;red&quot;&gt;¤(#,##0.00)&lt;/style&gt;">
+				<reportElement uuid="4ced03a5-fbf8-4cdf-80ad-ec336538205b" x="262" y="15" width="75" height="15"/>
+				<textElement textAlignment="Right" markup="styled">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{IMPORTEREC_2}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="d241eefe-e75e-4337-a199-221d4fedcb43" x="105" y="15" width="127" height="15"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[TOTAL RECIBIDO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2537691a-7f05-42be-9e1b-8bea92479f41" x="105" y="0" width="127" height="15"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL TRANSFERIDO:]]></text>
+			</staticText>
+			<subreport>
+				<reportElement uuid="87386418-31ee-4c7a-ad73-c834720936a8" x="232" y="0" width="105" height="15"/>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPOFICIO">
+					<subreportParameterExpression><![CDATA[$P{TIPOFICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO">
+					<subreportParameterExpression><![CDATA[$P{TIPO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ESTATUS">
+					<subreportParameterExpression><![CDATA[$P{ESTATUS}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="OFICIO">
+					<subreportParameterExpression><![CDATA[$P{OFICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "subrptTotalTransferencias.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>

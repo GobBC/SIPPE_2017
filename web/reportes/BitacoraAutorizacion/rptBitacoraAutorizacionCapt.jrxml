@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptBitacoraAutorizacion" language="groovy" pageWidth="700" pageHeight="612" columnWidth="660" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="20" uuid="ee80c1e4-6bff-470e-a7ff-59edada2ee05">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMG_DIR" class="java.lang.String"/>
+	<parameter name="OFICIO" class="java.lang.String"/>
+	<parameter name="TIPOUSR" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT MOV.OFICIO,
+    MOV.FECPPTO,
+    0 NIVEL,
+    0 ORDEN,
+    0 TIPO_FLUJO,
+    '' TIPO_USR,
+    0 TIPO_FLUJO,
+    '' TIPO_USR,
+    0 ORDEN,
+    NVL(TO_CHAR(MOV.FECPPTO,'DD/MM/YYYY HH:MM AM'),'PENDIENTE') AS FECHAAUT,
+    MOV.APP_LOGIN,
+    'Envío a autorización' DESCR,
+    P.GOBIERNO,
+    P.SECRETARIA
+FROM
+    POA.MOVOFICIOS MOV,
+    DGI.PARAMETROS P
+WHERE
+    MOV.OFICIO=$P{OFICIO}
+
+UNION
+
+SELECT MOV.OFICIO,MOV.FECPPTO,FA.NIVEL,FA.ORDEN,FA.TIPO_FLUJO,FA.TIPO_USR,F.TIPO_FLUJO,F.TIPO_USR,F.ORDEN,TO_CHAR(B.FECHAAUT,'DD/MM/YYYY HH:MI AM') AS FECHAAUT,B.APP_LOGIN,E.DESCR,P.GOBIERNO,P.SECRETARIA
+FROM
+POA.FLUJO_AUTORIZACION FA,
+POA.MOVOFICIOS MOV,
+POA.FLUJO_FIRMAS F,
+POA.BITMOVTOS B,
+POA.ESTATUS_MOV E,
+DGI.PARAMETROS P
+WHERE
+MOV.OFICIO=$P{OFICIO} AND
+MOV.TIPOMOV=FA.TIPOMOV AND
+--FA.TIPO_FLUJO=F.TIPO_FLUJO AND
+FA.TIPO_USR=F.TIPO_USR AND
+F.ORDEN=FA.ORDEN AND
+FA.TIPO_USR=$P{TIPOUSR} AND
+MOV.OFICIO=B.OFICIO(+) AND
+E.ESTATUS=FA.ESTATUS AND
+F.APP_LOGIN=B.APP_LOGIN AND
+F.TIPO_FLUJO=B.TIPO_FLUJO AND
+E.ESTATUS NOT IN('A')
+
+UNION
+
+SELECT MOV.OFICIO,MOV.FECPPTO,FA.NIVEL,FA.ORDEN,FA.TIPO_FLUJO,FA.TIPO_USR,F.TIPO_FLUJO,F.TIPO_USR,F.ORDEN,'PENDIENTE' AS FECHAAUT,F.APP_LOGIN,E.DESCR,P.GOBIERNO,P.SECRETARIA
+FROM
+POA.FLUJO_AUTORIZACION FA,
+POA.MOVOFICIOS MOV,
+POA.FLUJO_FIRMAS F,
+POA.BITMOVTOS B,
+POA.ESTATUS_MOV E,
+DGI.PARAMETROS P
+WHERE
+MOV.OFICIO=$P{OFICIO} AND
+MOV.TIPOMOV=FA.TIPOMOV AND
+--FA.TIPO_FLUJO=F.TIPO_FLUJO AND
+FA.TIPO_USR=F.TIPO_USR AND
+F.ORDEN=FA.ORDEN AND
+FA.TIPO_USR=$P{TIPOUSR} AND
+MOV.OFICIO=B.OFICIO(+) AND
+E.ESTATUS=FA.ESTATUS AND
+FA.ORDEN NOT IN(
+SELECT FA1.ORDEN
+FROM
+POA.FLUJO_AUTORIZACION FA1,
+POA.MOVOFICIOS MOV1,
+POA.FLUJO_FIRMAS F1,
+POA.BITMOVTOS B1,
+POA.ESTATUS_MOV E1
+WHERE
+MOV1.OFICIO=$P{OFICIO} AND
+MOV1.TIPOMOV=FA1.TIPOMOV AND
+--FA1.TIPO_FLUJO=F1.TIPO_FLUJO AND
+FA1.TIPO_USR=F1.TIPO_USR AND
+F1.ORDEN=FA1.ORDEN AND
+FA1.TIPO_USR=$P{TIPOUSR} AND
+MOV1.OFICIO=B1.OFICIO(+) AND
+E1.ESTATUS=FA1.ESTATUS AND
+F1.APP_LOGIN=B1.APP_LOGIN AND
+F1.TIPO_FLUJO=B1.TIPO_FLUJO) AND
+E.ESTATUS NOT IN('A')]]>
+	</queryString>
+	<field name="OFICIO" class="java.math.BigDecimal"/>
+	<field name="FECPPTO" class="java.sql.Timestamp"/>
+	<field name="NIVEL" class="java.math.BigDecimal"/>
+	<field name="ORDEN" class="java.math.BigDecimal"/>
+	<field name="TIPO_FLUJO" class="java.math.BigDecimal"/>
+	<field name="TIPO_USR" class="java.lang.String"/>
+	<field name="FECHAAUT" class="java.lang.String"/>
+	<field name="APP_LOGIN" class="java.lang.String"/>
+	<field name="DESCR" class="java.lang.String"/>
+	<field name="GOBIERNO" class="java.lang.String"/>
+	<field name="SECRETARIA" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="95" splitType="Stretch">
+			<image>
+				<reportElement uuid="45a27fc7-c0cb-48ea-93fa-b20d058541bd" x="19" y="6" width="67" height="56"/>
+				<imageExpression><![CDATA[$P{IMG_DIR}+"EDO.gif"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement uuid="4bf1d27f-2d81-4337-948c-adcb65a56b37" x="86" y="6" width="545" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GOBIERNO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="c901fa59-6057-4acd-ae2b-bb26eb05f692" x="86" y="26" width="545" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SECRETARIA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="87da3d13-d514-4160-9df5-f44816b914a5" x="86" y="46" width="545" height="23"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Consulta de Estatus del Tramite en Bitacora]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="8269ec2f-940c-41a9-92ea-6aa17ff4df96" x="19" y="80" width="612" height="15"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["OFICIO:"+$F{OFICIO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="17" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="c8ecd2c9-fb0a-464c-bd88-7c1e686e695d" mode="Opaque" x="19" y="0" width="189" height="16" forecolor="#000000" backcolor="#C0C0C0"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Usuario]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f0f296e7-e22c-4e34-87ba-7aea53839c94" mode="Opaque" x="487" y="0" width="144" height="16" backcolor="#C0C0C0"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Autorización]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1cfe2531-0c72-46d1-88ae-6289c6ca02dd" mode="Opaque" x="208" y="0" width="279" height="16" backcolor="#C0C0C0"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descripción Autorización]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement uuid="5efeb7fb-3c67-4221-8b14-c275864bb7ea" x="487" y="0" width="144" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{FECHAAUT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="edf4b97f-7ce3-4eaf-b72a-e9f17575eca7" x="19" y="0" width="189" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{APP_LOGIN}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b6cd256c-c4dd-4676-8c87-f1ca2f682739" x="208" y="0" width="279" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{DESCR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

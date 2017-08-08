@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptLeyEgresos" language="groovy" pageWidth="572" pageHeight="957" columnWidth="538" leftMargin="17" rightMargin="17" topMargin="17" bottomMargin="17" uuid="d08c2163-aa59-4226-a299-145bee118e5f">
+	<property name="ireport.zoom" value="1.6105100000000045"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="41"/>
+	<parameter name="YEAR" class="java.lang.Integer"/>
+	<parameter name="RAMO_IN_LIST" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IMG_DIR" class="java.lang.String"/>
+	<parameter name="PAGINA" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    $P{PAGINA},
+    PPTO.RAMO,
+    RAM.DESCR RAM_DESCR,
+    PPTO.PRG,
+    PRG.DESCR PRG_DESCR,
+    GPO.GRUPO,
+    GPO.DESCR GPO_DESCR,
+    SUBSUBGPO.SUBGRUPO,
+    SUBGPO.DESCR SUBGPO_DESCR,
+    SUBSUBGPO.SUBSUBGRUPO,
+    SUBSUBGPO.DESCR SUBSUBGPO_DESCR,
+    PPTO.PARTIDA,
+    PART.DESCR PART_DESCR,
+    SUM(PPTO.ASIGNADO) AS ASIGNADO,
+    PARAM.GOBIERNO,
+    PARAM.SECRETARIA,
+    SYSDATE AS FECHA
+
+FROM
+    SPP.PPTO PPTO,
+    DGI.PARTIDA PART,
+    S_DGI_SUBSUBGPO SUBSUBGPO,
+    S_DGI_SUBGRUPOS SUBGPO,
+    S_DGI_GRUPOS GPO,
+    S_POA_PROGRAMA PRG,
+    DGI.RAMOS RAM,
+    POA.RAMO_PROGRAMA RAMPRG,
+    DGI.PARAMETROS PARAM
+
+WHERE
+    PPTO.YEAR = $P{YEAR} AND
+    PPTO.RAMO IN ($P!{RAMO_IN_LIST}) AND
+    PPTO.ASIGNADO <> 0 AND
+    RAMPRG.YEAR = PPTO.YEAR AND
+    RAMPRG.PRG = PPTO.PRG AND
+    RAMPRG.YEAR = PPTO.YEAR AND
+    RAMPRG.RAMO = PPTO.RAMO AND
+    RAM.YEAR = RAMPRG.YEAR AND
+    RAM.RAMO = RAMPRG.RAMO AND
+    PRG.YEAR = RAMPRG.YEAR AND
+    PRG.PRG = RAMPRG.PRG AND
+    PPTO.YEAR = RAM.YEAR AND
+    PPTO.RAMO = RAM.RAMO AND
+    PPTO.YEAR = PRG.YEAR AND
+    PPTO.PRG = PRG.PRG AND
+    PPTO.PARTIDA = PART.PARTIDA AND
+    PPTO.YEAR = PART.YEAR AND
+    PART.SUBSUBGPO = SUBSUBGPO.SUBSUBGRUPO AND
+    PART.YEAR = SUBSUBGPO.YEAR AND
+    SUBSUBGPO.GRUPO = SUBGPO.GRUPO AND
+    SUBSUBGPO.SUBGRUPO = SUBGPO.SUBGRUPO AND
+    SUBSUBGPO.YEAR = SUBGPO.YEAR AND
+    SUBSUBGPO.GRUPO = GPO.GRUPO AND
+    SUBSUBGPO.YEAR = GPO.YEAR
+
+GROUP BY
+    PPTO.RAMO,
+    RAM.DESCR,
+    PPTO.PRG,
+    PRG.DESCR,
+    GPO.GRUPO,
+    GPO.DESCR,
+    SUBSUBGPO.SUBGRUPO,
+    SUBGPO.DESCR,
+    SUBSUBGPO.SUBSUBGRUPO,
+    SUBSUBGPO.DESCR,
+    PPTO.PARTIDA,
+    $P{PAGINA},
+    PART.DESCR,
+    PARAM.GOBIERNO,
+    PARAM.SECRETARIA
+
+ORDER BY
+    PPTO.RAMO,
+    PPTO.PRG,
+  GPO.GRUPO,
+ SUBSUBGPO.SUBGRUPO,
+   SUBSUBGPO.SUBSUBGRUPO,
+  PPTO.PARTIDA]]>
+	</queryString>
+	<field name=":1" class="java.math.BigDecimal"/>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="RAM_DESCR" class="java.lang.String"/>
+	<field name="PRG" class="java.lang.String"/>
+	<field name="PRG_DESCR" class="java.lang.String"/>
+	<field name="GRUPO" class="java.lang.String"/>
+	<field name="GPO_DESCR" class="java.lang.String"/>
+	<field name="SUBGRUPO" class="java.lang.String"/>
+	<field name="SUBGPO_DESCR" class="java.lang.String"/>
+	<field name="SUBSUBGRUPO" class="java.lang.String"/>
+	<field name="SUBSUBGPO_DESCR" class="java.lang.String"/>
+	<field name="PARTIDA" class="java.lang.String"/>
+	<field name="PART_DESCR" class="java.lang.String"/>
+	<field name="ASIGNADO" class="java.math.BigDecimal"/>
+	<field name="GOBIERNO" class="java.lang.String"/>
+	<field name="SECRETARIA" class="java.lang.String"/>
+	<field name="FECHA" class="java.sql.Timestamp"/>
+	<variable name="AsignadoSubSubGrupo" class="java.math.BigDecimal" resetType="Group" resetGroup="SUBSUBGRUPO" calculation="Sum">
+		<variableExpression><![CDATA[$F{ASIGNADO}]]></variableExpression>
+	</variable>
+	<variable name="AsignadoSubGrupo" class="java.math.BigDecimal" resetType="Group" resetGroup="SUBGRUPO" calculation="Sum">
+		<variableExpression><![CDATA[$F{ASIGNADO}]]></variableExpression>
+	</variable>
+	<variable name="AsignadoGrupo" class="java.math.BigDecimal" resetType="Group" resetGroup="GRUPO" calculation="Sum">
+		<variableExpression><![CDATA[$F{ASIGNADO}]]></variableExpression>
+	</variable>
+	<variable name="AsignadoPrograma" class="java.math.BigDecimal" resetType="Group" resetGroup="PROGRAMA" calculation="Sum">
+		<variableExpression><![CDATA[$F{ASIGNADO}]]></variableExpression>
+	</variable>
+	<variable name="AsignadoRamo" class="java.math.BigDecimal" resetType="Group" resetGroup="RAMO" calculation="Sum">
+		<variableExpression><![CDATA[$F{ASIGNADO}]]></variableExpression>
+	</variable>
+	<variable name="AsignadoGeneral" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{ASIGNADO}]]></variableExpression>
+	</variable>
+	<group name="RAMO" isStartNewPage="true" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{RAMO}]]></groupExpression>
+		<groupHeader>
+			<band height="13">
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="879a595c-60ca-4c12-bbed-c5f592debdb0" x="0" y="0" width="538" height="13"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{RAMO}+" "+$F{RAM_DESCR}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<textField>
+					<reportElement uuid="53e8e5bb-ec60-4f6e-8c44-ff0235d42c85" x="133" y="0" width="311" height="13"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["TOTAL RAMO: " + $F{RAM_DESCR}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="RAMO" pattern="¤ #,##0.00" isBlankWhenNull="true">
+					<reportElement uuid="eedcfe71-5717-45d1-9526-da8db36cd979" x="444" y="0" width="94" height="13">
+						<printWhenExpression><![CDATA[$F{RAM_DESCR}.isEmpty() != true]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{AsignadoRamo}]]></textFieldExpression>
+				</textField>
+				<rectangle>
+					<reportElement uuid="d35fe9fd-0077-49e5-86a9-5917af379613" mode="Transparent" x="133" y="0" width="311" height="13">
+						<printWhenExpression><![CDATA[$F{RAM_DESCR}.isEmpty() != true]]></printWhenExpression>
+					</reportElement>
+				</rectangle>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="PROGRAMA">
+		<groupExpression><![CDATA[$F{PRG}]]></groupExpression>
+		<groupHeader>
+			<band height="13">
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="960e8615-0179-4858-a9ea-e7b00a284bff" x="10" y="0" width="528" height="13"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PRG}+" "+$F{PRG_DESCR}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<textField>
+					<reportElement uuid="adde9a6e-c870-4581-aad9-e4dff25545f3" x="133" y="0" width="311" height="13"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["TOTAL PROGRAMA: " + $F{PRG_DESCR}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="PROGRAMA" pattern="¤ #,##0.00" isBlankWhenNull="true">
+					<reportElement uuid="dc7be6b2-eba3-4593-82a4-458b3357a731" x="444" y="0" width="94" height="13">
+						<printWhenExpression><![CDATA[$F{PRG_DESCR}.isEmpty() != true]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{AsignadoPrograma}]]></textFieldExpression>
+				</textField>
+				<rectangle>
+					<reportElement uuid="e8e562be-fa8f-465f-a192-6236cd75f8ec" mode="Transparent" x="133" y="0" width="311" height="13">
+						<printWhenExpression><![CDATA[$F{PRG_DESCR}.isEmpty() != true]]></printWhenExpression>
+					</reportElement>
+				</rectangle>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="GRUPO">
+		<groupExpression><![CDATA[$F{GRUPO}]]></groupExpression>
+		<groupHeader>
+			<band height="13">
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="88a54cab-da46-4d22-b142-cbc92d7fca83" x="20" y="0" width="518" height="13"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{GRUPO}+" "+$F{GPO_DESCR}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<textField>
+					<reportElement uuid="17f6468d-84cd-4533-bd67-6f1f2b544ba2" x="133" y="0" width="311" height="13"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["TOTAL DEL CAPITULO: " +  $F{GPO_DESCR}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="GRUPO" pattern="¤ #,##0.00" isBlankWhenNull="true">
+					<reportElement uuid="d7accb72-6654-447b-813b-c537455159bf" x="444" y="0" width="94" height="13">
+						<printWhenExpression><![CDATA[$F{GPO_DESCR}.isEmpty() != true]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{AsignadoGrupo}]]></textFieldExpression>
+				</textField>
+				<rectangle>
+					<reportElement uuid="a8bf816b-5bdb-4cdf-9409-9494c23a7b8e" mode="Transparent" x="133" y="0" width="311" height="13">
+						<printWhenExpression><![CDATA[$F{GPO_DESCR}.isEmpty() != true]]></printWhenExpression>
+					</reportElement>
+				</rectangle>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="SUBGRUPO">
+		<groupExpression><![CDATA[$F{SUBGRUPO}]]></groupExpression>
+		<groupHeader>
+			<band height="13">
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="96bbb1f9-6a32-4726-a43d-0390ecda909d" x="30" y="0" width="508" height="13"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SUBGRUPO}+" "+$F{SUBGPO_DESCR}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<textField>
+					<reportElement uuid="ea4d43c1-4ccf-4b68-a8d4-dd87410f11a5" x="133" y="0" width="311" height="13"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["TOTAL DEL CONCEPTO: " + $F{SUBGPO_DESCR}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="SUBGRUPO" pattern="¤ #,##0.00" isBlankWhenNull="true">
+					<reportElement uuid="7b9ba083-bcf5-44a7-ad3a-ddc2ebd1b124" x="444" y="0" width="94" height="13">
+						<printWhenExpression><![CDATA[$F{SUBGPO_DESCR}.isEmpty() != true]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{AsignadoSubGrupo}]]></textFieldExpression>
+				</textField>
+				<rectangle>
+					<reportElement uuid="6a214aa9-e24b-4c29-8140-bfac1725a135" mode="Transparent" x="133" y="0" width="311" height="13">
+						<printWhenExpression><![CDATA[$F{SUBGPO_DESCR}.isEmpty() != true]]></printWhenExpression>
+					</reportElement>
+				</rectangle>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="SUBSUBGRUPO">
+		<groupExpression><![CDATA[$F{SUBSUBGRUPO}]]></groupExpression>
+		<groupHeader>
+			<band height="13">
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="4d35f98f-5c61-45b2-9921-57ef9d7bee34" x="40" y="0" width="498" height="13"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SUBSUBGRUPO}+" "+$F{SUBSUBGPO_DESCR}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<textField>
+					<reportElement uuid="0cfe355e-620d-4921-83f3-dc2669eded9d" x="133" y="0" width="311" height="13"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["TOTAL DE LA PARTIDA GENÉRICA: " + $F{SUBSUBGPO_DESCR}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Group" evaluationGroup="SUBSUBGRUPO" pattern="¤ #,##0.00" isBlankWhenNull="true">
+					<reportElement uuid="6878d740-572b-4a37-9165-c6d86f2943de" x="444" y="0" width="94" height="13">
+						<printWhenExpression><![CDATA[$F{SUBSUBGPO_DESCR}.isEmpty() != true]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{AsignadoSubSubGrupo}]]></textFieldExpression>
+				</textField>
+				<rectangle>
+					<reportElement uuid="606b7a58-ec98-4360-9ab3-03f1f2022e3e" mode="Transparent" x="133" y="0" width="311" height="13">
+						<printWhenExpression><![CDATA[$F{SUBSUBGPO_DESCR}.isEmpty() != true]]></printWhenExpression>
+					</reportElement>
+				</rectangle>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="71">
+			<textField>
+				<reportElement uuid="78c2c8d1-f827-4cf8-96ca-fe2f225b94b2" x="85" y="0" width="368" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GOBIERNO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="5f5a910b-9768-44bf-99aa-6d087bb1b1d8" x="85" y="20" width="368" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SECRETARIA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="e8a4d893-9ebc-4ef8-b090-382b447babb8" x="85" y="40" width="368" height="15"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PRESUPUESTO DE EGRESOS " +  $P{YEAR}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="3b651214-d8a4-4f8f-8268-693f81bc0d29" x="0" y="56" width="538" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="2e03d9e3-b450-4bdb-9c7d-2742de4a20fb" x="0" y="57" width="31" height="13"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RAMO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="47c213e8-83d8-4ce1-b7bc-600af4fb4aa0" x="31" y="57" width="31" height="13"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PROG.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="88975f01-0f32-4a70-9702-2a2ec45bc376" x="62" y="57" width="45" height="13"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PARTIDA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e53d1220-d997-4a04-bedf-ddbb62991bbb" x="107" y="57" width="59" height="13"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="611522f8-c9f5-47a6-b118-aa35b1709e80" x="442" y="57" width="96" height="13"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRESUPUESTO ANUAL]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement uuid="64489340-9066-444d-b4f2-e8626e4de8b1" mode="Transparent" x="0" y="57" width="538" height="13"/>
+			</rectangle>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement uuid="c9155f0c-a803-4ea2-b7fd-e17416335c4a" stretchType="RelativeToBandHeight" x="0" y="0" width="50" height="55"/>
+				<imageExpression><![CDATA[$P{IMG_DIR}+"EDO.gif"]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band height="13" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="adf05af4-ae1b-483d-a520-bdd47678eae3" x="50" y="0" width="47" height="13"/>
+				<textElement textAlignment="Center">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PARTIDA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="a9a230bc-4538-4448-8992-7290f4a9c9a4" x="444" y="0" width="94" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ASIGNADO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c18c67b6-7868-4eee-96b1-2fd580a41a18" x="97" y="0" width="377" height="13"/>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PART_DESCR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="12" splitType="Stretch">
+			<line>
+				<reportElement uuid="ec6e97b5-67f3-4d85-b118-02d9be61f24e" x="0" y="0" width="538" height="1"/>
+			</line>
+			<textField>
+				<reportElement uuid="63860251-0e65-4e77-ba20-997de5b85e56" x="0" y="1" width="538" height="10"/>
+				<textElement textAlignment="Right">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pág. " + ($V{PAGE_NUMBER}+$P{PAGINA})]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="15" splitType="Stretch">
+			<textField>
+				<reportElement uuid="eafae823-de7a-4b90-8804-5ad8d356cf13" x="133" y="0" width="311" height="13"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["TOTAL GENERAL: "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="05d38e23-359f-4f4f-be8a-76e4a9bab376" x="444" y="0" width="94" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{AsignadoGeneral}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement uuid="e37445dc-1dc7-4218-8d6f-ca67933bad9a" mode="Transparent" x="133" y="0" width="311" height="13"/>
+			</rectangle>
+		</band>
+	</summary>
+</jasperReport>

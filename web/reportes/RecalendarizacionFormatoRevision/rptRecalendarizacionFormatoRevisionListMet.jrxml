@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptRecalendarizacionFormatoRevisionListMet" language="groovy" pageWidth="751" pageHeight="101" orientation="Landscape" columnWidth="751" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d08c2163-aa59-4226-a299-145bee118e5f">
+	<property name="ireport.zoom" value="2.662000000000002"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMG_DIR" class="java.lang.String"/>
+	<parameter name="OFICIO" class="java.lang.Long"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<parameter name="RAMO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="STATUS" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\desarrollo\\repositorio_local\\POA\\web\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PRG" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PROY" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TIPO_PROY" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RPT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\desarrollo\\repositorio_local\\POA\\web\\reportes\\RecalendarizacionFormatoRevision\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+	MOVMET.OFICIO,
+	MOVMET.RAMO,
+	MET.PRG,
+	MET.DEPTO,
+	MET.TIPO_PROY,
+	MET.PROY,
+	MOVMET.META,
+	MET.DESCR META_DESCR,
+	MED.DESCR MEDIDA_DESCR
+
+FROM
+	POA.MOVOFICIOS_ESTIMACION MOVMET,
+	S_POA_META MET,
+	S_POA_MEDIDA_META MED
+
+WHERE
+	MOVMET.YEAR = $P{YEAR} AND
+	MOVMET.OFICIO = $P{OFICIO} AND
+	MOVMET.RAMO = $P{RAMO} AND
+	MET.YEAR = MOVMET.YEAR AND
+	MET.RAMO = MOVMET.RAMO AND
+	MET.PRG = $P{PRG} AND
+	MET.TIPO_PROY = $P{TIPO_PROY} AND
+	MET.PROY = $P{PROY} AND
+	MET.META = MOVMET.META AND
+	MED.YEAR = MET.YEAR AND
+	MED.ACTIVO = 'S' AND
+	MED.MEDIDA =  MET.CVE_MEDIDA
+
+GROUP BY
+	MOVMET.OFICIO,
+	MOVMET.RAMO,
+	MET.PRG,
+	MET.DEPTO,
+	MET.TIPO_PROY,
+	MET.PROY,
+	MOVMET.META,
+	MET.DESCR,
+	MED.DESCR
+
+ORDER BY
+	MOVMET.OFICIO,
+	MOVMET.RAMO,
+	MET.PRG,
+	MET.DEPTO,
+	MET.TIPO_PROY,
+	MET.PROY,
+	MOVMET.META,
+	MED.DESCR]]>
+	</queryString>
+	<field name="OFICIO" class="java.lang.Long"/>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="PRG" class="java.lang.String"/>
+	<field name="DEPTO" class="java.math.BigDecimal"/>
+	<field name="TIPO_PROY" class="java.lang.String"/>
+	<field name="PROY" class="java.math.BigDecimal"/>
+	<field name="META" class="java.math.BigDecimal"/>
+	<field name="META_DESCR" class="java.lang.String"/>
+	<field name="MEDIDA_DESCR" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="101">
+			<staticText>
+				<reportElement uuid="28c5247c-1232-465a-90ea-24f3aa70d1b0" mode="Opaque" x="80" y="10" width="52" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MEDIDA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="dcaf439a-10b6-4c6a-b4b7-4ba6cb899a35" mode="Opaque" x="0" y="0" width="25" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NO. META ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="853db942-8e79-41ce-826e-11cee23ddcfc" mode="Opaque" x="25" y="0" width="55" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCIÓN META]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e96db5bc-1ae4-4e9b-987e-114d3ab76221" mode="Opaque" x="80" y="0" width="52" height="10" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ UNIDAD DE]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="2072c993-17ae-44f4-8b7e-637f4aee13e7" x="0" y="20" width="25" height="70"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="4" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{META}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="a88eff85-b1ca-47af-a676-55eee1dc8b54" x="25" y="20" width="55" height="70"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="4" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{META_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="ddf41c80-a955-4e8b-8f2f-db3bef5566fd" x="80" y="20" width="52" height="70"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="4" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MEDIDA_DESCR}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement uuid="fe3dc692-8844-489f-a808-29022b584990" x="132" y="0" width="477" height="30"/>
+				<subreportParameter name="OFICIO">
+					<subreportParameterExpression><![CDATA[$F{OFICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="META">
+					<subreportParameterExpression><![CDATA[$F{META}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMG_DIR">
+					<subreportParameterExpression><![CDATA[$P{IMG_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "rptRecalendarizacionFormatoRevisionCalMetIni.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement uuid="fb631c89-fdee-43cd-86b7-426b9220463c" x="132" y="30" width="477" height="30"/>
+				<subreportParameter name="OFICIO">
+					<subreportParameterExpression><![CDATA[$F{OFICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="META">
+					<subreportParameterExpression><![CDATA[$F{META}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMG_DIR">
+					<subreportParameterExpression><![CDATA[$P{IMG_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="STATUS">
+					<subreportParameterExpression><![CDATA[$P{STATUS}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "rptRecalendarizacionFormatoRevisionCalMetAct.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement uuid="b3908637-f3f1-40a3-bb65-0b7e23c68557" x="132" y="60" width="477" height="30"/>
+				<subreportParameter name="OFICIO">
+					<subreportParameterExpression><![CDATA[$F{OFICIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="META">
+					<subreportParameterExpression><![CDATA[$F{META}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMG_DIR">
+					<subreportParameterExpression><![CDATA[$P{IMG_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "rptRecalendarizacionFormatoRevisionCalMetSol.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement uuid="945ab7d2-35e9-45f8-97e0-df3b05cb3202" x="609" y="30" width="82" height="30"/>
+				<subreportParameter name="PRG">
+					<subreportParameterExpression><![CDATA[$F{PRG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DEPTO">
+					<subreportParameterExpression><![CDATA[$F{DEPTO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PROY">
+					<subreportParameterExpression><![CDATA[$F{PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="META">
+					<subreportParameterExpression><![CDATA[$F{META}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IMG_DIR">
+					<subreportParameterExpression><![CDATA[$P{IMG_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TIPO_PROY">
+					<subreportParameterExpression><![CDATA[$F{TIPO_PROY}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "rptRecalendarizacionFormatoRevisionCalMetModAut.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

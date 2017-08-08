@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptMIRxls" language="groovy" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="fe1eeeb7-608d-4630-8e3a-8865d24d680a">
+	<property name="ireport.zoom" value="1.5421731577181272"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#A9A9A9">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Table Dataset 1" uuid="54b59229-ab4f-4c9c-bf4a-90a9d3c9e06a"/>
+	<parameter name="YEAR" class="java.lang.Integer"/>
+	<parameter name="RAMO" class="java.lang.String"/>
+	<parameter name="PROGRAMA" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RPT_DIR" class="java.lang.String"/>
+	<parameter name="IMG_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\SISTEMAS\\WEB\\repositorio_local\\POA\\web\\reportes\\imagenes\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    RP.YEAR, RP.RAMO, R.RAMO||' - '||R.DESCR AS RAMO_DESCR,
+    RP.PRG, P.PRG ||' - '|| P.DESCR AS PRG_DESCR,
+    P.PRG_CONAC, NVL(CONAC.PRG_CONAC ||' - '||CONAC.DESCR,'') AS CLASIF_PROGRAMATICA,
+    RP.DEPTO, DEP.DEPTO||' - '||DEP.DESCR AS UNIDAD_RESPONSABLE,
+    RP.PROBLEMA_FOCAL,
+    RP.PONDERADO, NVL(PON.PONDERADO||' - '||UPPER(PON.DESCR),'') AS PONDERADO_DESCR,
+    NVL(EMP.NOMBRE||' ','')||NVL(EMP.PATERNO||' ','')||NVL(EMP.MATERNO,'') AS UE_RESPONSABLE,
+    to_char(RP.FIN, '000' ) AS FIN, FIN.DESCR AS FIN_DESCR,
+    RP.PROPOSITO,PA.GOBIERNO,PA.SECRETARIA,SYSDATE AS HOY
+FROM POA.RAMO_PROGRAMA RP
+    INNER JOIN DGI.RAMOS R ON R.YEAR = RP.YEAR AND R.RAMO = RP.RAMO
+    INNER JOIN S_POA_PROGRAMA P ON RP.YEAR = P.YEAR AND RP.PRG = P.PRG
+    LEFT JOIN DGI.DEPENDENCIA DEP ON  RP.YEAR = DEP.YEAR AND RP.RAMO = DEP.RAMO AND RP.DEPTO = DEP.DEPTO
+    LEFT JOIN S_POA_PROGRAMA_CONAC CONAC ON P.YEAR = CONAC.YEAR AND P.PRG_CONAC = CONAC.PRG_CONAC
+    LEFT JOIN DGI.PONDERADO PON ON RP.PONDERADO = PON.PONDERADO
+    LEFT JOIN DGI.VW_EMPLEADOS EMP ON RP.RFC = EMP.RFC AND RP.HOMOCLAVE = EMP.HOMOCLAVE
+    LEFT JOIN S_POA_FIN FIN  ON RP.YEAR = FIN.YEAR AND TO_CHAR(RP.FIN,'000') = TO_CHAR(FIN.FIN,'000')
+    LEFT JOIN DGI.PARAMETROS PA ON PA.GOBIERNO = PA.GOBIERNO
+WHERE
+        RP.YEAR = $P{YEAR}
+       AND RP.RAMO = $P{RAMO}
+       AND RP.PRG = $P{PROGRAMA}]]>
+	</queryString>
+	<field name="YEAR" class="java.lang.String"/>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="RAMO_DESCR" class="java.lang.String"/>
+	<field name="PRG" class="java.lang.String"/>
+	<field name="PRG_DESCR" class="java.lang.String"/>
+	<field name="PRG_CONAC" class="java.lang.String"/>
+	<field name="CLASIF_PROGRAMATICA" class="java.lang.String"/>
+	<field name="DEPTO" class="java.lang.String"/>
+	<field name="UNIDAD_RESPONSABLE" class="java.lang.String"/>
+	<field name="PROBLEMA_FOCAL" class="java.lang.String"/>
+	<field name="PONDERADO" class="java.lang.String"/>
+	<field name="PONDERADO_DESCR" class="java.lang.String"/>
+	<field name="UE_RESPONSABLE" class="java.lang.String"/>
+	<field name="FIN" class="java.lang.String"/>
+	<field name="FIN_DESCR" class="java.lang.String"/>
+	<field name="PROPOSITO" class="java.lang.String"/>
+	<field name="GOBIERNO" class="java.lang.String"/>
+	<field name="SECRETARIA" class="java.lang.String"/>
+	<field name="HOY" class="java.sql.Timestamp"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="95">
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement uuid="9d029c40-3786-47c2-a96c-6911d704fc3f" stretchType="RelativeToBandHeight" x="0" y="0" width="66" height="60"/>
+				<imageExpression><![CDATA[$P{IMG_DIR}+"EDO.gif"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement uuid="42d45d84-00ea-40be-94ee-6b1f7eb134ad" x="175" y="0" width="429" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="14" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GOBIERNO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="d0e87f6b-a2c1-4211-b382-591762bc7634" x="175" y="40" width="429" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PRESUPUESTO DE EGRESOS " + $P{YEAR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="15f40253-745d-4816-aff3-f6dd973e3db1" x="175" y="20" width="429" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SECRETARIA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="7a266191-bad9-4d5f-a519-1a6645e48304" x="175" y="60" width="429" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["MATRIZ DE INDICADORES PARA RESULTADOS"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="37b3eaf6-2e09-4660-b957-89a8ec786b17" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="80" width="137" height="15" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+				<textElement>
+					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[RAMO:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="88341043-1c19-456d-b5d6-91dcfd7047ba" stretchType="RelativeToTallestObject" mode="Opaque" x="137" y="80" width="376" height="15" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+				<textElement>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RAMO_DESCR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="d2198bb5-6b78-423b-b0a6-0f9b4ff022ee" stretchType="RelativeToTallestObject" mode="Opaque" x="513" y="80" width="68" height="15" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+				<textElement>
+					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[CLASIF. PROG.:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="d2a262c9-1c5c-473d-9f2b-1ff216455629" stretchType="RelativeToTallestObject" mode="Opaque" x="581" y="80" width="171" height="15" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+				<textElement>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CLASIF_PROGRAMATICA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="15" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="64ddd0e1-4522-41f9-bc1d-636a0fc451fa" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="137" height="15" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+				<textElement>
+					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[PROGRAMA PRESUPUESTARIO:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="12f1da54-9644-4bce-9c2f-e18a0e63d55e" stretchType="RelativeToTallestObject" mode="Transparent" x="137" y="0" width="376" height="15" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+				<textElement>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRG_DESCR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f5f47353-8e93-470a-86f9-fbd688f26d30" stretchType="RelativeToTallestObject" x="513" y="0" width="68" height="15" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[PONDERADO:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="b3c76aa9-cd40-45c6-8622-53ce7af0d392" stretchType="RelativeToTallestObject" x="581" y="0" width="171" height="15" forecolor="#000000"/>
+				<textElement>
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PONDERADO_DESCR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="95a41158-2a82-46fc-95ca-5d15a5159ec4" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="137" height="15" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+				<textElement>
+					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[UNIDAD RESPONSABLE]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="eff2f09a-d353-49d6-95ea-a3d01e63df6d" stretchType="RelativeToTallestObject" mode="Opaque" x="137" y="0" width="376" height="15" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+				<textElement>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNIDAD_RESPONSABLE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="d34be0b0-bbc3-4cf1-9437-a9336e6e6270" stretchType="RelativeToTallestObject" mode="Opaque" x="581" y="0" width="171" height="15" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+				<textElement>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UE_RESPONSABLE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="cf21ea96-78c8-44e9-97fa-9dba86d97bfd" stretchType="RelativeToTallestObject" mode="Opaque" x="513" y="0" width="68" height="15" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+				<textElement>
+					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[RESPONSABLE:]]></text>
+			</staticText>
+		</band>
+		<band/>
+		<band height="15">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="233f4d83-7d5b-47a8-acc6-be0dea15a5c8" stretchType="RelativeToTallestObject" x="137" y="0" width="615" height="15" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROBLEMA_FOCAL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a7d7818b-79fe-4bc7-9b03-cc152d5ec21b" stretchType="RelativeToTallestObject" x="0" y="0" width="137" height="15" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[PROBLEMA FOCAL QUE ATIENDE:]]></text>
+			</staticText>
+		</band>
+		<band height="15">
+			<subreport isUsingCache="true">
+				<reportElement uuid="a3ca8ad9-3435-441b-9ffa-3817ef5df65f" x="0" y="0" width="752" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<subreportParameter name="PRG">
+					<subreportParameterExpression><![CDATA[$P{PROGRAMA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$P{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "subRptMIRFinProposito.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="20">
+			<subreport>
+				<reportElement uuid="dc93f326-d2fb-492a-b522-9e58adef7ebb" x="0" y="0" width="752" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<subreportParameter name="PRG">
+					<subreportParameterExpression><![CDATA[$P{PROGRAMA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$P{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "subRptMIRInfoAdicional.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="10" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement uuid="c04f44fc-29f3-4ef9-94ce-9105d6701355" x="300" y="0" width="146" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HOY}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="df6ab0be-835e-40c4-8d7b-9f2ea3aace33" x="677" y="0" width="43" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement uuid="42955b1f-c552-4b72-ac08-e22ed9899d86" x="720" y="0" width="32" height="10"/>
+				<textElement>
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" de " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement uuid="9cfa8d71-9225-4f8d-9495-8fe2c2113aab" x="16" y="0" width="50" height="10"/>
+				<textElement>
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<rptMIR>"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="e053fc39-9ddb-4c4f-9e99-44e03f32f3e5" x="0" y="0" width="752" height="1"/>
+			</line>
+		</band>
+	</pageFooter>
+</jasperReport>

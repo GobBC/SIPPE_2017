@@ -1,0 +1,747 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptAvanceAccionMasivo" language="groovy" pageWidth="792" pageHeight="612" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a89524e2-618a-4b8b-b71b-7d8c1e4ca7a8">
+	<property name="ireport.zoom" value="3.452271214393123"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="618"/>
+	<parameter name="YEAR" class="java.lang.Integer"/>
+	<parameter name="IMG_DIR" class="java.lang.String"/>
+	<parameter name="RPT_DIR" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\desarrollo\\repositorio_local\\POA\\web\\reportes\\reporteMasivo\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="QUERY" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PERIODO" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[SELECT
+	DISTINCT
+	R.RAMO,
+	R.RAMO || ' - ' || R.DESCR AS DESCR_RAMO,
+	P.PRG,
+	P.PRG || ' - ' || P.DESCR AS DECR_PRG,
+	M.META,
+	M.META || ' - ' || M.DESCR AS DESCR_META,
+	A.ACCION,
+	A.ACCION || ' - ' ||REPLACE(REPLACE(A.DESCR,CHR(10),''),CHR(13),'') AS DESCR_ACCION,
+	PY.PROY,
+	PY.DESCR,
+	PY.TIPO_PROY,
+	PRO.LIDER,
+	RP.YEAR,
+	PAA.MES,
+	DECODE(PAA.MES,1,'ENERO',2,'FEBRERO',3,'MARZO',4,'ABRIL',5,'MAYO',6,'JUNIO',7,'JULIO',8,'AGOSTO',9,'SEPTIEMBRE',10,'OCTUBRE',11,'NOVIEMBRE',12,'DICIEMBRE') AS DESCR_MES,
+	PAA.REALIZADO,
+	NVL(PAA.IMPT_ASIG_XMES,0) AS IMPORTE_ASIGNADO,
+	NVL(PAA.IMPT_EJER_XMES,0) AS IMPORTE_EJERCIDO,
+    NVL(PPTO.ASIGNADO,0) AS IMPORTE_ASIGNADO_PPTO,
+    NVL(CIM.EJERCIDO,0) AS EJERCIDO_CIM,
+NVL(CIM.AMPLIACION,0) AS AMP_CIM,
+    NVL(CIM.REDUCCION,0) AS RED_CIM,
+    ((NVL(PPTO.ASIGNADO,0))+NVL(CIM.REDUCCION,0)+NVL(CIM.AMPLIACION,0)) AS MODIFICADO,
+       ( (NVL(PPTO.ASIGNADO,0)) - (NVL(CIM.EJERCIDO,0)) ) AS DIFERENCIA,
+	PAA.OBSERVACIONES,
+	PARAM.GOBIERNO,
+	PARAM.SECRETARIA,
+	PARAM.LOGO,
+	SYSDATE AS HOY,
+	PAA.VALOR AS VALOR_ACCION,
+	NVL(AE.VALOR,0) AS VALOR_ESTIMACION,
+          PARAM.REPWEB_IMPFIRMA
+
+FROM
+	POA.RAMO_PROGRAMA RP,
+	DGI.RAMOS R,
+	S_POA_PROGRAMA P,
+	S_POA_META M,
+	S_POA_ACCION A,
+(SELECT
+META AS META,
+RAMO AS RAMO,
+ACCION AS ACCION,
+YEAR,
+MES,
+MIN(OBSERVACIONES) AS OBSERVACIONES,
+SUM(REALIZADO) AS REALIZADO,
+SUM(IMPT_ASIG_XMES) AS IMPT_ASIG_XMES,
+SUM(IMPT_EJER_XMES) AS IMPT_EJER_XMES,
+SUM(VALOR) AS VALOR
+FROM
+(SELECT
+T.META AS META,
+T.RAMO AS RAMO,
+T.YEAR AS YEAR,
+T.ACCION AS ACCION,
+T.MES AS MES,
+T.REALIZADO AS REALIZADO,
+T.IMPT_ASIG_XMES AS IMPT_ASIG_XMES,
+T.IMPT_EJER_XMES AS IMPT_EJER_XMES,
+T.OBSERVACIONES AS OBSERVACIONES,
+T.VALOR AS VALOR  FROM
+DGI.POA_AVANCE_ACCION T
+
+UNION
+SELECT A.META,A.RAMO,A.YEAR,A.ACCION,MM.MES,'0',0,0,'',0
+FROM
+S_POA_ACCION A,
+DGI.MESES MM
+)R
+GROUP BY
+META,
+RAMO,
+ACCION,
+YEAR,
+MES
+
+) PAA
+	/*DGI.POA_AVANCE_ACCION PAA*/,
+   (SELECT YEAR,RAMO,META,ACCION,MES,SUM(ASIGNADO) AS ASIGNADO
+   FROM
+   SPP.PPTO
+   GROUP BY
+   YEAR,RAMO,META,ACCION,MES)PPTO,
+	DGI.ACCION_ESTIMACION AE,
+	DGI.VW_SP_PROY_ACT PY,
+    (SELECT
+        EJERCICIO,
+        RAMO,META,
+        ACCION,MES,
+        SUM(DEV) AS DEVENGADO,
+        SUM(DEV) AS EJERCIDO,
+        SUM(AMP) AS AMPLIACION,
+        SUM(RED) AS REDUCCION
+        from S_CIM_CIERRE_PPTO_ARMO_MEN
+        GROUP BY
+        EJERCICIO,RAMO,META,ACCION,MES) CIM,
+	(
+		SELECT
+			P.RAMO
+			,P.YEAR
+			,P.PRG
+			,P.TIPO_PROY
+			,P.PROY
+			,DECODE(P.RFC,NULL,NULL,EM.NOMBRE||' '||EM.PATERNO||' '||EM.MATERNO) AS LIDER
+		FROM
+			POA.PROYECTO P
+			,DGI.VW_EMPLEADOS EM
+		WHERE
+			P.RFC = EM.RFC(+) AND
+			P.HOMOCLAVE = EM.HOMOCLAVE(+) AND
+			P.YEAR = $P{YEAR}
+	) PRO,
+	DGI.PARAMETROS PARAM
+
+WHERE
+	RP.YEAR = $P{YEAR} AND
+	R.YEAR = RP.YEAR AND
+	R.RAMO = RP.RAMO AND
+	P.YEAR = RP.YEAR AND
+	P.PRG = RP.PRG AND
+	M.YEAR = RP.YEAR AND
+	M.RAMO = RP.RAMO AND
+	M.PRG = RP.PRG AND
+	PY.YEAR = M.YEAR AND
+	PY.PROY = M.PROY AND
+	PY.TIPO_PROY = M.TIPO_PROY AND
+	PRO.YEAR (+)= M.YEAR AND
+	PRO.RAMO = M.RAMO AND
+	PRO.PRG = M.PRG AND
+	PRO.PROY (+)= M.PROY AND
+	PRO.TIPO_PROY (+)= M.TIPO_PROY AND
+	A.YEAR = M.YEAR AND
+	A.RAMO = M.RAMO AND
+	A.PRG = M.PRG AND
+	A.META = M.META AND
+	PAA.YEAR (+)= A.YEAR AND
+	PAA.META (+)= A.META AND
+	PAA.RAMO (+)= A.RAMO AND
+	PAA.ACCION (+)= A.ACCION AND
+	AE.YEAR (+)= PAA.YEAR AND
+	AE.ACCION (+)= PAA.ACCION AND
+	AE.RAMO (+)= PAA.RAMO AND
+	AE.META (+)= PAA.META AND
+	AE.PERIODO (+)= PAA.MES AND
+   PPTO.YEAR(+) =PAA.YEAR AND
+    PPTO.RAMO(+) =PAA.RAMO AND
+    PPTO.META(+) =PAA.META AND
+    PPTO.ACCION(+) =PAA.ACCION AND
+    PPTO.MES(+) = PAA.MES AND
+    CIM.EJERCICIO(+)=PAA.YEAR AND
+    CIM.RAMO(+)=PAA.RAMO AND
+    CIM.META(+)=PAA.META AND
+    CIM.ACCION(+)=PAA.ACCION AND
+    CIM.MES(+)=PAA.MES AND
+    M.PERIODO>=1 AND M.PERIODO<=12 AND
+    A.PERIODO>=1 AND A.PERIODO<=12 AND
+ $P!{QUERY}
+
+
+ORDER BY
+	R.RAMO,
+	P.PRG,
+	M.META,
+	A.ACCION,
+	PAA.MES]]>
+	</queryString>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="DESCR_RAMO" class="java.lang.String"/>
+	<field name="PRG" class="java.lang.String"/>
+	<field name="DECR_PRG" class="java.lang.String"/>
+	<field name="META" class="java.math.BigDecimal"/>
+	<field name="DESCR_META" class="java.lang.String"/>
+	<field name="ACCION" class="java.math.BigDecimal"/>
+	<field name="DESCR_ACCION" class="java.lang.String"/>
+	<field name="PROY" class="java.math.BigDecimal"/>
+	<field name="DESCR" class="java.lang.String"/>
+	<field name="TIPO_PROY" class="java.lang.String"/>
+	<field name="LIDER" class="java.lang.String"/>
+	<field name="YEAR" class="java.lang.String"/>
+	<field name="MES" class="java.math.BigDecimal"/>
+	<field name="DESCR_MES" class="java.lang.String"/>
+	<field name="REALIZADO" class="java.lang.String"/>
+	<field name="IMPORTE_ASIGNADO" class="java.math.BigDecimal"/>
+	<field name="IMPORTE_EJERCIDO" class="java.math.BigDecimal"/>
+	<field name="IMPORTE_ASIGNADO_PPTO" class="java.math.BigDecimal"/>
+	<field name="EJERCIDO_CIM" class="java.math.BigDecimal"/>
+	<field name="AMP_CIM" class="java.math.BigDecimal"/>
+	<field name="RED_CIM" class="java.math.BigDecimal"/>
+	<field name="MODIFICADO" class="java.math.BigDecimal"/>
+	<field name="DIFERENCIA" class="java.math.BigDecimal"/>
+	<field name="OBSERVACIONES" class="java.lang.String"/>
+	<field name="GOBIERNO" class="java.lang.String"/>
+	<field name="SECRETARIA" class="java.lang.String"/>
+	<field name="LOGO" class="java.lang.String"/>
+	<field name="HOY" class="java.sql.Timestamp"/>
+	<field name="VALOR_ACCION" class="java.math.BigDecimal"/>
+	<field name="VALOR_ESTIMACION" class="java.math.BigDecimal"/>
+	<field name="REPWEB_IMPFIRMA" class="java.lang.String"/>
+	<variable name="totalImporteEjercido" class="java.math.BigDecimal" resetType="Group" resetGroup="Meta" calculation="Sum">
+		<variableExpression><![CDATA[$F{EJERCIDO_CIM}]]></variableExpression>
+	</variable>
+	<variable name="totalImporteAsignado" class="java.math.BigDecimal" resetType="Group" resetGroup="Meta" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE_ASIGNADO_PPTO}]]></variableExpression>
+	</variable>
+	<variable name="totalImporteAccion" class="java.math.BigDecimal" resetType="Group" resetGroup="Meta" calculation="Sum">
+		<variableExpression><![CDATA[$F{VALOR_ACCION}]]></variableExpression>
+	</variable>
+	<variable name="totalImporteEstimacion" class="java.math.BigDecimal" resetType="Group" resetGroup="Meta" calculation="Sum">
+		<variableExpression><![CDATA[$F{VALOR_ESTIMACION}]]></variableExpression>
+	</variable>
+	<variable name="totalGlobalImporteEjercido" class="java.math.BigDecimal" resetType="Group" resetGroup="Proyecto" calculation="Sum">
+		<variableExpression><![CDATA[$F{EJERCIDO_CIM}]]></variableExpression>
+	</variable>
+	<variable name="totalGlobalImporteAsignado" class="java.math.BigDecimal" resetType="Group" resetGroup="Proyecto" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE_ASIGNADO_PPTO}]]></variableExpression>
+	</variable>
+	<variable name="totalGlobalImporteAccion" class="java.math.BigDecimal" resetType="Group" resetGroup="Proyecto" calculation="Sum">
+		<variableExpression><![CDATA[$F{VALOR_ACCION}]]></variableExpression>
+	</variable>
+	<variable name="totalGlobalImporteEstimacion" class="java.math.BigDecimal" resetType="Group" resetGroup="Proyecto" calculation="Sum">
+		<variableExpression><![CDATA[$F{VALOR_ESTIMACION}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_ASIGNADO_PPTO_2" class="java.math.BigDecimal" resetType="Group" resetGroup="Accion" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE_ASIGNADO_PPTO}]]></variableExpression>
+	</variable>
+	<variable name="EJERCIDO_CIM_1" class="java.math.BigDecimal" resetType="Group" resetGroup="Accion" calculation="Sum">
+		<variableExpression><![CDATA[$F{EJERCIDO_CIM}]]></variableExpression>
+	</variable>
+	<variable name="DIFERENCIA" class="java.lang.String">
+		<variableExpression><![CDATA[$V{IMPORTE_ASIGNADO_PPTO_2} - $V{EJERCIDO_CIM_1}]]></variableExpression>
+	</variable>
+	<variable name="DIFERENCIA_1" class="java.math.BigDecimal" resetType="Group" resetGroup="Accion" calculation="Sum">
+		<variableExpression><![CDATA[$F{DIFERENCIA}]]></variableExpression>
+	</variable>
+	<variable name="MODIFICADO_1" class="java.math.BigDecimal" resetType="Group" resetGroup="Accion" calculation="Sum">
+		<variableExpression><![CDATA[$F{MODIFICADO}]]></variableExpression>
+	</variable>
+	<group name="ramo" isStartNewPage="true" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{RAMO}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<staticText>
+					<reportElement uuid="83ac839b-41bc-48e4-afac-3ceaa5da70c9" stretchType="RelativeToBandHeight" x="0" y="0" width="60" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Ramo:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="34b2d1c3-8280-4b6c-9f57-2503fa4848f8" stretchType="RelativeToBandHeight" x="60" y="0" width="692" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement>
+						<font fontName="SansSerif" size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESCR_RAMO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Programa" isStartNewPage="true" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{PRG}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<staticText>
+					<reportElement uuid="8d14f74c-8828-4cef-87cb-fd7cec0d0720" stretchType="RelativeToBandHeight" x="0" y="0" width="60" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Programa:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="ef20523f-c783-4f5d-949d-13c6804958c1" stretchType="RelativeToBandHeight" x="60" y="0" width="692" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement>
+						<font fontName="SansSerif" size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DECR_PRG}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Proyecto" isStartNewPage="true" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{PROY}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<staticText>
+					<reportElement uuid="950e9b3f-e7f8-4a70-9760-798cdfaa06fd" stretchType="RelativeToBandHeight" x="0" y="0" width="60" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Proy. / Act. :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="91b0adc3-f006-4c40-8cb4-484b549a3445" stretchType="RelativeToBandHeight" x="60" y="0" width="692" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement>
+						<font fontName="SansSerif" size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PROY}+" - " + $F{DESCR}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="23">
+				<textField isStretchWithOverflow="true" pattern="&lt;style forecolor=&quot;black&quot;&gt;¤#,##0.00&lt;/style&gt;;&lt;style forecolor=&quot;red&quot;&gt;¤(#,##0.00)&lt;/style&gt;" isBlankWhenNull="true">
+					<reportElement uuid="7c5463e9-2ac5-4f2b-8038-f3d0a83ab1b6" stretchType="RelativeToTallestObject" x="320" y="1" width="80" height="15" isRemoveLineWhenBlank="true"/>
+					<textElement textAlignment="Center" markup="styled">
+						<font size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{totalGlobalImporteEjercido}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="7e06034d-4d75-4132-ad4a-e42618131c28" stretchType="RelativeToTallestObject" x="0" y="1" width="80" height="15" isRemoveLineWhenBlank="true" backcolor="#999999"/>
+					<textElement textAlignment="Center" verticalAlignment="Top" markup="styled">
+						<font size="6" isBold="true" isUnderline="false" isStrikeThrough="false"/>
+					</textElement>
+					<text><![CDATA[Total por Proyecto:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="&lt;style forecolor=&quot;black&quot;&gt;¤#,##0.00&lt;/style&gt;;&lt;style forecolor=&quot;red&quot;&gt;¤(#,##0.00)&lt;/style&gt;" isBlankWhenNull="true">
+					<reportElement uuid="f4b21cfb-b4a6-4111-8c73-afb02a8d6d65" stretchType="RelativeToTallestObject" x="240" y="1" width="80" height="15" isRemoveLineWhenBlank="true"/>
+					<textElement textAlignment="Center" markup="styled">
+						<font size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{totalGlobalImporteAsignado}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="ce8f8a05-f28e-4ed3-82d1-7e3a07881d95" stretchType="RelativeToTallestObject" x="160" y="1" width="80" height="15" isRemoveLineWhenBlank="true"/>
+					<textElement textAlignment="Center">
+						<font size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{totalGlobalImporteAccion}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="baade38b-736f-4292-b11d-c26b9f563a97" stretchType="RelativeToTallestObject" x="80" y="1" width="80" height="15" isRemoveLineWhenBlank="true"/>
+					<textElement textAlignment="Center">
+						<font size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{totalGlobalImporteEstimacion}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement uuid="4525fbf2-0a26-4e5c-be3e-91dd276387ef" x="0" y="0" width="752" height="1"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Meta" isStartNewPage="true" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{META}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<staticText>
+					<reportElement uuid="3442777f-6aab-4709-be5e-e6f3bc1eb789" stretchType="RelativeToBandHeight" x="0" y="0" width="60" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Meta:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="7e725f4b-cdca-43f3-8847-5a122ad07aff" stretchType="RelativeToBandHeight" x="60" y="0" width="692" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement>
+						<font fontName="SansSerif" size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESCR_META}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="16">
+				<staticText>
+					<reportElement uuid="f421fd15-fcb0-4378-a788-3c6df3ae3c34" stretchType="RelativeToTallestObject" x="0" y="1" width="80" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" backcolor="#999999"/>
+					<textElement textAlignment="Center" verticalAlignment="Top" markup="styled">
+						<font size="6" isBold="true" isUnderline="false" isStrikeThrough="false"/>
+					</textElement>
+					<text><![CDATA[Total por meta:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="fc560f7f-a2c4-48f8-b5aa-09810b87a458" stretchType="RelativeToTallestObject" x="80" y="1" width="80" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Center">
+						<font size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{totalImporteEstimacion}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="70934c1d-821a-4eb4-8c31-3b14ee05c264" stretchType="RelativeToTallestObject" x="160" y="1" width="80" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Center">
+						<font size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{totalImporteAccion}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="&lt;style forecolor=&quot;black&quot;&gt;¤#,##0.00&lt;/style&gt;;&lt;style forecolor=&quot;red&quot;&gt;¤(#,##0.00)&lt;/style&gt;" isBlankWhenNull="true">
+					<reportElement uuid="d2245991-125c-442a-a123-ea049c514ce0" stretchType="RelativeToTallestObject" x="240" y="1" width="80" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Center" markup="styled">
+						<font size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{totalImporteAsignado}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="&lt;style forecolor=&quot;black&quot;&gt;¤#,##0.00&lt;/style&gt;;&lt;style forecolor=&quot;red&quot;&gt;¤(#,##0.00)&lt;/style&gt;" isBlankWhenNull="true">
+					<reportElement uuid="008143cc-2de8-4c4b-b84c-fd349bcfa2f2" stretchType="RelativeToTallestObject" x="320" y="1" width="80" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" printWhenGroupChanges="Meta"/>
+					<textElement textAlignment="Center" markup="styled">
+						<font size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{totalImporteEjercido}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement uuid="c2be8a9e-55eb-4107-aacd-5201a3222135" x="0" y="0" width="752" height="1"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Accion" isStartNewPage="true" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{ACCION}]]></groupExpression>
+		<groupHeader>
+			<band height="74">
+				<staticText>
+					<reportElement uuid="8841ed52-2583-42b6-9692-393eb6e1bbc3" stretchType="RelativeToTallestObject" mode="Opaque" x="240" y="24" width="80" height="15" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Modificado]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="4519f69c-3a49-4187-980c-258b75d54319" stretchType="RelativeToBandHeight" x="60" y="0" width="692" height="15" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<font fontName="SansSerif" size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESCR_ACCION}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="e718382a-4a55-4bd4-aab1-ab146522c6f7" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="58" width="80" height="15" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+						<font size="6" isBold="true" isUnderline="false" isStrikeThrough="false"/>
+					</textElement>
+					<text><![CDATA[Periodo]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="fe16d489-c070-4ae1-9f85-e623e70b70b7" stretchType="RelativeToTallestObject" mode="Opaque" x="80" y="58" width="80" height="15" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Programado]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="b61b3410-8b03-4944-b272-e490b2c9654f" stretchType="RelativeToTallestObject" mode="Opaque" x="160" y="58" width="80" height="15" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Realizado]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="4ee4f0b7-07c6-410b-ae8a-ddbaa874ed36" stretchType="RelativeToTallestObject" mode="Opaque" x="240" y="58" width="80" height="15" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Importe Asignado]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="7e06e194-4ed2-4eff-9ea9-b80246138d9d" stretchType="RelativeToTallestObject" mode="Opaque" x="400" y="58" width="352" height="15" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Observaciones]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="0568d66a-bcd5-4a19-bf9e-1c0eb0ee824d" stretchType="RelativeToTallestObject" mode="Opaque" x="320" y="58" width="80" height="15" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Importe Devengado]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="5b23288f-021c-41e7-ac81-eb4f4d07a18f" stretchType="RelativeToBandHeight" x="0" y="0" width="60" height="15" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Accion:]]></text>
+				</staticText>
+				<elementGroup/>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Accion" pattern="&lt;style forecolor=&quot;black&quot;&gt;¤#,##0.00&lt;/style&gt;;&lt;style forecolor=&quot;red&quot;&gt;¤(#,##0.00)&lt;/style&gt;" isBlankWhenNull="true">
+					<reportElement uuid="b678d55c-642a-4f41-8f66-c1e6b56a9137" stretchType="RelativeToTallestObject" x="0" y="39" width="80" height="15" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" markup="styled">
+						<font size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{IMPORTE_ASIGNADO_PPTO_2}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Accion" pattern="&lt;style forecolor=&quot;black&quot;&gt;¤#,##0.00&lt;/style&gt;;&lt;style forecolor=&quot;red&quot;&gt;¤(#,##0.00)&lt;/style&gt;" isBlankWhenNull="true">
+					<reportElement uuid="15aced6c-2b06-4a08-bfe4-ce94c6dd7ed8" stretchType="RelativeToTallestObject" x="80" y="39" width="80" height="15" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" markup="styled">
+						<font size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{EJERCIDO_CIM_1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Accion" pattern="&lt;style forecolor=&quot;black&quot;&gt;¤#,##0.00&lt;/style&gt;;&lt;style forecolor=&quot;red&quot;&gt;¤(#,##0.00)&lt;/style&gt;" isBlankWhenNull="true">
+					<reportElement uuid="d8a10114-ce7b-473f-8f0c-b76b2f3045c2" stretchType="RelativeToTallestObject" x="160" y="39" width="80" height="15" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" markup="styled">
+						<font size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{DIFERENCIA_1}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="b733cce7-5365-4ea0-b1d1-7efaf5d90ac4" stretchType="RelativeToTallestObject" mode="Opaque" x="80" y="24" width="80" height="15" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Devengado]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="37305a62-63df-4a86-9361-f1e654932a1d" stretchType="RelativeToTallestObject" mode="Opaque" x="160" y="24" width="80" height="15" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Diferencia]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="e6612af6-be89-4d34-ae11-cfb82fc0ddbf" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="24" width="80" height="15" isPrintWhenDetailOverflows="true" backcolor="#CCCCCC"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+						<font size="6" isBold="true" isUnderline="false" isStrikeThrough="false"/>
+					</textElement>
+					<text><![CDATA[Autorizado]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Accion" pattern="&lt;style forecolor=&quot;black&quot;&gt;¤#,##0.00&lt;/style&gt;;&lt;style forecolor=&quot;red&quot;&gt;¤(#,##0.00)&lt;/style&gt;" isBlankWhenNull="true">
+					<reportElement uuid="f301776f-0938-4f21-8cd9-dcf48dad5ba9" stretchType="RelativeToTallestObject" x="240" y="39" width="80" height="15" isPrintWhenDetailOverflows="true"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" markup="styled">
+						<font size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{MODIFICADO_1}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="64">
+			<textField>
+				<reportElement uuid="a60bf77f-b837-4a2a-8e77-b073092824e4" x="164" y="20" width="429" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SECRETARIA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="72e73dbb-b75d-4df7-b449-ddc672b9594c" x="164" y="0" width="429" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GOBIERNO}]]></textFieldExpression>
+			</textField>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement uuid="38b64b3f-2d50-430a-bc41-432bcedfaeea" stretchType="RelativeToBandHeight" x="0" y="0" width="66" height="59"/>
+				<imageExpression><![CDATA[$P{IMG_DIR}+"EDO.gif"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement uuid="523faf1c-7ad3-4766-9449-cc6aeb44f8af" x="164" y="40" width="429" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA["Avance de Acción al " + $P{YEAR}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="a2b49ed5-afef-4a3d-81fb-35c8028c9c57" x="1" y="60" width="751" height="1"/>
+			</line>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="16">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="ad006ba7-39cf-431c-939b-1c7c18661cc9" stretchType="RelativeToBandHeight" x="0" y="0" width="80" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCR_MES}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="3b93c32c-e58d-4475-944d-8fa400622b3e" stretchType="RelativeToBandHeight" x="80" y="0" width="80" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{VALOR_ESTIMACION}.equals(null)?0:$F{VALOR_ESTIMACION})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="dec6ff35-d4ec-4ca5-b9b9-1c3fd3b7c62a" stretchType="RelativeToBandHeight" x="160" y="0" width="80" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{VALOR_ACCION}.equals(null)?0:$F{VALOR_ACCION})]]></textFieldExpression>
+			</textField>
+			<textField pattern="&lt;style forecolor=&quot;black&quot;&gt;¤#,##0.00&lt;/style&gt;;&lt;style forecolor=&quot;red&quot;&gt;¤(#,##0.00)&lt;/style&gt;" isBlankWhenNull="true">
+				<reportElement uuid="cb750bba-8a57-44e4-92ef-f3f488604a3c" stretchType="RelativeToBandHeight" x="240" y="0" width="80" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font fontName="SansSerif" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE_ASIGNADO_PPTO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="&lt;style forecolor=&quot;black&quot;&gt;¤#,##0.00&lt;/style&gt;;&lt;style forecolor=&quot;red&quot;&gt;¤(#,##0.00)&lt;/style&gt;" isBlankWhenNull="true">
+				<reportElement uuid="08d9fb9f-513d-440a-b777-98c3951526ca" stretchType="RelativeToBandHeight" x="320" y="0" width="80" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font fontName="SansSerif" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EJERCIDO_CIM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="42705c5f-c341-4080-b09f-c52933a937b6" stretchType="RelativeToBandHeight" x="400" y="0" width="352" height="15" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OBSERVACIONES}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="71" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement uuid="9f193cbf-f4f6-4fec-ae9f-da433084666f" x="331" y="54" width="146" height="10"/>
+				<textElement textAlignment="Center">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HOY}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="55657e43-4a2a-4cea-977c-eaf1a221401a" x="1" y="38" width="752" height="1"/>
+			</line>
+			<textField>
+				<reportElement uuid="0a693d0b-5a53-41dc-ab79-ca7e70f4735b" x="675" y="54" width="43" height="10"/>
+				<textElement textAlignment="Right">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement uuid="96caeec8-1aba-4a91-95d9-2ad6915df398" x="718" y="54" width="31" height="10"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" de " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement uuid="2e9d0fc7-9bb9-42ae-8abc-9743fff2279f" x="1" y="54" width="283" height="10"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["rptAvanceAccionMasivo"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="a70b80d6-8808-4af5-b02b-b87d5efed75f" x="286" y="15" width="232" height="1">
+					<printWhenExpression><![CDATA[(!$F{LIDER}.equals(null)) && ($F{REPWEB_IMPFIRMA}.equals('S'))]]></printWhenExpression>
+				</reportElement>
+			</line>
+			<staticText>
+				<reportElement uuid="1c65d29b-5ed8-4a15-878a-1caaf1f08221" x="343" y="16" width="115" height="18" backcolor="#999999">
+					<printWhenExpression><![CDATA[(!$F{LIDER}.equals(null)) && ($F{REPWEB_IMPFIRMA}.equals('S'))]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="styled">
+					<font size="8" isBold="true" isUnderline="false" isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[Lider de Proyecto]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="f6fb1a30-1770-4e31-9e81-e8d3f38a25c6" x="261" y="0" width="287" height="15">
+					<printWhenExpression><![CDATA[(!$F{LIDER}.equals(null)) && ($F{REPWEB_IMPFIRMA}.equals('S'))]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LIDER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

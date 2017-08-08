@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subrptTotalTransferencias" language="groovy" pageWidth="92" pageHeight="12" columnWidth="92" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="bfd1032f-59c6-427f-bd0d-8208ea282790">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="RPT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\desarrollo\\repositorio_local\\POA_13042016\\trunk\\POA\\web\\reportes\\repAmpTrans\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TIPOFICIO" class="java.lang.String"/>
+	<parameter name="TIPO" class="java.lang.String"/>
+	<parameter name="ESTATUS" class="java.lang.String"/>
+	<parameter name="OFICIO" class="java.lang.Long"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT OFI.CONSEC as consec,
+
+        max(TRAN.IMPTE) as importetran
+
+    FROM DGI.OFICONS OFI,
+         SPP.TRANSFERENCIAS TRAN,
+         SPP.TRANSFREC REC,
+         DGI.PARTIDA PARTIDA_A,
+         DGI.PARTIDA PARTIDA_B,
+         DGI.PARAMETROS PARAM,
+         POA.MOVOFICIOS MOVS,
+	S_DGI_PARAM_LONG_COD PLC
+   WHERE (TRAN.OFICIO = OFI.OFICIO ) and
+         ( REC.OFICIO =TRAN.OFICIO ) and
+         ( REC.CONSEC =TRAN.CONSEC ) and
+         (TRAN.PARTIDA = PARTIDA_A.PARTIDA ) and
+         ( REC.PARTIDA = PARTIDA_B.PARTIDA ) and
+         ( OFI.CONSEC =TRAN.CONSEC ) and
+         (TRAN.OFICIO = MOVS.OFICIO ) and
+         ( PARTIDA_A.YEAR = PARTIDA_B.YEAR ) and
+         ( ( OFI.OFICIO = $P{OFICIO} ) AND
+         ( OFI.TIPO = $P{TIPOFICIO} )) AND
+         PARTIDA_A.YEAR = $P{YEAR} AND
+	PLC.YEAR = PARTIDA_A.YEAR AND
+         (LENGTH(NVL($P{TIPOFICIO},'00'))=1)
+         group by ofi.CONSEC
+
+UNION ALL
+
+
+
+SELECT
+        TRAN.CONSEC AS CONSEC,
+        max(TRAN.IMPTE) as importetran
+    FROM
+         SPP.TRANSFERENCIAS TRAN,
+         SPP.TRANSFREC REC,
+         DGI.PARTIDA PARTIDA_A,
+         DGI.PARTIDA PARTIDA_B,
+         DGI.PARAMETROS PARAM,
+         POA.MOVOFICIOS MOVS,
+	S_DGI_PARAM_LONG_COD PLC
+   WHERE ( REC.OFICIO =TRAN.OFICIO ) and
+         ( REC.CONSEC =TRAN.CONSEC ) and
+         (TRAN.PARTIDA = PARTIDA_A.PARTIDA ) and
+         ( REC.PARTIDA = PARTIDA_B.PARTIDA ) and
+         (TRAN.OFICIO = MOVS.OFICIO ) and
+         ( PARTIDA_A.YEAR = PARTIDA_B.YEAR ) and
+         ( MOVS.OFICIO=$P{OFICIO} ) AND
+         PARTIDA_A.YEAR = $P{YEAR} AND
+	PLC.YEAR = PARTIDA_A.YEAR AND
+    (LENGTH(NVL($P{TIPOFICIO},'00'))>1)
+    group by tran.CONSEC]]>
+	</queryString>
+	<field name="CONSEC" class="java.math.BigDecimal"/>
+	<field name="IMPORTETRAN" class="java.math.BigDecimal"/>
+	<variable name="IMPORTETRAN_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTETRAN}]]></variableExpression>
+	</variable>
+	<summary>
+		<band height="12">
+			<textField pattern="&lt;style forecolor=&quot;red&quot;&gt;(¤#,##0.00)&lt;/style&gt;;&lt;style forecolor=&quot;red&quot;&gt;¤(#,##0.00)&lt;/style&gt;">
+				<reportElement uuid="22a48f0e-56c4-4eb2-8385-33a63e1d7e72" x="0" y="0" width="92" height="12"/>
+				<textElement textAlignment="Right" markup="styled">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{IMPORTETRAN_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subRptPlantillaPersonalVertical" language="groovy" pageWidth="752" pageHeight="572" orientation="Landscape" columnWidth="752" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="46dd87d8-534b-4f3a-a8a4-2a8d919e4f91">
+	<property name="ireport.zoom" value="1.1289478601075547"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Porcentaje1">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[($F{CANTIDAD_ACT} - $F{CANTIDAD_ANT}) >= 0]]></conditionExpression>
+			<style forecolor="#000000" pattern=""/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[($F{CANTIDAD_ACT} - $F{CANTIDAD_ANT}) < 0]]></conditionExpression>
+			<style forecolor="#FF0000" pattern="">
+				<pen lineColor="#000000"/>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+			</style>
+		</conditionalStyle>
+	</style>
+	<style name="Porcentaje2">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[($V{CANTIDAD_ACT_1} - $V{CANTIDAD_ANT_1}) >= 0]]></conditionExpression>
+			<style forecolor="#000000"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[($V{CANTIDAD_ACT_1} - $V{CANTIDAD_ANT_1}) < 0]]></conditionExpression>
+			<style forecolor="#FF0000">
+				<pen lineColor="#000000"/>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+			</style>
+		</conditionalStyle>
+	</style>
+	<style name="Inicial">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{CANTIDAD_ANT} >= 0]]></conditionExpression>
+			<style forecolor="#000000"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{CANTIDAD_ANT} < 0]]></conditionExpression>
+			<style forecolor="#FF0000">
+				<pen lineColor="#000000"/>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+			</style>
+		</conditionalStyle>
+	</style>
+	<style name="RamoInicial">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{CANTIDAD_ANT_1} >= 0]]></conditionExpression>
+			<style forecolor="#000000">
+				<pen lineColor="#000000"/>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+			</style>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{CANTIDAD_ANT_1} < 0]]></conditionExpression>
+			<style forecolor="#FF0000">
+				<pen lineColor="#000000"/>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+			</style>
+		</conditionalStyle>
+	</style>
+	<style name="Asignado">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{CANTIDAD_ACT} >= 0]]></conditionExpression>
+			<style forecolor="#000000">
+				<pen lineColor="#000000"/>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+			</style>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{CANTIDAD_ACT} < 0]]></conditionExpression>
+			<style forecolor="#FF0000">
+				<pen lineColor="#000000"/>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+			</style>
+		</conditionalStyle>
+	</style>
+	<style name="RamoAsignado">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{CANTIDAD_ACT_1} >= 0]]></conditionExpression>
+			<style forecolor="#000000">
+				<pen lineColor="#000000"/>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+			</style>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{CANTIDAD_ACT_1} < 0]]></conditionExpression>
+			<style forecolor="#FF0000">
+				<pen lineColor="#000000"/>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineColor="#000000"/>
+					<leftPen lineColor="#000000"/>
+					<bottomPen lineColor="#000000"/>
+					<rightPen lineColor="#000000"/>
+				</box>
+			</style>
+		</conditionalStyle>
+	</style>
+	<parameter name="YEAR_SIG" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RAMO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+	RELLAB.DESCR,
+	NVL(REL_ANT.CANTIDAD_ANT,0) CANTIDAD_ANT,
+	NVL(REL_ACT.CANTIDAD_ACT,0)  CANTIDAD_ACT
+FROM
+	S_POA_REL_LABORAL RELLAB,
+	(
+		SELECT
+			RPP.YEAR,
+			RPP.REL_LABORAL,
+			NVL(SUM(RPP.CANTIDAD),0) AS CANTIDAD_ANT
+		FROM
+			POA.RAMO_PLANTILLA_PERSONAL RPP,
+			S_POA_REL_LABORAL PRL
+		WHERE
+			RPP.RAMO = $P{RAMO} AND
+			RPP.YEAR = $P{YEAR_SIG} AND
+			PRL.YEAR = RPP.YEAR AND
+			PRL.REL_LABORAL = RPP.REL_LABORAL AND
+			PRL.TIPO = 'P'
+	   GROUP BY
+			RPP.YEAR,
+			RPP.RAMO,
+			RPP.REL_LABORAL,
+			RPP.RAMO,
+			PRL.DESCR
+	) REL_ANT,
+	(
+		SELECT
+			RPP.YEAR,
+			RPP.REL_LABORAL,
+			NVL(SUM(RPP.CANTIDAD),0) AS CANTIDAD_ACT
+		FROM
+			POA.RAMO_PLANTILLA_PERSONAL RPP,
+			S_POA_REL_LABORAL PRL
+		WHERE
+			RPP.YEAR = to_char(to_number($P{YEAR_SIG})+1) AND
+			RPP.RAMO = $P{RAMO} AND
+			PRL.YEAR = RPP.YEAR AND
+			PRL.REL_LABORAL = RPP.REL_LABORAL AND
+			PRL.TIPO = 'P'
+	   GROUP BY
+			RPP.YEAR,
+			RPP.RAMO,
+			RPP.REL_LABORAL,
+			RPP.RAMO,
+			PRL.DESCR
+	) REL_ACT
+WHERE
+	RELLAB.YEAR = to_char(to_number($P{YEAR_SIG})+1) AND
+	REL_ANT.YEAR (+)= (RELLAB.YEAR-1) AND
+	REL_ANT.REL_LABORAL (+)= RELLAB.REL_LABORAL AND
+	REL_ACT.YEAR (+)= RELLAB.YEAR AND
+	REL_ACT.REL_LABORAL (+)= RELLAB.REL_LABORAL AND
+	RELLAB.TIPO = 'P'
+ORDER BY
+RELLAB.DESCR]]>
+	</queryString>
+	<field name="DESCR" class="java.lang.String"/>
+	<field name="CANTIDAD_ANT" class="java.math.BigDecimal"/>
+	<field name="CANTIDAD_ACT" class="java.math.BigDecimal"/>
+	<variable name="CANTIDAD_ANT_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CANTIDAD_ANT}]]></variableExpression>
+	</variable>
+	<variable name="CANTIDAD_ACT_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CANTIDAD_ACT}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="30" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="cff98a6b-8fba-48bf-9330-331ac163449d" mode="Opaque" x="0" y="10" width="238" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PLANTILLA DE PERSONAL Y OTROS]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField pattern="#,##0;(#,##0)" isBlankWhenNull="true">
+				<reportElement uuid="a8f38409-58dc-400f-9580-de8aced4d55d" style="Asignado" x="454" y="0" width="120" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[($F{CANTIDAD_ANT} + $F{CANTIDAD_ACT}) > 0]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANTIDAD_ACT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(#,##0)" isBlankWhenNull="true">
+				<reportElement uuid="45c7fa2d-dc09-442b-b2a4-59979679112b" style="Inicial" x="238" y="0" width="116" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[($F{CANTIDAD_ANT} + $F{CANTIDAD_ACT}) > 0]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANTIDAD_ANT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(#,##0)" isBlankWhenNull="true">
+				<reportElement uuid="09c4fdbf-f052-4760-9bdb-c7e9575add29" style="Porcentaje1" x="574" y="0" width="122" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[($F{CANTIDAD_ANT} + $F{CANTIDAD_ACT}) > 0]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANTIDAD_ACT}- $F{CANTIDAD_ANT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="03ced73f-11e0-42dd-826d-3bd562563d0a" x="0" y="0" width="238" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[($F{CANTIDAD_ANT} + $F{CANTIDAD_ACT}) > 0]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{DESCR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 %;(#,##0.00 %)" isBlankWhenNull="true">
+				<reportElement uuid="d8d00c32-3349-44c8-8b8c-57622ff985f4" style="Porcentaje1" x="696" y="0" width="56" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[($F{CANTIDAD_ANT} + $F{CANTIDAD_ACT}) > 0]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANTIDAD_ANT} == 0 && $F{CANTIDAD_ACT} == 0 ? "0 %" :
+($F{CANTIDAD_ACT} - $F{CANTIDAD_ANT}) > 0 && $F{CANTIDAD_ANT} == 0 ? "100 %" :
+($F{CANTIDAD_ACT} - $F{CANTIDAD_ANT}) / $F{CANTIDAD_ANT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(#,##0)" isBlankWhenNull="true">
+				<reportElement uuid="410bf59a-97e0-48be-be5f-73fd4b16d2fa" style="Inicial" x="354" y="0" width="100" height="20">
+					<printWhenExpression><![CDATA[($F{CANTIDAD_ANT} + $F{CANTIDAD_ACT}) > 0]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="30" splitType="Stretch">
+			<textField pattern="#,##0.00 %;(#,##0.00 %)" isBlankWhenNull="true">
+				<reportElement uuid="4d21e45b-1722-49b0-be66-4ffc7e9a698d" style="Porcentaje2" mode="Transparent" x="696" y="10" width="56" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{CANTIDAD_ANT_1} == 0 && $V{CANTIDAD_ACT_1} == 0 ? "0 %" :
+($V{CANTIDAD_ACT_1} - $V{CANTIDAD_ANT_1}) > 0 && $V{CANTIDAD_ANT_1}== 0 ? "100 %" :
+($V{CANTIDAD_ACT_1} - $V{CANTIDAD_ANT_1}) / $V{CANTIDAD_ANT_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f9f079a6-36f3-4e0a-aa64-bbb1a663356d" mode="Transparent" x="0" y="10" width="238" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL PLAZAS]]></text>
+			</staticText>
+			<textField pattern="#,##0;(#,##0)" isBlankWhenNull="true">
+				<reportElement uuid="fa71867d-4d15-4bb2-bd30-f5af9ec21806" style="Porcentaje2" mode="Transparent" x="574" y="10" width="122" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{CANTIDAD_ACT_1} - $V{CANTIDAD_ANT_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(#,##0)" isBlankWhenNull="true">
+				<reportElement uuid="c880cceb-e97c-4df0-810d-b5a14e8ee93b" style="RamoInicial" mode="Transparent" x="238" y="10" width="116" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{CANTIDAD_ANT_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(#,##0)" isBlankWhenNull="true">
+				<reportElement uuid="c0ab93df-c464-4d6e-a400-04fdd4585f38" style="RamoAsignado" mode="Transparent" x="454" y="10" width="120" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{CANTIDAD_ACT_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0;(#,##0)" isBlankWhenNull="true">
+				<reportElement uuid="9b789db8-1061-4d5d-a6f5-0becafb3ab2a" style="RamoInicial" mode="Transparent" x="354" y="10" width="100" height="20"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

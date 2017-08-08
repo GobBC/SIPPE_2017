@@ -1,0 +1,881 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptAvanceAccionMensual" language="groovy" pageWidth="792" pageHeight="612" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a89524e2-618a-4b8b-b71b-7d8c1e4ca7a8">
+	<property name="ireport.zoom" value="1.4641000000000008"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="YEAR" class="java.lang.Integer"/>
+	<parameter name="IMG_DIR" class="java.lang.String"/>
+	<parameter name="RAMO_IN_LIST" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT DISTINCT
+    A.YEAR,
+    R.RAMO,  R.RAMO || ' - ' || R.DESCR AS DESCR_RAMO,
+    P.PRG,   P.PRG || ' - ' || P.DESCR AS DECR_PRG,
+    M.META,  M.META || ' - ' || M.DESCR AS DESCR_META,
+    A.ACCION,A.ACCION || ' - ' ||REPLACE(REPLACE(A.DESCR,CHR(10),''),CHR(13),'') AS DESCR_ACCION,
+    MED.DESCR AS UM,
+    ENE.PROGRAMADO AS PROGRAMADO_ENE,ENE.REALIZADO AS REALIZADO_ENE,ENE.VARIACION AS VARIACION_ENE,
+    FEB.PROGRAMADO AS PROGRAMADO_FEB,FEB.REALIZADO AS REALIZADO_FEB,FEB.VARIACION AS VARIACION_FEB,
+    MAR.PROGRAMADO AS PROGRAMADO_MAR,MAR.REALIZADO AS REALIZADO_MAR,MAR.VARIACION AS VARIACION_MAR,
+    ABR.PROGRAMADO AS PROGRAMADO_ABR,ABR.REALIZADO AS REALIZADO_ABR,ABR.VARIACION AS VARIACION_ABR,
+    MAY.PROGRAMADO AS PROGRAMADO_MAY,MAY.REALIZADO AS REALIZADO_MAY,MAY.VARIACION AS VARIACION_MAY,
+    JUN.PROGRAMADO AS PROGRAMADO_JUN,JUN.REALIZADO AS REALIZADO_JUN,JUN.VARIACION AS VARIACION_JUN,
+    JUL.PROGRAMADO AS PROGRAMADO_JUL,JUL.REALIZADO AS REALIZADO_JUL,JUL.VARIACION AS VARIACION_JUL,
+    AGO.PROGRAMADO AS PROGRAMADO_AGO,AGO.REALIZADO AS REALIZADO_AGO,AGO.VARIACION AS VARIACION_AGO,
+    SEP.PROGRAMADO AS PROGRAMADO_SEP,SEP.REALIZADO AS REALIZADO_SEP,SEP.VARIACION AS VARIACION_SEP,
+    OCT.PROGRAMADO AS PROGRAMADO_OCT,OCT.REALIZADO AS REALIZADO_OCT,OCT.VARIACION AS VARIACION_OCT,
+    NOV.PROGRAMADO AS PROGRAMADO_NOV,NOV.REALIZADO AS REALIZADO_NOV,NOV.VARIACION AS VARIACION_NOV,
+    DIC.PROGRAMADO AS PROGRAMADO_DIC,DIC.REALIZADO AS REALIZADO_DIC,DIC.VARIACION AS VARIACION_DIC,
+
+    DGI.F_CALCULA_AVANCE_ANUAL(A.CALCULO, ENE.PROGRAMADO, FEB.PROGRAMADO, MAR.PROGRAMADO, ABR.PROGRAMADO, MAY.PROGRAMADO, JUN.PROGRAMADO, JUL.PROGRAMADO, AGO.PROGRAMADO, SEP.PROGRAMADO, OCT.PROGRAMADO, NOV.PROGRAMADO, DIC.PROGRAMADO) AS ANUAL_PROGRAMADO,
+
+	DGI.F_CALCULA_AVANCE_ANUAL(A.CALCULO,ENE.REALIZADO, FEB.REALIZADO, MAR.REALIZADO, ABR.REALIZADO, MAY.REALIZADO, JUN.REALIZADO, JUL.REALIZADO,AGO.REALIZADO, SEP.REALIZADO, OCT.REALIZADO, NOV.REALIZADO, DIC.REALIZADO) AS ANUAL_REALIZADO,
+
+	DGI.F_CALCULA_AVANCE_ANUAL(A.CALCULO,ENE.REALIZADO, FEB.REALIZADO, MAR.REALIZADO, ABR.REALIZADO, MAY.REALIZADO, JUN.REALIZADO, JUL.REALIZADO,AGO.REALIZADO, SEP.REALIZADO, OCT.REALIZADO, NOV.REALIZADO, DIC.REALIZADO) - DGI.F_CALCULA_AVANCE_ANUAL(A.CALCULO, ENE.PROGRAMADO, FEB.PROGRAMADO, MAR.PROGRAMADO, ABR.PROGRAMADO, MAY.PROGRAMADO, JUN.PROGRAMADO, JUL.PROGRAMADO, AGO.PROGRAMADO, SEP.PROGRAMADO, OCT.PROGRAMADO, NOV.PROGRAMADO, DIC.PROGRAMADO) AS ANUAL_VARIACION,
+
+    PARAM.GOBIERNO, PARAM.SECRETARIA, PARAM.LOGO, SYSDATE AS HOY
+FROM
+    POA.RAMO_PROGRAMA RP,
+    DGI.RAMOS R,
+    S_POA_PROGRAMA P,
+    S_POA_META M,
+    S_POA_ACCION A,
+    (   SELECT DISTINCT A.YEAR,A.RAMO,A.PRG,A.META,A.ACCION,A.PERIODO,
+            NVL(AE.VALOR,0) AS PROGRAMADO,PAA.VALOR AS REALIZADO,PAA.VALOR-NVL(AE.VALOR,0) AS VARIACION
+        FROM S_POA_ACCION A,
+             (  SELECT YEAR,RAMO,META,ACCION,PERIODO,SUM(VALOR) AS VALOR
+                FROM (  SELECT T.YEAR,T.RAMO,T.META,T.ACCION,T.MES AS PERIODO,T.VALOR FROM DGI.POA_AVANCE_ACCION T WHERE T.YEAR = $P{YEAR} AND T.RAMO IN ($P!{RAMO_IN_LIST}) UNION
+                        SELECT A.YEAR,A.RAMO,A.META,A.ACCION,MM.MES AS PERIODO,0 FROM S_POA_ACCION A, DGI.MESES MM WHERE A.YEAR = $P{YEAR} AND A.RAMO IN ($P!{RAMO_IN_LIST}) )R
+                GROUP BY YEAR,RAMO,META,ACCION,PERIODO ) PAA,
+            DGI.ACCION_ESTIMACION AE
+        WHERE
+            A.YEAR = $P{YEAR} AND A.RAMO IN ($P!{RAMO_IN_LIST}) AND
+            PAA.YEAR (+)= A.YEAR AND PAA.RAMO (+)= A.RAMO AND PAA.META (+)= A.META AND PAA.ACCION (+)= A.ACCION AND
+            AE.META (+)= PAA.META AND AE.RAMO (+)= PAA.RAMO AND AE.YEAR (+)= PAA.YEAR AND AE.ACCION (+)= PAA.ACCION AND AE.PERIODO (+)= PAA.PERIODO AND
+            PAA.PERIODO = 1 ) ENE,
+    (   SELECT DISTINCT A.YEAR,A.RAMO,A.PRG,A.META,A.ACCION,A.PERIODO,
+            NVL(AE.VALOR,0) AS PROGRAMADO,PAA.VALOR AS REALIZADO,PAA.VALOR-NVL(AE.VALOR,0) AS VARIACION
+        FROM S_POA_ACCION A,
+             (  SELECT YEAR,RAMO,META,ACCION,PERIODO,SUM(VALOR) AS VALOR
+                FROM (  SELECT T.YEAR,T.RAMO,T.META,T.ACCION,T.MES AS PERIODO,T.VALOR FROM DGI.POA_AVANCE_ACCION T WHERE T.YEAR = $P{YEAR} AND T.RAMO IN ($P!{RAMO_IN_LIST}) UNION
+                        SELECT A.YEAR,A.RAMO,A.META,A.ACCION,MM.MES AS PERIODO,0 FROM S_POA_ACCION A, DGI.MESES MM WHERE A.YEAR = $P{YEAR} AND A.RAMO IN ($P!{RAMO_IN_LIST})  )R
+                GROUP BY YEAR,RAMO,META,ACCION,PERIODO ) PAA,
+            DGI.ACCION_ESTIMACION AE
+        WHERE
+            A.YEAR = $P{YEAR} AND A.RAMO IN ($P!{RAMO_IN_LIST}) AND
+            PAA.YEAR (+)= A.YEAR AND PAA.RAMO (+)= A.RAMO AND PAA.META (+)= A.META AND PAA.ACCION (+)= A.ACCION AND
+            AE.META (+)= PAA.META AND AE.RAMO (+)= PAA.RAMO AND AE.YEAR (+)= PAA.YEAR AND AE.ACCION (+)= PAA.ACCION AND AE.PERIODO (+)= PAA.PERIODO AND
+            PAA.PERIODO = 2 ) FEB,
+    (   SELECT DISTINCT A.YEAR,A.RAMO,A.PRG,A.META,A.ACCION,A.PERIODO,
+            NVL(AE.VALOR,0) AS PROGRAMADO,PAA.VALOR AS REALIZADO,PAA.VALOR-NVL(AE.VALOR,0) AS VARIACION
+        FROM S_POA_ACCION A,
+             (  SELECT YEAR,RAMO,META,ACCION,PERIODO,SUM(VALOR) AS VALOR
+                FROM (  SELECT T.YEAR,T.RAMO,T.META,T.ACCION,T.MES AS PERIODO,T.VALOR FROM DGI.POA_AVANCE_ACCION T WHERE T.YEAR = $P{YEAR} AND T.RAMO IN ($P!{RAMO_IN_LIST}) UNION
+                        SELECT A.YEAR,A.RAMO,A.META,A.ACCION,MM.MES AS PERIODO,0 FROM S_POA_ACCION A, DGI.MESES MM WHERE A.YEAR = $P{YEAR} AND A.RAMO IN ($P!{RAMO_IN_LIST})  )R
+                GROUP BY YEAR,RAMO,META,ACCION,PERIODO ) PAA,
+            DGI.ACCION_ESTIMACION AE
+        WHERE
+            A.YEAR = $P{YEAR} AND A.RAMO IN ($P!{RAMO_IN_LIST}) AND
+            PAA.YEAR (+)= A.YEAR AND PAA.RAMO (+)= A.RAMO AND PAA.META (+)= A.META AND PAA.ACCION (+)= A.ACCION AND
+            AE.META (+)= PAA.META AND AE.RAMO (+)= PAA.RAMO AND AE.YEAR (+)= PAA.YEAR AND AE.ACCION (+)= PAA.ACCION AND AE.PERIODO (+)= PAA.PERIODO AND
+            PAA.PERIODO = 3 ) MAR,
+    (   SELECT DISTINCT A.YEAR,A.RAMO,A.PRG,A.META,A.ACCION,A.PERIODO,
+            NVL(AE.VALOR,0) AS PROGRAMADO,PAA.VALOR AS REALIZADO,PAA.VALOR-NVL(AE.VALOR,0) AS VARIACION
+        FROM S_POA_ACCION A,
+             (  SELECT YEAR,RAMO,META,ACCION,PERIODO,SUM(VALOR) AS VALOR
+                FROM (  SELECT T.YEAR,T.RAMO,T.META,T.ACCION,T.MES AS PERIODO,T.VALOR FROM DGI.POA_AVANCE_ACCION T WHERE T.YEAR = $P{YEAR} AND T.RAMO IN ($P!{RAMO_IN_LIST}) UNION
+                        SELECT A.YEAR,A.RAMO,A.META,A.ACCION,MM.MES AS PERIODO,0 FROM S_POA_ACCION A, DGI.MESES MM WHERE A.YEAR = $P{YEAR} AND A.RAMO IN ($P!{RAMO_IN_LIST})  )R
+                GROUP BY YEAR,RAMO,META,ACCION,PERIODO ) PAA,
+            DGI.ACCION_ESTIMACION AE
+        WHERE
+            A.YEAR = $P{YEAR} AND A.RAMO IN ($P!{RAMO_IN_LIST}) AND
+            PAA.YEAR (+)= A.YEAR AND PAA.RAMO (+)= A.RAMO AND PAA.META (+)= A.META AND PAA.ACCION (+)= A.ACCION AND
+            AE.META (+)= PAA.META AND AE.RAMO (+)= PAA.RAMO AND AE.YEAR (+)= PAA.YEAR AND AE.ACCION (+)= PAA.ACCION AND AE.PERIODO (+)= PAA.PERIODO AND
+            PAA.PERIODO = 4 ) ABR,
+    (   SELECT DISTINCT A.YEAR,A.RAMO,A.PRG,A.META,A.ACCION,A.PERIODO,
+            NVL(AE.VALOR,0) AS PROGRAMADO,PAA.VALOR AS REALIZADO,PAA.VALOR-NVL(AE.VALOR,0) AS VARIACION
+        FROM S_POA_ACCION A,
+             (  SELECT YEAR,RAMO,META,ACCION,PERIODO,SUM(VALOR) AS VALOR
+                FROM (  SELECT T.YEAR,T.RAMO,T.META,T.ACCION,T.MES AS PERIODO,T.VALOR FROM DGI.POA_AVANCE_ACCION T WHERE T.YEAR = $P{YEAR} AND T.RAMO IN ($P!{RAMO_IN_LIST}) UNION
+                        SELECT A.YEAR,A.RAMO,A.META,A.ACCION,MM.MES AS PERIODO,0 FROM S_POA_ACCION A, DGI.MESES MM WHERE A.YEAR = $P{YEAR} AND A.RAMO IN ($P!{RAMO_IN_LIST})  )R
+                GROUP BY YEAR,RAMO,META,ACCION,PERIODO ) PAA,
+            DGI.ACCION_ESTIMACION AE
+        WHERE
+            A.YEAR = $P{YEAR} AND A.RAMO IN ($P!{RAMO_IN_LIST}) AND
+            PAA.YEAR (+)= A.YEAR AND PAA.RAMO (+)= A.RAMO AND PAA.META (+)= A.META AND PAA.ACCION (+)= A.ACCION AND
+            AE.META (+)= PAA.META AND AE.RAMO (+)= PAA.RAMO AND AE.YEAR (+)= PAA.YEAR AND AE.ACCION (+)= PAA.ACCION AND AE.PERIODO (+)= PAA.PERIODO AND
+            PAA.PERIODO = 5 ) MAY,
+    (   SELECT DISTINCT A.YEAR,A.RAMO,A.PRG,A.META,A.ACCION,A.PERIODO,
+            NVL(AE.VALOR,0) AS PROGRAMADO,PAA.VALOR AS REALIZADO,PAA.VALOR-NVL(AE.VALOR,0) AS VARIACION
+        FROM S_POA_ACCION A,
+             (  SELECT YEAR,RAMO,META,ACCION,PERIODO,SUM(VALOR) AS VALOR
+                FROM (  SELECT T.YEAR,T.RAMO,T.META,T.ACCION,T.MES AS PERIODO,T.VALOR FROM DGI.POA_AVANCE_ACCION T WHERE T.YEAR = $P{YEAR} AND T.RAMO IN ($P!{RAMO_IN_LIST}) UNION
+                        SELECT A.YEAR,A.RAMO,A.META,A.ACCION,MM.MES AS PERIODO,0 FROM S_POA_ACCION A, DGI.MESES MM WHERE A.YEAR = $P{YEAR} AND A.RAMO IN ($P!{RAMO_IN_LIST})  )R
+                GROUP BY YEAR,RAMO,META,ACCION,PERIODO ) PAA,
+            DGI.ACCION_ESTIMACION AE
+        WHERE
+            A.YEAR = $P{YEAR} AND A.RAMO IN ($P!{RAMO_IN_LIST}) AND
+            PAA.YEAR (+)= A.YEAR AND PAA.RAMO (+)= A.RAMO AND PAA.META (+)= A.META AND PAA.ACCION (+)= A.ACCION AND
+            AE.META (+)= PAA.META AND AE.RAMO (+)= PAA.RAMO AND AE.YEAR (+)= PAA.YEAR AND AE.ACCION (+)= PAA.ACCION AND AE.PERIODO (+)= PAA.PERIODO AND
+            PAA.PERIODO = 6 ) JUN,
+    (   SELECT DISTINCT A.YEAR,A.RAMO,A.PRG,A.META,A.ACCION,A.PERIODO,
+            NVL(AE.VALOR,0) AS PROGRAMADO,PAA.VALOR AS REALIZADO,PAA.VALOR-NVL(AE.VALOR,0) AS VARIACION
+        FROM S_POA_ACCION A,
+             (  SELECT YEAR,RAMO,META,ACCION,PERIODO,SUM(VALOR) AS VALOR
+                FROM (  SELECT T.YEAR,T.RAMO,T.META,T.ACCION,T.MES AS PERIODO,T.VALOR FROM DGI.POA_AVANCE_ACCION T WHERE T.YEAR = $P{YEAR} AND T.RAMO IN ($P!{RAMO_IN_LIST}) UNION
+                        SELECT A.YEAR,A.RAMO,A.META,A.ACCION,MM.MES AS PERIODO,0 FROM S_POA_ACCION A, DGI.MESES MM WHERE A.YEAR = $P{YEAR} AND A.RAMO IN ($P!{RAMO_IN_LIST})  )R
+                GROUP BY YEAR,RAMO,META,ACCION,PERIODO ) PAA,
+            DGI.ACCION_ESTIMACION AE
+        WHERE
+            A.YEAR = $P{YEAR} AND A.RAMO IN ($P!{RAMO_IN_LIST}) AND
+            PAA.YEAR (+)= A.YEAR AND PAA.RAMO (+)= A.RAMO AND PAA.META (+)= A.META AND PAA.ACCION (+)= A.ACCION AND
+            AE.META (+)= PAA.META AND AE.RAMO (+)= PAA.RAMO AND AE.YEAR (+)= PAA.YEAR AND AE.ACCION (+)= PAA.ACCION AND AE.PERIODO (+)= PAA.PERIODO AND
+            PAA.PERIODO = 7 ) JUL,
+    (   SELECT DISTINCT A.YEAR,A.RAMO,A.PRG,A.META,A.ACCION,A.PERIODO,
+            NVL(AE.VALOR,0) AS PROGRAMADO,PAA.VALOR AS REALIZADO,PAA.VALOR-NVL(AE.VALOR,0) AS VARIACION
+        FROM S_POA_ACCION A,
+             (  SELECT YEAR,RAMO,META,ACCION,PERIODO,SUM(VALOR) AS VALOR
+                FROM (  SELECT T.YEAR,T.RAMO,T.META,T.ACCION,T.MES AS PERIODO,T.VALOR FROM DGI.POA_AVANCE_ACCION T WHERE T.YEAR = $P{YEAR} AND T.RAMO IN ($P!{RAMO_IN_LIST}) UNION
+                        SELECT A.YEAR,A.RAMO,A.META,A.ACCION,MM.MES AS PERIODO,0 FROM S_POA_ACCION A, DGI.MESES MM WHERE A.YEAR = $P{YEAR} AND A.RAMO IN ($P!{RAMO_IN_LIST})  )R
+                GROUP BY YEAR,RAMO,META,ACCION,PERIODO ) PAA,
+            DGI.ACCION_ESTIMACION AE
+        WHERE
+            A.YEAR = $P{YEAR} AND A.RAMO IN ($P!{RAMO_IN_LIST}) AND
+            PAA.YEAR (+)= A.YEAR AND PAA.RAMO (+)= A.RAMO AND PAA.META (+)= A.META AND PAA.ACCION (+)= A.ACCION AND
+            AE.META (+)= PAA.META AND AE.RAMO (+)= PAA.RAMO AND AE.YEAR (+)= PAA.YEAR AND AE.ACCION (+)= PAA.ACCION AND AE.PERIODO (+)= PAA.PERIODO AND
+            PAA.PERIODO = 8 ) AGO,
+    (   SELECT DISTINCT A.YEAR,A.RAMO,A.PRG,A.META,A.ACCION,A.PERIODO,
+            NVL(AE.VALOR,0) AS PROGRAMADO,PAA.VALOR AS REALIZADO,PAA.VALOR-NVL(AE.VALOR,0) AS VARIACION
+        FROM S_POA_ACCION A,
+             (  SELECT YEAR,RAMO,META,ACCION,PERIODO,SUM(VALOR) AS VALOR
+                FROM (  SELECT T.YEAR,T.RAMO,T.META,T.ACCION,T.MES AS PERIODO,T.VALOR FROM DGI.POA_AVANCE_ACCION T WHERE T.YEAR = $P{YEAR} AND T.RAMO IN ($P!{RAMO_IN_LIST}) UNION
+                        SELECT A.YEAR,A.RAMO,A.META,A.ACCION,MM.MES AS PERIODO,0 FROM S_POA_ACCION A, DGI.MESES MM WHERE A.YEAR = $P{YEAR} AND A.RAMO IN ($P!{RAMO_IN_LIST})  )R
+                GROUP BY YEAR,RAMO,META,ACCION,PERIODO ) PAA,
+            DGI.ACCION_ESTIMACION AE
+        WHERE
+            A.YEAR = $P{YEAR} AND A.RAMO IN ($P!{RAMO_IN_LIST}) AND
+            PAA.YEAR (+)= A.YEAR AND PAA.RAMO (+)= A.RAMO AND PAA.META (+)= A.META AND PAA.ACCION (+)= A.ACCION AND
+            AE.META (+)= PAA.META AND AE.RAMO (+)= PAA.RAMO AND AE.YEAR (+)= PAA.YEAR AND AE.ACCION (+)= PAA.ACCION AND AE.PERIODO (+)= PAA.PERIODO AND
+            PAA.PERIODO = 9 ) SEP,
+    (   SELECT DISTINCT A.YEAR,A.RAMO,A.PRG,A.META,A.ACCION,A.PERIODO,
+            NVL(AE.VALOR,0) AS PROGRAMADO,PAA.VALOR AS REALIZADO,PAA.VALOR-NVL(AE.VALOR,0) AS VARIACION
+        FROM S_POA_ACCION A,
+             (  SELECT YEAR,RAMO,META,ACCION,PERIODO,SUM(VALOR) AS VALOR
+                FROM (  SELECT T.YEAR,T.RAMO,T.META,T.ACCION,T.MES AS PERIODO,T.VALOR FROM DGI.POA_AVANCE_ACCION T WHERE T.YEAR = $P{YEAR} AND T.RAMO IN ($P!{RAMO_IN_LIST}) UNION
+                        SELECT A.YEAR,A.RAMO,A.META,A.ACCION,MM.MES AS PERIODO,0 FROM S_POA_ACCION A, DGI.MESES MM WHERE A.YEAR = $P{YEAR} AND A.RAMO IN ($P!{RAMO_IN_LIST})  )R
+                GROUP BY YEAR,RAMO,META,ACCION,PERIODO ) PAA,
+            DGI.ACCION_ESTIMACION AE
+        WHERE
+            A.YEAR = $P{YEAR} AND A.RAMO IN ($P!{RAMO_IN_LIST}) AND
+            PAA.YEAR (+)= A.YEAR AND PAA.RAMO (+)= A.RAMO AND PAA.META (+)= A.META AND PAA.ACCION (+)= A.ACCION AND
+            AE.META (+)= PAA.META AND AE.RAMO (+)= PAA.RAMO AND AE.YEAR (+)= PAA.YEAR AND AE.ACCION (+)= PAA.ACCION AND AE.PERIODO (+)= PAA.PERIODO AND
+            PAA.PERIODO = 10 ) OCT,
+    (   SELECT DISTINCT A.YEAR,A.RAMO,A.PRG,A.META,A.ACCION,A.PERIODO,
+            NVL(AE.VALOR,0) AS PROGRAMADO,PAA.VALOR AS REALIZADO,PAA.VALOR-NVL(AE.VALOR,0) AS VARIACION
+        FROM S_POA_ACCION A,
+             (  SELECT YEAR,RAMO,META,ACCION,PERIODO,SUM(VALOR) AS VALOR
+                FROM (  SELECT T.YEAR,T.RAMO,T.META,T.ACCION,T.MES AS PERIODO,T.VALOR FROM DGI.POA_AVANCE_ACCION T WHERE T.YEAR = $P{YEAR} AND T.RAMO IN ($P!{RAMO_IN_LIST}) UNION
+                        SELECT A.YEAR,A.RAMO,A.META,A.ACCION,MM.MES AS PERIODO,0 FROM S_POA_ACCION A, DGI.MESES MM WHERE A.YEAR = $P{YEAR} AND A.RAMO IN ($P!{RAMO_IN_LIST})  )R
+                GROUP BY YEAR,RAMO,META,ACCION,PERIODO ) PAA,
+            DGI.ACCION_ESTIMACION AE
+        WHERE
+            A.YEAR = $P{YEAR} AND A.RAMO IN ($P!{RAMO_IN_LIST}) AND
+            PAA.YEAR (+)= A.YEAR AND PAA.RAMO (+)= A.RAMO AND PAA.META (+)= A.META AND PAA.ACCION (+)= A.ACCION AND
+            AE.META (+)= PAA.META AND AE.RAMO (+)= PAA.RAMO AND AE.YEAR (+)= PAA.YEAR AND AE.ACCION (+)= PAA.ACCION AND AE.PERIODO (+)= PAA.PERIODO AND
+            PAA.PERIODO = 11 ) NOV,
+    (   SELECT DISTINCT A.YEAR,A.RAMO,A.PRG,A.META,A.ACCION,A.PERIODO,
+            NVL(AE.VALOR,0) AS PROGRAMADO,PAA.VALOR AS REALIZADO,PAA.VALOR-NVL(AE.VALOR,0) AS VARIACION
+        FROM S_POA_ACCION A,
+             (  SELECT YEAR,RAMO,META,ACCION,PERIODO,SUM(VALOR) AS VALOR
+                FROM (  SELECT T.YEAR,T.RAMO,T.META,T.ACCION,T.MES AS PERIODO,T.VALOR FROM DGI.POA_AVANCE_ACCION T WHERE T.YEAR = $P{YEAR} AND T.RAMO IN ($P!{RAMO_IN_LIST}) UNION
+                        SELECT A.YEAR,A.RAMO,A.META,A.ACCION,MM.MES AS PERIODO,0 FROM S_POA_ACCION A, DGI.MESES MM WHERE A.YEAR = $P{YEAR} AND A.RAMO IN ($P!{RAMO_IN_LIST})  )R
+                GROUP BY YEAR,RAMO,META,ACCION,PERIODO ) PAA,
+            DGI.ACCION_ESTIMACION AE
+        WHERE
+            A.YEAR = $P{YEAR} AND A.RAMO IN ($P!{RAMO_IN_LIST}) AND
+            PAA.YEAR (+)= A.YEAR AND PAA.RAMO (+)= A.RAMO AND PAA.META (+)= A.META AND PAA.ACCION (+)= A.ACCION AND
+            AE.META (+)= PAA.META AND AE.RAMO (+)= PAA.RAMO AND AE.YEAR (+)= PAA.YEAR AND AE.ACCION (+)= PAA.ACCION AND AE.PERIODO (+)= PAA.PERIODO AND
+            PAA.PERIODO = 12 ) DIC,
+    S_POA_MEDIDA_META MED,
+    DGI.PARAMETROS PARAM
+WHERE
+    RP.YEAR = $P{YEAR} AND RP.RAMO IN ($P!{RAMO_IN_LIST}) AND
+    R.YEAR = RP.YEAR AND R.RAMO = RP.RAMO AND
+    P.YEAR = RP.YEAR AND P.PRG = RP.PRG AND
+    M.YEAR = RP.YEAR AND M.RAMO = RP.RAMO AND M.PRG = RP.PRG AND M.PERIODO>=1 AND M.PERIODO<=12 AND
+    A.YEAR = M.YEAR AND A.RAMO = M.RAMO AND A.PRG = M.PRG AND A.META = M.META AND A.PERIODO>=1 AND A.PERIODO<=12 AND
+    ENE.YEAR (+)= A.YEAR AND ENE.META (+)= A.META AND ENE.RAMO (+)= A.RAMO AND ENE.ACCION (+)= A.ACCION AND
+    FEB.YEAR (+)= A.YEAR AND FEB.META (+)= A.META AND FEB.RAMO (+)= A.RAMO AND FEB.ACCION (+)= A.ACCION AND
+    MAR.YEAR (+)= A.YEAR AND MAR.META (+)= A.META AND MAR.RAMO (+)= A.RAMO AND MAR.ACCION (+)= A.ACCION AND
+    ABR.YEAR (+)= A.YEAR AND ABR.META (+)= A.META AND ABR.RAMO (+)= A.RAMO AND ABR.ACCION (+)= A.ACCION AND
+    MAY.YEAR (+)= A.YEAR AND MAY.META (+)= A.META AND MAY.RAMO (+)= A.RAMO AND MAY.ACCION (+)= A.ACCION AND
+    JUN.YEAR (+)= A.YEAR AND JUN.META (+)= A.META AND JUN.RAMO (+)= A.RAMO AND JUN.ACCION (+)= A.ACCION AND
+    JUL.YEAR (+)= A.YEAR AND JUL.META (+)= A.META AND JUL.RAMO (+)= A.RAMO AND JUL.ACCION (+)= A.ACCION AND
+    AGO.YEAR (+)= A.YEAR AND AGO.META (+)= A.META AND AGO.RAMO (+)= A.RAMO AND AGO.ACCION (+)= A.ACCION AND
+    SEP.YEAR (+)= A.YEAR AND SEP.META (+)= A.META AND SEP.RAMO (+)= A.RAMO AND SEP.ACCION (+)= A.ACCION AND
+    OCT.YEAR (+)= A.YEAR AND OCT.META (+)= A.META AND OCT.RAMO (+)= A.RAMO AND OCT.ACCION (+)= A.ACCION AND
+    NOV.YEAR (+)= A.YEAR AND NOV.META (+)= A.META AND NOV.RAMO (+)= A.RAMO AND NOV.ACCION (+)= A.ACCION AND
+    DIC.YEAR (+)= A.YEAR AND DIC.META (+)= A.META AND DIC.RAMO (+)= A.RAMO AND DIC.ACCION (+)= A.ACCION AND
+    MED.YEAR = A.YEAR AND MED.ACTIVO = 'S' AND MED.ACCION = 'S' AND A.CVE_MEDIDA= MED.MEDIDA(+)
+ORDER BY R.RAMO, P.PRG, M.META, A.ACCION]]>
+	</queryString>
+	<field name="YEAR" class="java.lang.String"/>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="DESCR_RAMO" class="java.lang.String"/>
+	<field name="PRG" class="java.lang.String"/>
+	<field name="DECR_PRG" class="java.lang.String"/>
+	<field name="META" class="java.math.BigDecimal"/>
+	<field name="DESCR_META" class="java.lang.String"/>
+	<field name="ACCION" class="java.math.BigDecimal"/>
+	<field name="DESCR_ACCION" class="java.lang.String"/>
+	<field name="UM" class="java.lang.String"/>
+	<field name="PROGRAMADO_ENE" class="java.math.BigDecimal"/>
+	<field name="REALIZADO_ENE" class="java.math.BigDecimal"/>
+	<field name="VARIACION_ENE" class="java.math.BigDecimal"/>
+	<field name="PROGRAMADO_FEB" class="java.math.BigDecimal"/>
+	<field name="REALIZADO_FEB" class="java.math.BigDecimal"/>
+	<field name="VARIACION_FEB" class="java.math.BigDecimal"/>
+	<field name="PROGRAMADO_MAR" class="java.math.BigDecimal"/>
+	<field name="REALIZADO_MAR" class="java.math.BigDecimal"/>
+	<field name="VARIACION_MAR" class="java.math.BigDecimal"/>
+	<field name="PROGRAMADO_ABR" class="java.math.BigDecimal"/>
+	<field name="REALIZADO_ABR" class="java.math.BigDecimal"/>
+	<field name="VARIACION_ABR" class="java.math.BigDecimal"/>
+	<field name="PROGRAMADO_MAY" class="java.math.BigDecimal"/>
+	<field name="REALIZADO_MAY" class="java.math.BigDecimal"/>
+	<field name="VARIACION_MAY" class="java.math.BigDecimal"/>
+	<field name="PROGRAMADO_JUN" class="java.math.BigDecimal"/>
+	<field name="REALIZADO_JUN" class="java.math.BigDecimal"/>
+	<field name="VARIACION_JUN" class="java.math.BigDecimal"/>
+	<field name="PROGRAMADO_JUL" class="java.math.BigDecimal"/>
+	<field name="REALIZADO_JUL" class="java.math.BigDecimal"/>
+	<field name="VARIACION_JUL" class="java.math.BigDecimal"/>
+	<field name="PROGRAMADO_AGO" class="java.math.BigDecimal"/>
+	<field name="REALIZADO_AGO" class="java.math.BigDecimal"/>
+	<field name="VARIACION_AGO" class="java.math.BigDecimal"/>
+	<field name="PROGRAMADO_SEP" class="java.math.BigDecimal"/>
+	<field name="REALIZADO_SEP" class="java.math.BigDecimal"/>
+	<field name="VARIACION_SEP" class="java.math.BigDecimal"/>
+	<field name="PROGRAMADO_OCT" class="java.math.BigDecimal"/>
+	<field name="REALIZADO_OCT" class="java.math.BigDecimal"/>
+	<field name="VARIACION_OCT" class="java.math.BigDecimal"/>
+	<field name="PROGRAMADO_NOV" class="java.math.BigDecimal"/>
+	<field name="REALIZADO_NOV" class="java.math.BigDecimal"/>
+	<field name="VARIACION_NOV" class="java.math.BigDecimal"/>
+	<field name="PROGRAMADO_DIC" class="java.math.BigDecimal"/>
+	<field name="REALIZADO_DIC" class="java.math.BigDecimal"/>
+	<field name="VARIACION_DIC" class="java.math.BigDecimal"/>
+	<field name="ANUAL_PROGRAMADO" class="java.math.BigDecimal"/>
+	<field name="ANUAL_REALIZADO" class="java.math.BigDecimal"/>
+	<field name="ANUAL_VARIACION" class="java.math.BigDecimal"/>
+	<field name="GOBIERNO" class="java.lang.String"/>
+	<field name="SECRETARIA" class="java.lang.String"/>
+	<field name="LOGO" class="java.lang.String"/>
+	<field name="HOY" class="java.sql.Timestamp"/>
+	<group name="ramo" isReprintHeaderOnEachPage="true" minHeightToStartNewPage="104">
+		<groupExpression><![CDATA[$F{RAMO}]]></groupExpression>
+		<groupHeader>
+			<band height="12">
+				<staticText>
+					<reportElement uuid="83ac839b-41bc-48e4-afac-3ceaa5da70c9" x="0" y="0" width="60" height="12"/>
+					<textElement>
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Ramo:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="34b2d1c3-8280-4b6c-9f57-2503fa4848f8" x="60" y="0" width="692" height="12"/>
+					<textElement>
+						<font fontName="SansSerif" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESCR_RAMO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Programa" isReprintHeaderOnEachPage="true" minHeightToStartNewPage="92">
+		<groupExpression><![CDATA[$F{PRG}]]></groupExpression>
+		<groupHeader>
+			<band height="16">
+				<staticText>
+					<reportElement uuid="8d14f74c-8828-4cef-87cb-fd7cec0d0720" x="0" y="4" width="60" height="12"/>
+					<textElement verticalAlignment="Top">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Programa:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="ef20523f-c783-4f5d-949d-13c6804958c1" x="60" y="4" width="693" height="12"/>
+					<textElement verticalAlignment="Top">
+						<font fontName="SansSerif" size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DECR_PRG}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Meta" isReprintHeaderOnEachPage="true" minHeightToStartNewPage="76">
+		<groupExpression><![CDATA[$F{META}]]></groupExpression>
+		<groupHeader>
+			<band height="39">
+				<staticText>
+					<reportElement uuid="3442777f-6aab-4709-be5e-e6f3bc1eb789" x="0" y="4" width="60" height="12"/>
+					<textElement verticalAlignment="Top">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Meta:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="7e725f4b-cdca-43f3-8847-5a122ad07aff" x="60" y="4" width="693" height="12"/>
+					<textElement verticalAlignment="Top">
+						<font fontName="SansSerif" size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESCR_META}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="e718382a-4a55-4bd4-aab1-ab146522c6f7" mode="Opaque" x="1" y="20" width="232" height="18" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+						<font size="6" isBold="true" isUnderline="false" isStrikeThrough="false"/>
+					</textElement>
+					<text><![CDATA[ACCIÓN]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="fe16d489-c070-4ae1-9f85-e623e70b70b7" mode="Opaque" x="233" y="20" width="54" height="18" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[UNIDAD DE MEDIDA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="b61b3410-8b03-4944-b272-e490b2c9654f" mode="Opaque" x="287" y="20" width="36" height="18" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CANTIDAD ANUAL]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="4ee4f0b7-07c6-410b-ae8a-ddbaa874ed36" mode="Opaque" x="354" y="20" width="31" height="18" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[FEB]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="ba3199dd-db42-4c77-ab93-cb435142cbd4" mode="Opaque" x="323" y="20" width="31" height="18" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[ENE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="fb2f62aa-cbaf-4ddf-8679-0e6e1ffa7491" mode="Opaque" x="416" y="20" width="31" height="18" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[ABR]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="206b2ced-d53a-44d6-8db8-4898859c4b51" mode="Opaque" x="385" y="20" width="31" height="18" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MAR]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="d81bbb90-2589-4f40-ba52-fbe98a6ce7c7" mode="Opaque" x="447" y="20" width="31" height="18" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MAY]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="07fde627-8ecb-442b-8ace-ff35c2018c8a" mode="Opaque" x="478" y="20" width="31" height="18" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[JUN]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="4faefa83-0dad-4908-926b-416cbd9c1dd7" mode="Opaque" x="509" y="20" width="31" height="18" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[JUL]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="b0cc2f51-507f-411f-b829-551e75473756" mode="Opaque" x="540" y="20" width="31" height="18" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[AGO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="abfe9e6e-b27b-4ab5-b001-89fd48e5245a" mode="Opaque" x="571" y="20" width="31" height="18" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SEP]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="a1b537dc-8a02-47c1-81cf-1f3b7a23c80f" mode="Opaque" x="602" y="20" width="31" height="18" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[OCT]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="797b9a01-4499-4273-a752-70a3170645ae" mode="Opaque" x="633" y="20" width="31" height="18" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[NOV]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="b7e113d2-f94e-47be-9bee-efcf776b1fa5" mode="Opaque" x="664" y="20" width="31" height="18" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[DIC]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="c8b9c980-b9a3-42be-b4e3-754b9b872dfe" mode="Opaque" x="695" y="20" width="57" height="18" backcolor="#CCCCCC"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<line>
+					<reportElement uuid="b91a05af-1145-4f6e-a4b4-e97eb4db0ac5" x="1" y="20" width="751" height="1"/>
+				</line>
+				<line>
+					<reportElement uuid="3730bb12-658c-4bed-8ced-bbbc3f326003" x="2" y="38" width="751" height="1"/>
+				</line>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="64">
+			<textField>
+				<reportElement uuid="a60bf77f-b837-4a2a-8e77-b073092824e4" x="164" y="20" width="429" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SECRETARIA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="72e73dbb-b75d-4df7-b449-ddc672b9594c" x="164" y="0" width="429" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GOBIERNO}]]></textFieldExpression>
+			</textField>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement uuid="38b64b3f-2d50-430a-bc41-432bcedfaeea" stretchType="RelativeToBandHeight" x="0" y="0" width="66" height="59"/>
+				<imageExpression><![CDATA[$P{IMG_DIR}+"EDO.gif"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement uuid="523faf1c-7ad3-4766-9449-cc6aeb44f8af" x="164" y="40" width="429" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ESTIMACIÓN Y AVANCES DE ACCIÓN " + $P{YEAR}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="a2b49ed5-afef-4a3d-81fb-35c8028c9c57" x="1" y="60" width="751" height="1"/>
+			</line>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="37">
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="a72dbf64-d3fb-40ff-91e3-569508637c64" x="2" y="0" width="231" height="36"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCR_ACCION}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="a6b56a69-5bff-43a3-9a1b-781266575012" x="233" y="0" width="54" height="36"/>
+				<textElement textAlignment="Center">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="a5440b3c-8842-4c43-ba39-e511e0a52d65" x="323" y="0" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROGRAMADO_ENE}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="fd01c956-1e9d-450b-83aa-ee9fc6719641" x="323" y="12" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REALIZADO_ENE}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="f42a39f3-1ed7-411d-81cf-f19e5d633450" x="323" y="24" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VARIACION_ENE}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="e7012afb-e860-47fe-bd91-a1eeecff10ed" x="354" y="0" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROGRAMADO_FEB}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="b20aeb1b-cc57-4276-a9b2-2df07d92c538" x="354" y="12" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REALIZADO_FEB}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="f638b066-2729-459c-8bfa-ccb0796b03a3" x="354" y="24" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VARIACION_FEB}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="6385b6e4-8ca2-4fd0-97c8-998c1daea498" x="385" y="0" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROGRAMADO_MAR}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="46571eba-8d84-4f97-951a-577d42d5a249" x="385" y="12" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REALIZADO_MAR}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="e79d904c-d919-4fa9-890e-f23bc6f0c21d" x="385" y="24" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VARIACION_MAR}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="6b5a8cdb-a709-4944-a83f-21118a88f426" x="416" y="12" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REALIZADO_ABR}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="ee2f688f-b81c-4fa9-b60d-a4fd12cbd378" x="416" y="24" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VARIACION_ABR}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="32baeedf-9638-41a3-9bbd-dee074722db4" x="416" y="0" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROGRAMADO_ABR}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="d2f94a5d-bc18-41fd-aec0-83a4b568509c" x="447" y="0" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROGRAMADO_MAY}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="557c3144-9dbf-44de-9b68-27c292c263e1" x="447" y="12" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REALIZADO_MAY}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="bd4a0e7e-768a-45a6-868d-308865945178" x="447" y="24" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VARIACION_MAY}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="d89b8599-e065-4d42-abcd-c5ae14468ab2" x="478" y="0" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROGRAMADO_JUN}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="49694af9-9cc3-43b2-90bd-a0409f638696" x="478" y="12" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REALIZADO_JUN}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="c343c6f7-3f74-410a-86cc-cebaaac5db7b" x="478" y="24" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VARIACION_JUN}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="66b663ff-f48e-4aea-b2e9-6bb942c1db54" x="509" y="0" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROGRAMADO_JUL}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="7d315777-88a4-4cf5-bfd9-3dcc1ff6563a" x="509" y="12" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REALIZADO_JUL}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="a036d98e-c934-4ace-8b01-04a05b6231e2" x="509" y="24" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VARIACION_JUL}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="a513e22a-7b95-48f0-9214-3080911f5720" x="540" y="0" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROGRAMADO_AGO}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="5d78ab2b-eeeb-45d6-b37f-654d26f82779" x="540" y="12" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REALIZADO_AGO}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="75488b56-b09f-4cef-b809-9b140edcd0cd" x="540" y="24" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VARIACION_AGO}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="05b2f015-6094-4b80-9f5e-7d2c466a4f67" x="571" y="0" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROGRAMADO_SEP}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="ef39a7be-10da-442a-b409-cdc3dbdfe261" x="571" y="12" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REALIZADO_SEP}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="57fb0180-2764-4dca-8045-f8581c798e52" x="571" y="24" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VARIACION_SEP}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="5cc6b812-ddc9-41d3-a01b-e6d4c889e86a" x="602" y="0" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROGRAMADO_OCT}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="9a110646-0469-475e-a3ed-809640e87be8" x="602" y="12" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REALIZADO_OCT}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="427f5915-5de3-4834-8f91-c0bc81490f42" x="602" y="24" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VARIACION_OCT}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="5cdb6c3d-683e-44bf-974f-787cc4c90dfb" x="633" y="0" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROGRAMADO_NOV}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="77596a2c-b5d4-4a79-9075-e0d882db26eb" x="633" y="12" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REALIZADO_NOV}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="c3a1f979-c44d-4e06-bf2a-123fcbac5bfe" x="633" y="24" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VARIACION_NOV}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="1261e0c6-c33b-4cd8-9b2d-39f6bbd2dd4e" x="664" y="0" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROGRAMADO_DIC}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="bc114a33-0c15-4455-852b-865398bbf697" x="664" y="12" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REALIZADO_DIC}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="0132e2dc-57f2-431a-84d1-6ba83abd4974" x="664" y="24" width="31" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VARIACION_DIC}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="0f6f1ed4-4334-4109-b650-d07a93095d32" mode="Opaque" x="695" y="0" width="57" height="12" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PROGRAMADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="365982ab-7b80-448a-880f-6916d9d5485f" mode="Opaque" x="695" y="12" width="57" height="12" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REALIZADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="df8b7b0f-1a77-4d3a-9e87-0f23075e175d" stretchType="RelativeToBandHeight" mode="Opaque" x="695" y="24" width="57" height="12" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="6" isBold="true"/>
+					<paragraph spacingBefore="2"/>
+				</textElement>
+				<text><![CDATA[VARIACION]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="638b8637-0795-4b57-a47f-41740fe4af6c" positionType="FixRelativeToBottom" x="2" y="36" width="751" height="1"/>
+			</line>
+			<textField pattern="">
+				<reportElement uuid="5e932a1e-45b0-4f9d-b54c-f43e58adedfa" x="287" y="0" width="36" height="13"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ANUAL_PROGRAMADO}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="1a799918-a26e-445f-a636-cdb0c97238fa" x="287" y="13" width="36" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ANUAL_REALIZADO}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement uuid="6372bc1e-2f3e-43bc-a09e-ae057cb8f810" x="287" y="24" width="36" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ANUAL_VARIACION}]]></textFieldExpression>
+				<patternExpression><![CDATA["<style forecolor=\"black\">#,##0.##</style>;<style forecolor=\"red\">(#,##0.##)</style>"]]></patternExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="19" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement uuid="9f193cbf-f4f6-4fec-ae9f-da433084666f" x="331" y="5" width="146" height="10"/>
+				<textElement textAlignment="Center">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HOY}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="55657e43-4a2a-4cea-977c-eaf1a221401a" x="1" y="1" width="752" height="1"/>
+			</line>
+			<textField>
+				<reportElement uuid="0a693d0b-5a53-41dc-ab79-ca7e70f4735b" x="675" y="5" width="43" height="10"/>
+				<textElement textAlignment="Right">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement uuid="96caeec8-1aba-4a91-95d9-2ad6915df398" x="718" y="5" width="31" height="10"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" de " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement uuid="2e9d0fc7-9bb9-42ae-8abc-9743fff2279f" x="1" y="5" width="283" height="10"/>
+				<textElement>
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["rptAvanceAccionMensual"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

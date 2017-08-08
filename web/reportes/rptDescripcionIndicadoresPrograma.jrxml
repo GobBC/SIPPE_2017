@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptDescripcionIndicadoresPrograma" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d73f9c31-535c-42f5-b5e5-dd3c33ce4bdc">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="YEAR" class="java.lang.Integer"/>
+	<parameter name="RAMO" class="java.lang.String"/>
+	<parameter name="PRG" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+	DISTINCT I.OBJETIVO_INDICADOR
+	FROM
+		DGI.VW_SEI_INDIC_GRAL I,
+     		DGI.VW_SEI_INDIC_META_ANUAL MA,
+        	(
+			SELECT
+				MAA.CLAVE_INDICADOR,
+                		MAA.ANIO,
+                		MAA.META
+         		FROM
+				DGI.VW_SEI_INDIC_META_ANUAL MAA
+         		WHERE
+				MAA.ANIO=TO_NUMBER($P{YEAR})-1
+		) METANT
+	WHERE
+		MA.CLAVE_INDICADOR(+)= I.CLAVE_INDICADOR AND
+      		METANT.CLAVE_INDICADOR(+)= I.CLAVE_INDICADOR AND
+      		I.RAMO = $P{RAMO}AND
+      		TO_NUMBER(I.PROG) = TO_NUMBER($P{PRG}) AND
+      		MA.ANIO(+) = $P{YEAR}]]>
+	</queryString>
+	<field name="OBJETIVO_INDICADOR" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="16" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="f6ae43ba-245a-428f-a400-9fab7b11f8c8" x="0" y="0" width="155" height="15"/>
+				<textElement>
+					<font size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[INDICADORES DEL PROGRAMA:]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="4a71c848-5e93-42e5-bc43-3195c28d2833" x="0" y="0" width="555" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OBJETIVO_INDICADOR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

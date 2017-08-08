@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptAvancePoaTrimestreExcellsub1" language="groovy" pageWidth="1900" pageHeight="842" columnWidth="1900" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a6385f0c-468c-4eea-996f-caa1d92bbddf">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="PERIODO" class="java.lang.String"/>
+	<parameter name="PROG" class="java.lang.String"/>
+	<parameter name="RAMO" class="java.lang.String"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<parameter name="META" class="java.lang.String"/>
+	<parameter name="PROY" class="java.math.BigDecimal"/>
+	<parameter name="DEPTO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+         $P{PROG},
+         	DECODE(META.CALCULO,'A',NVL(SUM(DGI.ESTIMACION.VALOR),0),MAX(DGI.ESTIMACION.VALOR)) AS VALOR,
+	DGI.ESTIMACION_PERIODO.EVALUACION,
+	META.META,
+	META.DESCR AS META_DESC,
+	MEDMET.DESCR AS MEDIDA_DESCR,
+	META.CALCULO,
+          META.LINEA,
+         LINE.DESCR AS LINEA_DESCR,
+      DECODE(META.CALCULO,'A',NVL(SUM(DGI.AVANCE.VALOR),0),MAX(DGI.AVANCE.VALOR)) AS AVANCE_VALOR,
+	POA.F_CALCULA_ESTIMACION_TEMP($P{RAMO},$P{META},$P{YEAR}, META.CALCULO,EVALUACION) AS ESTIM,
+	POA.F_CALCULA_AVANCE_TEMP($P{RAMO},$P{META},$P{YEAR}, META.CALCULO,EVALUACION) AS AVANCE,
+    POA.F_CALCULA_ESTIMACION($P{RAMO}, $P{META},$P{YEAR}, META.CALCULO) AS ESTIM_ANUAL,
+    POA.F_CALCULA_AVANCE_TEMP1($P{RAMO},$P{META},$P{YEAR}, META.CALCULO,$P{PERIODO}) AS AVANCE_ANUAL
+
+
+
+FROM
+	DGI.ESTIMACION,
+	S_POA_META META,
+	S_POA_LOCALIDAD,
+	DGI.AVANCE  ,
+	S_POA_MEDIDA_META MEDMET,
+	DGI.ESTIMACION_PERIODO,
+          S_POA_SP_LIN_ESTATAL LINE
+WHERE
+	( DGI.estimacion.meta (+) = META.meta) and
+	( DGI.estimacion.ramo (+) = META.ramo) and
+	( DGI.estimacion.year (+) = META.year) and
+	( DGI.avance.meta(+) = DGI.estimacion.meta) and
+	( DGI.avance.ramo(+) = DGI.estimacion.ramo) and
+	( DGI.avance.year(+) = DGI.estimacion.year) and
+	( DGI.avance.periodo(+) = DGI.estimacion.periodo) and
+	( META.CVE_MEDIDA = MEDMET.MEDIDA ) and
+	( META.YEAR = MEDMET.YEAR ) and
+	( DGI.ESTIMACION.PERIODO = DGI.ESTIMACION_PERIODO.PERIODO) AND
+	( ( META.RAMO = $P{RAMO} ) AND
+	( META.YEAR = $P{YEAR}) AND
+	( META.META = $P{META} ) ) AND
+           (META.LINEA=LINE.LINEA(+))AND
+
+          ( META.PERIODO<=$P{PERIODO}) AND
+	EVALUACION <= $P{PERIODO}
+group by
+	DGI.ESTIMACION_PERIODO.EVALUACION,
+     META.META,
+     META.DESCR,
+     MEDMET.DESCR,
+     META.CALCULO,
+     META.LINEA,
+     LINE.DESCR
+UNION
+SELECT
+	$P{PROG},
+DECODE(META.CALCULO,'AC',NVL(SUM(DGI.ESTIMACION.VALOR),0),DECODE(META.CALCULO,'MA',NVL(MAX(DGI.ESTIMACION.VALOR),0),NVL(MIN(DGI.ESTIMACION.VALOR),0))) AS VALOR,
+	DGI.ESTIMACION_PERIODO.EVALUACION,
+	META.META,
+	META.DESCR  AS META_DESC,
+	MEDMET.DESCR AS MEDIDA_DESCR,
+	META.CALCULO,
+          META.LINEA,
+          LINE.DESCR,
+          	0 AS AVANCE_VALOR,
+	POA.F_CALCULA_ESTIMACION_TEMP($P{RAMO}, $P{META}, $P{YEAR}, META.CALCULO,EVALUACION) AS ESTIM,
+    POA.F_CALCULA_AVANCE_TEMP($P{RAMO}, $P{META}, $P{YEAR}, META.CALCULO,EVALUACION) AS AVANCE,
+    POA.F_CALCULA_ESTIMACION($P{RAMO}, $P{META}, $P{YEAR}, META.CALCULO) AS ESTIM_ANUAL,
+    POA.F_CALCULA_AVANCE_TEMP1($P{RAMO},$P{META}, $P{YEAR}, META.CALCULO,$P{PERIODO}) AS AVANCE_ANUAL
+FROM
+	DGI.ESTIMACION,
+	S_POA_META META,
+	DGI.AVANCE  ,
+	S_POA_MEDIDA_META MEDMET,
+	DGI.ESTIMACION_PERIODO,
+          S_POA_SP_LIN_ESTATAL LINE
+WHERE
+	( DGI.estimacion.meta (+) = META.meta) and
+	( DGI.estimacion.ramo (+) = META.ramo) and
+	( DGI.estimacion.year (+) = META.year) and
+	( DGI.avance.meta(+) = DGI.estimacion.meta) and
+	( DGI.avance.ramo(+) = DGI.estimacion.ramo) and
+	( DGI.avance.year(+) = DGI.estimacion.year) and
+	( DGI.avance.periodo(+) = DGI.estimacion.periodo) and
+	( META.CVE_MEDIDA = MEDMET.MEDIDA ) and
+	( META.YEAR = MEDMET.YEAR ) and
+	( DGI.ESTIMACION.PERIODO = DGI.ESTIMACION_PERIODO.PERIODO) AND
+	( ( META.RAMO =$P{RAMO} ) AND
+	( META.YEAR =$P{YEAR}) AND
+	( META.META = $P{META} ) ) AND
+           (META.LINEA=LINE.LINEA(+))AND
+          ( META.PERIODO<=$P{PERIODO}) AND
+	EVALUACION >$P{PERIODO}
+group by
+	DGI.ESTIMACION_PERIODO.EVALUACION,
+	META.META,
+	META.DESCR,
+	MEDMET.DESCR,
+	META.CALCULO,
+          META.LINEA,
+          LINE.DESCR]]>
+	</queryString>
+	<field name=":1" class="java.lang.String"/>
+	<field name="VALOR" class="java.math.BigDecimal"/>
+	<field name="EVALUACION" class="java.math.BigDecimal"/>
+	<field name="META" class="java.math.BigDecimal"/>
+	<field name="META_DESC" class="java.lang.String"/>
+	<field name="MEDIDA_DESCR" class="java.lang.String"/>
+	<field name="CALCULO" class="java.lang.String"/>
+	<field name="LINEA" class="java.lang.String"/>
+	<field name="LINEA_DESCR" class="java.lang.String"/>
+	<field name="AVANCE_VALOR" class="java.math.BigDecimal"/>
+	<field name="ESTIM" class="java.math.BigDecimal"/>
+	<field name="AVANCE" class="java.math.BigDecimal"/>
+	<field name="ESTIM_ANUAL" class="java.math.BigDecimal"/>
+	<field name="AVANCE_ANUAL" class="java.math.BigDecimal"/>
+	<detail>
+		<band height="13" splitType="Stretch">
+			<textField>
+				<reportElement uuid="ff05ddd8-77d3-4f3d-9605-0c13b7f04cd8" stretchType="RelativeToBandHeight" x="316" y="0" width="677" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{META_DESC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="e5c6e9da-51bc-4d6d-bb7c-fc86afbd1f01" stretchType="RelativeToBandHeight" x="993" y="0" width="408" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MEDIDA_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="e5c4936e-7795-4581-a7fb-801660fa3743" x="1500" y="0" width="100" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ESTIM_ANUAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="33ebd610-846c-4686-87bf-abb5844dada4" x="1600" y="0" width="100" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AVANCE_ANUAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="9eab0ed0-ab64-42c4-90df-f0dd1c676d66" x="1700" y="0" width="100" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ESTIM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="a322efd1-c5a0-491c-82de-be39173eed8f" x="1800" y="0" width="100" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AVANCE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="947f52c3-add5-4c41-a454-e0933d2d65ee" x="234" y="0" width="48" height="12"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EVALUACION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="8b4e4ea8-ef24-42ae-b59d-94862fd0383f" x="0" y="0" width="44" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{RAMO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="56e6c111-7292-49c9-a47c-b0316c9062bd" x="44" y="0" width="66" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PROG}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="281fd769-be25-4fcc-9c11-3cae183ece0e" x="110" y="0" width="62" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{DEPTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="2af45474-e11d-4353-9575-be82079461c7" x="172" y="0" width="62" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PROY}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ea83c416-66e6-4fe4-bf96-46443f9c79db" x="282" y="0" width="34" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{META}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="5846b0c0-607b-40ef-9edf-3c0f8e9e7780" x="1401" y="0" width="97" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LINEA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

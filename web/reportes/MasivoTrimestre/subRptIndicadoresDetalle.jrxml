@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subRptEncabezadoIndicadoresFin" language="groovy" pageWidth="727" pageHeight="10" whenNoDataType="AllSectionsNoDetail" columnWidth="727" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="24e50e99-eb24-4094-b61c-eb323237ffee">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="698"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<parameter name="RPT_DIR" class="java.lang.String"/>
+	<parameter name="NOMBRE_INDICADOR" class="java.lang.String"/>
+	<parameter name="META_ANUAL" class="java.lang.String"/>
+	<parameter name="UNIDAD_MEDIDA" class="java.lang.String"/>
+	<parameter name="PERIODICIDAD" class="java.lang.String"/>
+	<parameter name="OBJETIVO" class="java.lang.String"/>
+	<parameter name="SINCAP" class="java.lang.String"/>
+	<parameter name="ULTIMO_RESULT" class="java.lang.String"/>
+	<columnHeader>
+		<band height="10">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="1d851a8b-420d-4641-9afd-5f88793c42c0" stretchType="RelativeToBandHeight" x="442" y="0" width="180" height="10" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="6" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{OBJETIVO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="6e30c8ad-2897-4335-aefd-176d5b3f19ac" stretchType="RelativeToBandHeight" x="170" y="0" width="76" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{META_ANUAL}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="dd95fc73-b741-4b7e-bb60-45ab7c1dd205" stretchType="RelativeToBandHeight" x="358" y="0" width="82" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PERIODICIDAD}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="e369cfc5-7827-4298-8a98-899aa8467675" stretchType="RelativeToBandHeight" x="248" y="0" width="108" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{UNIDAD_MEDIDA}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="93d5bf58-f21d-41c1-96a8-feda1c88a24b" stretchType="RelativeToBandHeight" x="624" y="0" width="78" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{SINCAP}.toString()).equalsIgnoreCase("1") || $P{ULTIMO_RESULT}.equalsIgnoreCase("") ? "NO PROGRAMADO" : $P{ULTIMO_RESULT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="2a1c9843-a1f2-466e-a730-bf4fed5ade82" stretchType="RelativeToBandHeight" x="0" y="0" width="169" height="10" isPrintWhenDetailOverflows="true"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NOMBRE_INDICADOR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+</jasperReport>

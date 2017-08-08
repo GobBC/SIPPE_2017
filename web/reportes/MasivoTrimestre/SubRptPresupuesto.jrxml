@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SubRptPresupuesto" language="groovy" pageWidth="740" pageHeight="572" orientation="Landscape" columnWidth="740" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="64956415-c2d8-4a04-850a-c9f70096c64a">
+	<property name="ireport.zoom" value="1.156629868288595"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="RAMO" class="java.lang.String"/>
+	<parameter name="PROG" class="java.lang.String"/>
+	<parameter name="YEAR" class="java.lang.Integer"/>
+	<parameter name="PERIODO" class="java.lang.Integer"/>
+	<parameter name="DOCVALIDO" class="java.lang.String"/>
+	<parameter name="IMG_DIR" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT A.GRUPO AS GRUPO,
+		 A.DESCR AS DESCR,
+		 NVL(A.IMPORTE,0) AS IMPORTE,
+		 NVL(A.MODIFICADO,0) AS MODIFICADO,
+		 NVL(A.EJERCIDO,0) AS EJERCIDO
+FROM
+( SELECT AA.GRUPO AS GRUPO,
+		 AA.DESCR AS DESCR,
+		 SUM(NVL(AA.IMPORTE,0)) AS IMPORTE,
+		 SUM(NVL(AA.IMPORTE,0)+NVL(AA.AMPLIACION,0)+NVL(AA.REDUCCION,0)) AS MODIFICADO,
+		 SUM(NVL(AA.EJERCIDO,0)) AS EJERCIDO
+FROM
+( SELECT  AAA.GRUPO AS GRUPO,
+         AAA.DESCR AS DESCR,
+         SUM(AAA.IMPORTE) AS IMPORTE,
+		   0 AS MODIFICADO,
+			0 AS EJERCIDO,
+		 	0 AS AMPLIACION,
+		 	0 AS REDUCCION
+FROM (SELECT  GRUPOS.GRUPO AS GRUPO,
+         GRUPOS.DESCR AS DESCR,
+         SUM(SPP.PPTO.ASIGNADO) AS IMPORTE
+    FROM SPP.PPTO,
+         DGI.PARTIDA ,
+         S_DGI_GRUPOS GRUPOS,
+			S_DGI_SUBGRUPOS SUBGRUPOS,
+			S_DGI_SUBSUBGPO SUBSUBGPO
+   WHERE ( SPP.PPTO.PARTIDA=DGI.PARTIDA.PARTIDA ) AND
+         ( SPP.PPTO.YEAR=DGI.PARTIDA.YEAR ) AND
+			( SPP.PPTO.RAMO=$P{RAMO} ) AND
+			( SPP.PPTO.PRG=to_number($P{PROG}) ) AND
+			( SPP.PPTO.YEAR=$P{YEAR})  AND
+      	PARTIDA.SUBSUBGPO = SUBSUBGPO.SUBSUBGRUPO AND
+			PARTIDA.YEAR = SUBSUBGPO.YEAR AND
+			SUBSUBGPO.SUBGRUPO = SUBGRUPOS.SUBGRUPO AND
+			SUBSUBGPO.YEAR = SUBGRUPOS.YEAR AND
+			SUBGRUPOS.GRUPO = GRUPOS.GRUPO AND
+			SUBGRUPOS.YEAR = GRUPOS.YEAR
+GROUP BY GRUPOS.GRUPO,
+         GRUPOS.DESCR
+ORDER BY GRUPOS.GRUPO) AAA
+GROUP BY AAA.GRUPO,
+         AAA.DESCR
+UNION ALL
+SELECT GRUPOS.GRUPO AS GRUPO,
+             GRUPOS.DESCR AS DESCR,
+             0 AS IMPORTE,
+             0 AS MODIFICADO,
+				/* SUM(NVL(S_CIM_CIERRE_PPTO_ARMO.MODIFICADO,0)) AS MODIFICADO,*/
+				 SUM(NVL(S_CIM_CIERRE_PPTO_ARMO.DEVENGADO,0)) AS EJERCIDO,
+				 SUM(NVL(S_CIM_CIERRE_PPTO_ARMO.AMPLIACION,0)) AS AMPLIACION,
+				 SUM(NVL(S_CIM_CIERRE_PPTO_ARMO.REDUCCION,0)) AS REDUCCION
+      FROM S_CIM_CIERRE_PPTO_ARMO,
+           DGI.PARTIDA ,
+           S_DGI_GRUPOS GRUPOS,
+			  S_DGI_SUBGRUPOS SUBGRUPOS,
+			  S_DGI_SUBSUBGPO SUBSUBGPO
+      WHERE ( S_CIM_CIERRE_PPTO_ARMO.PARTIDA=DGI.PARTIDA.PARTIDA ) AND
+            ( S_CIM_CIERRE_PPTO_ARMO.EJERCICIO=DGI.PARTIDA.YEAR ) AND
+			   ( S_CIM_CIERRE_PPTO_ARMO.RAMO=$P{RAMO} ) AND
+			   ( S_CIM_CIERRE_PPTO_ARMO.PROGRAMA=to_number($P{PROG}) ) AND
+			   ( S_CIM_CIERRE_PPTO_ARMO.EJERCICIO=$P{YEAR} )  AND
+			   ( S_CIM_CIERRE_PPTO_ARMO.MES=($P{PERIODO}*3) )  AND
+      	   PARTIDA.SUBSUBGPO = SUBSUBGPO.SUBSUBGRUPO AND
+			   PARTIDA.YEAR = SUBSUBGPO.YEAR AND
+			   SUBSUBGPO.SUBGRUPO = SUBGRUPOS.SUBGRUPO AND
+			   SUBSUBGPO.YEAR = SUBGRUPOS.YEAR AND
+			   SUBGRUPOS.GRUPO = GRUPOS.GRUPO AND
+			   SUBGRUPOS.YEAR = GRUPOS.YEAR
+      GROUP BY GRUPOS.GRUPO,
+               GRUPOS.DESCR,
+               S_CIM_CIERRE_PPTO_ARMO.EJERCICIO,
+               S_CIM_CIERRE_PPTO_ARMO.RAMO,
+               S_CIM_CIERRE_PPTO_ARMO.PROGRAMA)AA
+GROUP BY AA.GRUPO,
+		   AA.DESCR
+ORDER BY AA.GRUPO)A]]>
+	</queryString>
+	<field name="GRUPO" class="java.lang.String"/>
+	<field name="DESCR" class="java.lang.String"/>
+	<field name="IMPORTE" class="java.math.BigDecimal"/>
+	<field name="MODIFICADO" class="java.math.BigDecimal"/>
+	<field name="EJERCIDO" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="28">
+			<rectangle>
+				<reportElement uuid="76923d67-43f5-41cd-b7ae-a8f8844a78e9" x="642" y="10" width="98" height="18" backcolor="#EAEAEA"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="e489c718-9bc3-441e-a2e2-deb58f41fb56" x="532" y="20" width="110" height="8" backcolor="#EAEAEA"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="1d4c4b6c-5f1e-4e1d-87b7-5cb0966c2c48" x="642" y="10" width="98" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DEVENGADO AL TRIMESTRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="727e7683-662a-4610-a7e5-073bdd6edeb4" x="532" y="20" width="110" height="8"/>
+				<textElement textAlignment="Center">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MODIFICADO]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement uuid="d3657df1-f147-4afe-b37c-6a5a453b52ee" x="422" y="10" width="220" height="10" backcolor="#EAEAEA"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="95d27819-60a7-4e4c-b7a3-43d792e5928f" mode="Opaque" x="0" y="14" width="81" height="14" backcolor="#EAEAEA"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CAPÍTULO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b55b3ec6-bda0-484e-b118-85762d058ad0" mode="Opaque" x="0" y="0" width="422" height="14" backcolor="#EAEAEA"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRESUPUESTO POR CATEGORÍA PROGRAMÁTICA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2ccd1b62-ed3e-4f36-9e21-802d81cce7a1" mode="Opaque" x="81" y="14" width="341" height="14" backcolor="#EAEAEA"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCIÓN CAPÍTULO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8ea6f9fb-baad-4065-8aa4-44a3226b1a6f" mode="Opaque" x="422" y="0" width="318" height="10" backcolor="#EAEAEA"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRESUPUESTO DE EGRESOS]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement uuid="1d060970-9c35-449b-8f85-6db066f6bb15" x="422" y="20" width="110" height="8" backcolor="#EAEAEA"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="472548e0-a47a-49ca-a304-e21a4c10baf3" x="422" y="20" width="110" height="8"/>
+				<textElement textAlignment="Center">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AUTORIZADO INICIAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f91deeb2-7b8b-4253-b620-eb6694ac3641" x="422" y="10" width="220" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ANUAL]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="17">
+			<textField pattern="¤ #,##0.00">
+				<reportElement uuid="f18860ef-5b80-4531-9f5d-df6fa624b466" x="642" y="0" width="98" height="16"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EJERCIDO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="9c805e8e-5a7b-4ddd-9c54-0bf82cef4e6a" x="532" y="0" width="110" height="16"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MODIFICADO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="4edd1d2b-8d06-4123-9e60-767ca00d2a10" x="0" y="0" width="81" height="16"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GRUPO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="7ba2e70d-d9cd-4828-b20a-7ecad1364f27" x="81" y="0" width="341" height="16"/>
+				<box leftPadding="3">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="64837d0b-895b-4aff-96d7-d37052242987" x="422" y="0" width="110" height="16"/>
+				<box rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

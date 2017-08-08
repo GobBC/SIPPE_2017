@@ -1,0 +1,753 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptPresupuestoPorDetalleAccion" language="groovy" pageWidth="3750" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="3750" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="05d8eb50-fd82-4beb-b929-01b5a298ade9">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="6291"/>
+	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.cell.locked" value="false"/>
+	<parameter name="RAMO_IN_LIST" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="YEAR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IMG_DIR" class="java.lang.String"/>
+	<parameter name="QUERY" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+LINEA,
+TIPO_COMPROMISO,
+GRUPO_POBLACION,
+NVL(TO_CHAR(BENEF_HOMBRE),' ') AS CANTIDAD_HOMBRES,
+NVL(TO_CHAR(BENEF_MUJER),' ') AS CANTIDAD_MUJERES,
+RAMO,
+PRG,
+DESCR_PRG,
+OBRA,
+PROY,
+PROYECTO,
+TIPO_META,
+META_ID,
+META,
+MEDIDA_META,
+ACCION_ID,
+ACCION,
+TIPO_CALCULO,
+MEDIDA,
+UE,
+DEPTO_DESCR_UE,
+MPO,
+MPO_DESCR,
+LOCALIDAD,
+LOC_DESCR,
+COSTO_ANUAL,
+DGI.F_POA_META_VALOR_ANUAL_PROG(META_ID, RAMO, YEAR) AS TOTAL_META,
+DGI.F_POA_ACCION_VALOR_ANUAL_PROG(ACCION_ID,META_ID,RAMO,YEAR) AS TOTAL,
+NVL(DGI.F_ACCION_ESTIMACION(1, META_ID, RAMO, YEAR, ACCION_ID),'0') AS ACC_ENE,
+NVL( DGI.F_ACCION_ESTIMACION(2, META_ID, RAMO, YEAR, ACCION_ID),'0') AS ACC_FEB,
+NVL( DGI.F_ACCION_ESTIMACION(3, META_ID, RAMO, YEAR, ACCION_ID),'0') AS ACC_MAR,
+NVL( DGI.F_ACCION_ESTIMACION(4, META_ID, RAMO, YEAR, ACCION_ID),'0') AS ACC_ABR,
+NVL( DGI.F_ACCION_ESTIMACION(5, META_ID, RAMO, YEAR, ACCION_ID),'0') AS ACC_MAY,
+NVL( DGI.F_ACCION_ESTIMACION(6, META_ID, RAMO, YEAR, ACCION_ID),'0') AS ACC_JUN,
+NVL( DGI.F_ACCION_ESTIMACION(7, META_ID, RAMO, YEAR, ACCION_ID),'0') AS ACC_JUL,
+NVL( DGI.F_ACCION_ESTIMACION(8, META_ID, RAMO, YEAR, ACCION_ID),'0') AS ACC_AGO,
+NVL( DGI.F_ACCION_ESTIMACION(9, META_ID, RAMO, YEAR, ACCION_ID),'0') AS ACC_SEP,
+NVL( DGI.F_ACCION_ESTIMACION(10, META_ID, RAMO, YEAR,ACCION_ID),'0') AS ACC_OCT,
+NVL(DGI.F_ACCION_ESTIMACION(11, META_ID, RAMO, YEAR, ACCION_ID),'0') AS ACC_NOV,
+NVL( DGI.F_ACCION_ESTIMACION(12, META_ID, RAMO, YEAR, ACCION_ID),'0') AS ACC_DIC
+FROM (
+SELECT
+    A.YEAR,
+	A.LINEA,
+DECODE(B.TIPO_COMPROMISO,NULL,' ',B.TIPO_COMPROMISO||'-'||TP.DESCR) AS TIPO_COMPROMISO,
+    DECODE(A.GRUPO_POBLACION,NULL,' ',A.GRUPO_POBLACION||'-'||GP.DESCR) AS GRUPO_POBLACION,
+    A.BENEF_HOMBRE,
+    A.BENEF_MUJER,
+	A.RAMO,
+	A.PRG AS PRG,
+	PRG.DESCR AS DESCR_PRG,
+	DECODE(PROY.OBRA,'S','OBRA','') AS OBRA,
+	B.TIPO_PROY||B.PROY AS PROY,
+	PROY.DESCR AS PROYECTO,
+	NVL(DECODE(B.OBRA,'G','GASTO CORRIENTE',DECODE(B.OBRA,'I','INVERSIÓN PÚBLICA',DECODE(B.OBRA,'A','GASTO CORRIENTE /INVERSIÓN PÚBLICA'))),' ') AS TIPO_META,
+	A.META AS META_ID,
+	A.META||'-'||B.DESCR AS META,
+	UMM.MEDIDA||'-'||UMM.DESCR AS MEDIDA_META,
+	A.ACCION AS ACCION_ID,
+	A.ACCION||'-'||A.DESCR AS ACCION,
+	DECODE(A.CALCULO,'AC','ACUMULADO',DECODE(A.CALCULO,'MI','MÍNIMO','MÁXIMO')) AS TIPO_CALCULO,
+	MM.MEDIDA||'-'||MM.DESCR AS MEDIDA,
+	A.DEPTO AS UE,
+	DEPUE.DESCR AS DEPTO_DESCR_UE,
+	A.MPO AS MPO,
+	MUN.NOMBREMPO AS MPO_DESCR,
+	A.LOCALIDAD,
+	LOC.DESCR AS LOC_DESCR,
+	SUM(NVL(REQ.ASIGNADO,0)) AS COSTO_ANUAL
+    --SUM(NVL(REQ.costo_anual,0)) AS COSTO_ANUAL
+FROM
+	SPP.PPTO REQ,
+ S_POA_GPO_POBLACIONAL GP,
+    DGI.POA_TIPO_COMPROMISO TP,
+    --poa.accion_req REQ,
+    S_POA_ACCION A ,
+	S_POA_META B,
+	S_POA_PROGRAMA PRG,
+	POA.RAMO_PROGRAMA RP,
+	DGI.VW_SP_PROY_ACT PROY,
+	DGI.DEPENDENCIA DEPUE,
+	S_POA_MEDIDA_META UMM,
+	S_POA_MEDIDA_META MM,
+	S_POA_MUNICIPIO MUN,
+	S_POA_LOCALIDAD LOC
+
+WHERE
+	  B.TIPO_COMPROMISO=TP.TIPO_COMPROMISO(+)
+    AND A.GRUPO_POBLACION=GP.GRUPO_POBLACION(+)
+  AND         A.YEAR = $P{YEAR}
+	AND A.RAMO  IN ($P!{RAMO_IN_LIST})
+	AND A.YEAR =  REQ.YEAR (+)
+	AND A.RAMO =  REQ.RAMO (+)
+	AND A.PRG = REQ.PRG (+)
+	AND A.DEPTO = REQ.DEPTO (+)
+	AND A.META =  REQ.META (+)
+	AND A.ACCION =  REQ.ACCION (+)
+	AND B.YEAR = A.YEAR
+	AND B.RAMO = A.RAMO
+	AND B.META = A.META
+	AND PRG.YEAR = A.YEAR
+	AND PRG.PRG = A.PRG
+    AND RP.YEAR = A.YEAR
+	AND RP.RAMO = A.RAMO
+	AND RP.PRG = A.PRG
+	AND PROY.YEAR = B.YEAR
+	AND PROY.TIPO_PROY = B.TIPO_PROY
+	AND PROY.PROY = B.PROY
+	AND DEPUE.YEAR=A.YEAR
+	AND DEPUE.RAMO=A.RAMO
+	AND DEPUE.DEPTO=A.DEPTO
+	AND UMM.YEAR(+) = B.YEAR
+	AND UMM.MEDIDA(+) = B.CVE_MEDIDA
+	AND MM.YEAR(+) = A.YEAR
+	AND MM.MEDIDA(+) = A.CVE_MEDIDA
+	AND MUN.MPO = A.MPO
+	AND LOC.MPO = MUN.MPO
+	AND LOC.LOCALIDAD = A.LOCALIDAD
+	$P!{QUERY}
+
+GROUP BY
+    A.YEAR,
+	A.LINEA,
+DECODE(B.TIPO_COMPROMISO,NULL,' ',B.TIPO_COMPROMISO||'-'||TP.DESCR),
+    DECODE(A.GRUPO_POBLACION,NULL,' ',A.GRUPO_POBLACION||'-'||GP.DESCR),
+    A.BENEF_HOMBRE,
+    A.BENEF_MUJER,
+    A.RAMO,
+	A.PRG ,
+	PRG.DESCR ,
+	DECODE(PROY.OBRA,'S','OBRA',''),
+	B.TIPO_PROY||B.PROY,
+	PROY.DESCR,
+	DECODE(B.OBRA,'G','GASTO CORRIENTE',DECODE(B.OBRA,'I','INVERSIÓN PÚBLICA',DECODE(B.OBRA,'A','GASTO CORRIENTE /INVERSIÓN PÚBLICA'))),
+	A.META ,
+	A.META||'-'||B.DESCR,
+	UMM.MEDIDA||'-'||UMM.DESCR ,
+	A.ACCION,
+	A.ACCION||'-'||A.DESCR,
+	DECODE(A.CALCULO,'AC','ACUMULADO',DECODE(A.CALCULO,'MI','MÍNIMO','MÁXIMO')),
+	MM.MEDIDA||'-'||MM.DESCR ,
+	A.DEPTO ,
+	DEPUE.DESCR ,
+	A.MPO ,
+	MUN.NOMBREMPO ,
+	A.LOCALIDAD,
+	LOC.DESCR
+    )
+ORDER BY
+ RAMO,
+ PRG,
+ PROY,
+ META,
+ ACCION]]>
+	</queryString>
+	<field name="LINEA" class="java.lang.String"/>
+	<field name="TIPO_COMPROMISO" class="java.lang.String"/>
+	<field name="GRUPO_POBLACION" class="java.lang.String"/>
+	<field name="CANTIDAD_HOMBRES" class="java.lang.String"/>
+	<field name="CANTIDAD_MUJERES" class="java.lang.String"/>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="PRG" class="java.lang.String"/>
+	<field name="DESCR_PRG" class="java.lang.String"/>
+	<field name="OBRA" class="java.lang.String"/>
+	<field name="PROY" class="java.lang.String"/>
+	<field name="PROYECTO" class="java.lang.String"/>
+	<field name="TIPO_META" class="java.lang.String"/>
+	<field name="META_ID" class="java.math.BigDecimal"/>
+	<field name="META" class="java.lang.String"/>
+	<field name="MEDIDA_META" class="java.lang.String"/>
+	<field name="ACCION_ID" class="java.math.BigDecimal"/>
+	<field name="ACCION" class="java.lang.String"/>
+	<field name="TIPO_CALCULO" class="java.lang.String"/>
+	<field name="MEDIDA" class="java.lang.String"/>
+	<field name="UE" class="java.lang.String"/>
+	<field name="DEPTO_DESCR_UE" class="java.lang.String"/>
+	<field name="MPO" class="java.lang.String"/>
+	<field name="MPO_DESCR" class="java.lang.String"/>
+	<field name="LOCALIDAD" class="java.math.BigDecimal"/>
+	<field name="LOC_DESCR" class="java.lang.String"/>
+	<field name="COSTO_ANUAL" class="java.math.BigDecimal"/>
+	<field name="TOTAL_META" class="java.lang.String"/>
+	<field name="TOTAL" class="java.lang.String"/>
+	<field name="ACC_ENE" class="java.lang.String"/>
+	<field name="ACC_FEB" class="java.lang.String"/>
+	<field name="ACC_MAR" class="java.lang.String"/>
+	<field name="ACC_ABR" class="java.lang.String"/>
+	<field name="ACC_MAY" class="java.lang.String"/>
+	<field name="ACC_JUN" class="java.lang.String"/>
+	<field name="ACC_JUL" class="java.lang.String"/>
+	<field name="ACC_AGO" class="java.lang.String"/>
+	<field name="ACC_SEP" class="java.lang.String"/>
+	<field name="ACC_OCT" class="java.lang.String"/>
+	<field name="ACC_NOV" class="java.lang.String"/>
+	<field name="ACC_DIC" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="e5b441d3-d1e8-471c-8e46-e340c3d8bc72" mode="Transparent" x="0" y="0" width="40" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[RAMO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7ad9de87-f8e8-48e5-b1b6-6a7621b73930" mode="Transparent" x="40" y="0" width="40" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRG]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a54329a2-ce76-4e57-8145-aaa507d754c3" mode="Transparent" x="80" y="0" width="249" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCIÓN DEL PROGRAMA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="eeb7cb69-9498-4889-9505-7eb4374bcf15" mode="Transparent" x="387" y="0" width="40" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PROY/AI]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c864e0cd-de7d-465f-9b9b-5b3c2856108a" mode="Transparent" x="427" y="0" width="310" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCIÓN DEL PROYECTO/ACTIVIDAD INSTITUCIONAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="681a9e09-2ada-41da-aaff-e20fb1f6cca4" mode="Transparent" x="857" y="0" width="399" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[META]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f7788404-46aa-48e1-9be9-066e7c8615e8" mode="Transparent" x="1592" y="0" width="242" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ACCIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="16555515-0815-4aee-9c4c-c88c0ab7c27e" mode="Transparent" x="2780" y="0" width="39" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[U.E.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="fe8e82c5-24c9-42fd-b618-a7396c97d61e" mode="Transparent" x="2819" y="0" width="271" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCIÓN UNIDAD EJECUTORA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8a67dd5d-0398-4eee-bc37-4c10b41bdf51" mode="Transparent" x="2178" y="0" width="40" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ENE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9e858e48-8b99-49c1-a964-6e4e06c9fe3a" mode="Transparent" x="2498" y="0" width="40" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[SEP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="af33e61d-385d-4b72-af2f-736c517c88d5" mode="Transparent" x="2298" y="0" width="40" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ABR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ae386683-5b0e-43aa-a484-860b264ba773" mode="Transparent" x="2338" y="0" width="40" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[MAY]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a39d6c82-3376-42db-bc77-309c7a392246" mode="Transparent" x="2538" y="0" width="40" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[OCT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1b731353-748f-4f73-b85a-d35dd27d1373" mode="Transparent" x="2578" y="0" width="40" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOV]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f1991dba-806e-4c20-b5e3-41daeb452e4f" mode="Transparent" x="2378" y="0" width="40" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[JUN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b5c65078-9019-4412-a2b8-878a3bf3f46f" mode="Transparent" x="2618" y="0" width="40" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DIC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0311cc17-3ce5-4204-84d6-44ae7706c4db" mode="Transparent" x="2256" y="0" width="42" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[MAR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9ea2ffbc-4750-4442-a5f3-0050435d2af1" mode="Transparent" x="2418" y="0" width="38" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[JUL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6239fa79-f66a-4c29-87ba-f554b1cd5986" mode="Transparent" x="2218" y="0" width="38" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[FEB]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1164a0ad-0ae5-4163-aa32-fb6834a79438" mode="Transparent" x="2456" y="0" width="42" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[AGO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="203eae8b-0c2b-4408-b7f6-239f04b98417" mode="Transparent" x="1256" y="0" width="126" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[UNIDAD DE MEDIDA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7e766afd-ad10-4a84-b8c4-5913334832c8" mode="Transparent" x="1382" y="0" width="109" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CANTIDAD ANUAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2ed07b1e-30c1-485a-a928-6bdc9220e971" mode="Transparent" x="1491" y="0" width="101" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[LOCALIDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5839b31d-8f9f-4298-bf47-954d235662e2" mode="Transparent" x="1834" y="0" width="113" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[UNIDAD DE MEDIDA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b5bf2970-8e76-4259-8ba5-50d3b7550df1" mode="Transparent" x="2056" y="0" width="122" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CANTIDAD ANUAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0d4d68f8-85fa-4f82-ac0f-d564407dd890" mode="Transparent" x="2658" y="0" width="122" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[COSTO ANUAL DE LA ACCION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0e4ed361-93ed-42c4-a817-d2c6a95d0410" mode="Transparent" x="329" y="0" width="58" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[OBRA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="08d88c13-eb53-4f09-b805-90aaf364fdbd" mode="Transparent" x="737" y="0" width="120" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TIPO META]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a214b9c4-6fee-4d84-abec-d714360a19b9" mode="Transparent" x="1947" y="0" width="109" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TIPO CALCULO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="17086468-c221-4231-ab4a-8fd1255dd1e1" mode="Transparent" x="3090" y="0" width="90" height="20" backcolor="#CCCCCC"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[LINEA PED]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4d9c9455-95f7-4a05-b0df-17257c6d39c8" x="3180" y="0" width="145" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TIPO COMPROMISO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="45ba6718-44bc-4ff8-b016-1a03cbe1178c" x="3325" y="0" width="123" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[GRUPO POBLACION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5f7e5732-b45c-417f-87bb-b5d0122e1c6d" x="3448" y="0" width="142" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CANTIDAD HOMBRES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="72247a33-c3e8-4a06-a3eb-2f9af5743e6c" x="3590" y="0" width="146" height="20"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CANTIDAD MUJERES]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="caf85a14-20c7-4b7a-b97b-48e0ae7dd656" stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="0" width="40" height="20" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Middle">
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RAMO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="51e3624a-b416-4c66-a2ca-e0416559e484" stretchType="RelativeToBandHeight" mode="Transparent" x="40" y="0" width="40" height="20" forecolor="#000000" backcolor="#0066FF"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PRG}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="758657f8-19da-4193-bf0c-75c176230263" stretchType="RelativeToBandHeight" mode="Transparent" x="80" y="0" width="249" height="20" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{DESCR_PRG}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="a25b2877-514b-4944-96af-34c7b9107ed7" stretchType="RelativeToBandHeight" mode="Transparent" x="387" y="0" width="40" height="20" forecolor="#000000" backcolor="#0066FF"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PROY}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="5c438544-acf6-42bb-b283-6d53ac74e261" stretchType="RelativeToBandHeight" mode="Transparent" x="427" y="0" width="310" height="20" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PROYECTO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="92273d34-c9fd-4740-ad4a-a50a1dfc1867" stretchType="RelativeToBandHeight" mode="Transparent" x="857" y="0" width="399" height="20" forecolor="#000000" backcolor="#0066FF"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{META}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="def7c3ef-0df7-438b-a91f-23db22108fde" stretchType="RelativeToBandHeight" mode="Transparent" x="1592" y="0" width="242" height="20" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ACCION}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="bc96be24-1817-47e0-9061-3fab5bd002c0" stretchType="RelativeToBandHeight" mode="Transparent" x="2780" y="0" width="39" height="20" forecolor="#000000" backcolor="#0066FF"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{UE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="ff17b20a-cbca-469b-b2d2-54eaed3f10a5" stretchType="RelativeToBandHeight" mode="Transparent" x="2819" y="0" width="271" height="20" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{DEPTO_DESCR_UE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="718a86cd-ee88-4cbf-bd9c-1c5e0a220014" stretchType="RelativeToBandHeight" mode="Transparent" x="2378" y="0" width="40" height="20" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ACC_JUN}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="92a3d69c-9e98-4399-97bd-1b93bb59f1cc" stretchType="RelativeToBandHeight" mode="Transparent" x="2218" y="0" width="38" height="20" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ACC_FEB}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="f4e9cbdb-ffc6-4afd-8638-7296a6614561" stretchType="RelativeToBandHeight" mode="Transparent" x="2298" y="0" width="40" height="20" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ACC_ABR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="1eeaab33-1bb9-4b58-8cb3-1edccf6585c9" stretchType="RelativeToBandHeight" mode="Transparent" x="2178" y="0" width="40" height="20" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ACC_ENE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="c13f316e-a507-4c2c-9b4d-eff9bca5571b" stretchType="RelativeToBandHeight" mode="Transparent" x="2578" y="0" width="40" height="20" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ACC_NOV}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="c1a9b6ab-903a-47be-b057-3ee1b9e99ebb" stretchType="RelativeToBandHeight" mode="Transparent" x="2498" y="0" width="40" height="20" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ACC_SEP}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="b2916a3c-db35-4a72-a22a-ccc94dc8e962" stretchType="RelativeToBandHeight" mode="Transparent" x="2538" y="0" width="40" height="20" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ACC_OCT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="48e539f1-44cd-4d4d-9dd2-f2fcfe3dee9c" stretchType="RelativeToBandHeight" mode="Transparent" x="2256" y="0" width="42" height="20" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ACC_MAR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="63680d47-e1c8-4eae-8a6d-bd8a39e6ed75" stretchType="RelativeToBandHeight" mode="Transparent" x="2456" y="0" width="42" height="20" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ACC_AGO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="2a93c52a-019d-4b6a-a3fb-dbd7476061af" stretchType="RelativeToBandHeight" mode="Transparent" x="2618" y="0" width="40" height="20" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ACC_DIC}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="f2b185aa-546c-49ef-ba72-330da7f82cf3" stretchType="RelativeToBandHeight" mode="Transparent" x="2418" y="0" width="38" height="20" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ACC_JUL}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="188ca575-ea9f-47af-bc48-a34a6a37f4c9" stretchType="RelativeToBandHeight" mode="Transparent" x="2338" y="0" width="40" height="20" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ACC_MAY}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="4e61b461-4d4a-4133-9e83-94b213b0944d" stretchType="RelativeToBandHeight" mode="Transparent" x="1256" y="0" width="126" height="20" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{MEDIDA_META}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="c43c3373-51d0-4d51-9efd-afd21e6e62a5" stretchType="RelativeToBandHeight" mode="Transparent" x="1382" y="0" width="109" height="20" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{TOTAL_META}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="20d92e28-f6f5-467c-9420-a06df98d7945" stretchType="RelativeToBandHeight" mode="Transparent" x="1491" y="0" width="101" height="20" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{LOCALIDAD}+" "+$F{LOC_DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="40eac560-71e6-4d15-a754-5d639c02a556" stretchType="RelativeToBandHeight" mode="Transparent" x="1834" y="0" width="113" height="20" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{MEDIDA}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="761884c4-681e-43fe-ab43-7880f9c8375a" stretchType="RelativeToBandHeight" mode="Transparent" x="2056" y="0" width="122" height="20" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{TOTAL}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="0972acf0-28b0-4cf7-98a6-22984375fc02" stretchType="RelativeToBandHeight" mode="Transparent" x="2658" y="0" width="122" height="20" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{COSTO_ANUAL}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="400668ed-a6a9-425f-9ba1-579ff844310f" stretchType="RelativeToBandHeight" mode="Transparent" x="329" y="0" width="58" height="20" forecolor="#000000" backcolor="#0066FF"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{OBRA}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="1658931b-21fd-4876-a41c-dc9884527459" stretchType="RelativeToBandHeight" mode="Transparent" x="737" y="0" width="120" height="20" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{TIPO_META}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="e5f96297-44cb-4a64-88db-0e647b4f461e" stretchType="RelativeToBandHeight" mode="Transparent" x="1947" y="0" width="109" height="20" backcolor="#CCCCCC"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{TIPO_CALCULO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="b455484a-ae94-42bd-8bab-67840d2f87dc" stretchType="RelativeToBandHeight" mode="Transparent" x="3090" y="0" width="90" height="20" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{LINEA}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="0c0ef643-5b86-49e3-bec7-c71ecdfaa17d" x="3180" y="0" width="145" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{TIPO_COMPROMISO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="7b6a2ff9-2dbb-484e-9f79-794671fa5c23" x="3325" y="0" width="123" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{GRUPO_POBLACION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="029ec18c-8250-4d50-af38-d12c191915d0" x="3448" y="0" width="142" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{CANTIDAD_HOMBRES}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="7487c3e7-13ef-4036-b069-be2b0f94e908" x="3590" y="0" width="146" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{CANTIDAD_MUJERES}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

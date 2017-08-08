@@ -1,0 +1,1261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptEstadisticaFirmasFolio" language="groovy" pageWidth="2400" pageHeight="842" columnWidth="2400" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="2e07d505-e28f-45ba-98be-f79606a85c4c">
+	<property name="ireport.zoom" value="0.8481952367449697"/>
+	<property name="ireport.x" value="1246"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\desarrollo\\repositorio_local\\poa\\trunk\\web\\reportes\\EstadisticaFirmasFolio\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TIPOUSR" class="java.lang.String"/>
+	<parameter name="YEAR" class="java.lang.Integer"/>
+	<parameter name="QUERY" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+DISTINCT MOV0.OFICIO,
+( SELECT T.DESCR FROM POA.TIPO_MOV T WHERE T.TIPOMOV = MOV0.TIPOMOV ) TIPOMOV,
+MOV0.FECPPTO,
+DECODE(B.TIPO_USR,'SPPD','CENTRAL','PARAESTATAL') AS SECTOR,
+U.RAMO AS RAMO,
+AFECTADOS.RAMO AS RAMO_AFECTADO,
+NVL((SELECT
+ NVL(DECODE(TM.TIPO_MODIFICACION,2,REVPRES.DESCR_CORTA||' '||REVPRES.DESCR||' presupuestal '||'-'||TM.DESCR,REVPRES.DESCR_CORTA||' '||REVPRES.DESCR||' presupuestal '),' ') CARATULA_DESCR
+                FROM
+                    POA.CARATULA CAR,
+                    POA.REVISIONES_CARATULA REVS,
+                    POA.REVISIONES_CARATULA REVPRES,
+                    POA.REVISIONES_CARATULA REVPRG,
+                    POA.TIPO_SESION TIS,
+                    DGI.RAMOS RAM,
+                    POA.TIPO_MODIFICACION TM
+                WHERE
+                CAR.TIPO_MODIFICACION=TM.TIPO_MODIFICACION AND
+                    CAR.YEAR = CARATULA.C_ANIO AND
+                    CAR.RAMO = U.RAMO AND
+                    CAR.ID_CARATULA = CARATULA.C_ID AND
+                    REVS.REVISION = CAR.NUMERO_SESION AND
+                    REVPRES.REVISION (+)= CAR.NUM_MOD_PRES AND
+                    REVPRG.REVISION (+)= CAR.NUM_MOD_PROG AND
+                    TIS.CVE_SESION = CAR.TIPO_SESION AND
+                    RAM.YEAR = CAR.YEAR AND
+                    RAM.RAMO = CAR.RAMO
+
+),' ') AS LIGADO_A_CARATULA,
+MOV0.STATUS AS STATUS,
+STS.DESCR AS DESCR,
+MOV0.INVERSION AS INVERSION,
+NVL(IMPACPROG.REL_IMP_PROG,'N') AS PROG,
+TO_DATE(MOV0.FECHAELAB,'DD/MM/YYYY') AS FECHAELAB,
+BITACORA_FIRMA0.FECHAAUT AS FECHAAUT_FIRMA0,
+BITACORA_FIRMA0.APP_LOGIN AS APPLOGIN_FIRMA0,
+BITACORA_FIRMA1.FECHAAUT AS FECHAAUT_FIRMA1,
+BITACORA_FIRMA1.APP_LOGIN AS APPLOGIN_FIRMA1,
+BITACORA_FIRMA2.FECHAAUT AS FECHAAUT_FIRMA2,
+BITACORA_FIRMA2.APP_LOGIN AS APPLOGIN_FIRMA2,
+BITACORA_FIRMA3.FECHAAUT AS FECHAAUT_FIRMA3,
+BITACORA_FIRMA3.APP_LOGIN AS APPLOGIN_FIRMA3,
+BITACORA_FIRMA4.FECHAAUT AS FECHAAUT_FIRMA4,
+BITACORA_FIRMA4.APP_LOGIN AS APPLOGIN_FIRMA4,
+
+DECODE(BITACORA_FIRMA2.FECHAAUT,NULL,0,(DGI.F_DIAS_LABORABLES_REP_POA(BITACORA_FIRMA0.FECHAAUT,BITACORA_FIRMA1.FECHAAUT))) AS DURACION_EJECUTIVOS,
+DECODE(BITACORA_FIRMA2.FECHAAUT,NULL,0,(DGI.F_DIAS_LABORABLES_REP_POA(BITACORA_FIRMA1.FECHAAUT,BITACORA_FIRMA2.FECHAAUT))) AS DURACION_2daREVISION,DECODE(BITACORA_FIRMA2.FECHAAUT,NULL,0,(DGI.F_DIAS_LABORABLES_REP_POA(BITACORA_FIRMA2.FECHAAUT,BITACORA_FIRMA3.FECHAAUT))) AS DURACION_AutPLANEACION,
+DECODE(BITACORA_FIRMA2.FECHAAUT,NULL,0,(DGI.F_DIAS_LABORABLES_REP_POA(BITACORA_FIRMA3.FECHAAUT,BITACORA_FIRMA4.FECHAAUT))) AS DURACION_AutPpto
+FROM
+POA.MOVOFICIOS MOV0,
+POA.BITMOVTOS B,
+DGI.DGI_USR U,
+
+(SELECT C.YEAR AS C_ANIO,C.RAMO AS C_RAMO,M.ID_CARATULA AS C_ID,M.OFICIO AS C_OFICIO FROM
+POA.CARATULA C,
+POA.CARATULA_MOVOFICIO M
+WHERE
+C.ID_CARATULA=M.ID_CARATULA) CARATULA,
+POA.VW_MOVOFICIOS_RAMO_AFECTADO AFECTADOS,
+POA.ESTATUS_MOV STS,
+(
+SELECT
+	DECODE(SIGN(SUM(IMPACPROG.CONT)),1,'S','N') REL_IMP_PROG,
+    IMPACPROG.OFICIO
+FROM
+	(
+		SELECT
+			nvl(count(ROWNUM),0) CONT,
+            MOVACC.OFICIO AS OFICIO
+		FROM
+			POA.MOVOFICIOS_ACCION MOVACC
+		GROUP BY
+            MOVACC.OFICIO
+
+		UNION ALL
+
+		SELECT
+			nvl(count(ROWNUM),0) CONT,
+            MOVMET.OFICIO AS OFICIO
+		FROM
+			POA.MOVOFICIOS_META MOVMET
+            GROUP BY
+            MOVMET.OFICIO
+
+		UNION ALL
+
+		SELECT
+			nvl(count(ROWNUM),0) CONT,
+            MOVEST.OFICIO AS OFICIO
+		FROM
+			POA.MOVOFICIOS_ESTIMACION MOVEST
+            GROUP BY
+            MOVEST.OFICIO
+
+		UNION ALL
+
+		SELECT
+			nvl(count(ROWNUM),0) CONT,
+            MOVACCEST.OFICIO AS OFICIO
+		FROM
+			POA.MOVOFICIOS_ACCION_ESTIMACION MOVACCEST
+            GROUP BY
+            MOVACCEST.OFICIO
+
+	) IMPACPROG
+    GROUP BY
+    IMPACPROG.OFICIO
+) IMPACPROG,
+(
+SELECT
+    OFICIO,
+    FECHAAUT,
+    APP_LOGIN,
+    DESCR
+    FROM
+
+(
+SELECT
+    MOV.OFICIO AS OFICIO,
+    MOV.FECPPTO AS FECPPTO,
+    0 AS NIVEL,
+    0 ORDEN,
+    0 TIPO_FLUJO ,
+    ''  AS TIPO_USR,
+    0  AS TIPO_FLUJO1,
+    ''  AS TIPO_USR1,
+    0  AS ORDEN1,
+    MOV.FECPPTO AS FECHAAUT,
+    MOV.APP_LOGIN,
+    'Envio a autorizacion' DESCR,
+    P.GOBIERNO,
+    P.SECRETARIA,
+    '' TIPOFICIO,
+    0 AS MAXIMO,
+    0 AS AGRUPA
+FROM POA.MOVOFICIOS MOV, DGI.PARAMETROS P
+
+UNION ALL
+/*EN BITACORA*/
+SELECT MOV.OFICIO,MOV.FECPPTO,FA.NIVEL,FA.ORDEN,FA.TIPO_FLUJO,FA.TIPO_USR,F.TIPO_FLUJO AS TIPO_FLUJO1,F.TIPO_USR AS TIPO_USR1,F.ORDEN AS ORDEN1,B.FECHAAUT AS FECHAAUT,B.APP_LOGIN,E.DESCR,P.GOBIERNO,P.SECRETARIA,
+CASE WHEN
+FA.ORDEN=(SELECT  MAX(FM.ORDEN - 1)
+FROM
+POA.FLUJO_AUTORIZACION FM
+WHERE FM.TIPO_USR=$P{TIPOUSR} AND
+FM.TIPOMOV=MOV.TIPOMOV)
+THEN TF.TIPO
+ELSE
+'0'
+END AS TIPOFICIO,
+CASE WHEN
+FA.ORDEN=(SELECT  MAX(FM.ORDEN - 1) AS MAXIMO
+FROM
+POA.FLUJO_AUTORIZACION FM
+WHERE FM.TIPO_USR=$P{TIPOUSR} AND
+FM.TIPOMOV=MOV.TIPOMOV)
+THEN FA.ORDEN
+ELSE
+0
+END AS MAXIMO,
+0 AS AGRUPA
+FROM
+POA.FLUJO_AUTORIZACION FA,
+POA.MOVOFICIOS MOV,
+POA.FLUJO_FIRMAS F,
+POA.BITMOVTOS B,
+POA.ESTATUS_MOV E,
+DGI.PARAMETROS P,
+DGI.TIPOFICIO TF
+WHERE
+
+MOV.TIPOMOV=FA.TIPOMOV AND
+FA.TIPO_USR=F.TIPO_USR AND
+F.ORDEN=FA.ORDEN AND
+FA.TIPO_USR=$P{TIPOUSR} AND
+TF.OFICIO=MOV.OFICIO AND
+TF.OFICIO=B.OFICIO(+) AND
+TF.TIPO=B.TIPO_OFICIO(+) AND
+E.ESTATUS=FA.ESTATUS AND
+F.APP_LOGIN=B.APP_LOGIN AND
+F.TIPO_FLUJO=B.TIPO_FLUJO AND
+E.ESTATUS NOT IN('A') AND
+MOV.INVERSION<>'S'
+
+UNION
+
+SELECT MOV.OFICIO,MOV.FECPPTO,FA.NIVEL,FA.ORDEN,FA.TIPO_FLUJO,FA.TIPO_USR,F.TIPO_FLUJO AS TIPO_FLUJO1,F.TIPO_USR AS TIPO_USR1,F.ORDEN AS ORDEN1,B.FECHAAUT AS FECHAAUT,B.APP_LOGIN,E.DESCR,P.GOBIERNO,P.SECRETARIA,
+CASE WHEN
+FA.ORDEN=(SELECT  MAX(FM.ORDEN - 1)
+FROM
+POA.FLUJO_AUTORIZACION FM
+WHERE FM.TIPO_USR=$P{TIPOUSR} AND
+FM.TIPOMOV=MOV.TIPOMOV)
+THEN TF.TIPO
+ELSE
+'0'
+END AS TIPOFICIO,
+CASE WHEN
+FA.ORDEN=(SELECT  MAX(FM.ORDEN - 1) AS MAXIMO
+FROM
+POA.FLUJO_AUTORIZACION FM
+WHERE FM.TIPO_USR=$P{TIPOUSR} AND
+FM.TIPOMOV=MOV.TIPOMOV)
+THEN FA.ORDEN
+ELSE
+0
+END AS MAXIMO,
+0 AS AGRUPA
+FROM
+POA.FLUJO_AUTORIZACION FA,
+POA.MOVOFICIOS MOV,
+POA.FLUJO_FIRMAS F,
+POA.BITMOVTOS B,
+POA.ESTATUS_MOV E,
+DGI.PARAMETROS P,
+DGI.TIPOFICIO TF
+WHERE
+
+MOV.TIPOMOV=FA.TIPOMOV AND
+FA.TIPO_USR=F.TIPO_USR AND
+F.ORDEN=FA.ORDEN AND
+FA.TIPO_USR=$P{TIPOUSR} AND
+TF.OFICIO=MOV.OFICIO AND
+TF.OFICIO=B.OFICIO(+) AND
+--TF.TIPO=B.TIPO_OFICIO(+) AND
+E.ESTATUS=FA.ESTATUS AND
+F.APP_LOGIN=B.APP_LOGIN AND
+F.TIPO_FLUJO=B.TIPO_FLUJO AND
+E.ESTATUS NOT IN('A') AND
+MOV.INVERSION='S'
+
+) BITACORA
+
+WHERE
+BITACORA.ORDEN=0
+) BITACORA_FIRMA0,
+(
+SELECT
+    OFICIO,
+    FECHAAUT,
+    APP_LOGIN,
+    DESCR
+    FROM
+
+(
+SELECT
+    MOV.OFICIO AS OFICIO,
+    MOV.FECPPTO AS FECPPTO,
+    0 AS NIVEL,
+    0 ORDEN,
+    0 TIPO_FLUJO ,
+    ''  AS TIPO_USR,
+    0  AS TIPO_FLUJO1,
+    ''  AS TIPO_USR1,
+    0  AS ORDEN1,
+    MOV.FECPPTO AS FECHAAUT,
+    MOV.APP_LOGIN,
+    'Envio a autorizacion' DESCR,
+    P.GOBIERNO,
+    P.SECRETARIA,
+    '' TIPOFICIO,
+    0 AS MAXIMO,
+    0 AS AGRUPA
+FROM POA.MOVOFICIOS MOV, DGI.PARAMETROS P
+
+UNION ALL
+/*EN BITACORA*/
+SELECT MOV.OFICIO,MOV.FECPPTO,FA.NIVEL,FA.ORDEN,FA.TIPO_FLUJO,FA.TIPO_USR,F.TIPO_FLUJO AS TIPO_FLUJO1,F.TIPO_USR AS TIPO_USR1,F.ORDEN AS ORDEN1,B.FECHAAUT AS FECHAAUT,B.APP_LOGIN,E.DESCR,P.GOBIERNO,P.SECRETARIA,
+CASE WHEN
+FA.ORDEN=(SELECT  MAX(FM.ORDEN - 1)
+FROM
+POA.FLUJO_AUTORIZACION FM
+WHERE FM.TIPO_USR=$P{TIPOUSR} AND
+FM.TIPOMOV=MOV.TIPOMOV)
+THEN TF.TIPO
+ELSE
+'0'
+END AS TIPOFICIO,
+CASE WHEN
+FA.ORDEN=(SELECT  MAX(FM.ORDEN - 1) AS MAXIMO
+FROM
+POA.FLUJO_AUTORIZACION FM
+WHERE FM.TIPO_USR=$P{TIPOUSR} AND
+FM.TIPOMOV=MOV.TIPOMOV)
+THEN FA.ORDEN
+ELSE
+0
+END AS MAXIMO,
+0 AS AGRUPA
+FROM
+POA.FLUJO_AUTORIZACION FA,
+POA.MOVOFICIOS MOV,
+POA.FLUJO_FIRMAS F,
+POA.BITMOVTOS B,
+POA.ESTATUS_MOV E,
+DGI.PARAMETROS P,
+DGI.TIPOFICIO TF
+WHERE
+
+MOV.TIPOMOV=FA.TIPOMOV AND
+FA.TIPO_USR=F.TIPO_USR AND
+F.ORDEN=FA.ORDEN AND
+FA.TIPO_USR=$P{TIPOUSR} AND
+TF.OFICIO=MOV.OFICIO AND
+TF.OFICIO=B.OFICIO(+) AND
+TF.TIPO=B.TIPO_OFICIO(+) AND
+E.ESTATUS=FA.ESTATUS AND
+F.APP_LOGIN=B.APP_LOGIN AND
+F.TIPO_FLUJO=B.TIPO_FLUJO AND
+E.ESTATUS NOT IN('A') AND
+MOV.INVERSION<>'S'
+
+UNION
+
+SELECT MOV.OFICIO,MOV.FECPPTO,FA.NIVEL,FA.ORDEN,FA.TIPO_FLUJO,FA.TIPO_USR,F.TIPO_FLUJO AS TIPO_FLUJO1,F.TIPO_USR AS TIPO_USR1,F.ORDEN AS ORDEN1,B.FECHAAUT AS FECHAAUT,B.APP_LOGIN,E.DESCR,P.GOBIERNO,P.SECRETARIA,
+CASE WHEN
+FA.ORDEN=(SELECT  MAX(FM.ORDEN - 1)
+FROM
+POA.FLUJO_AUTORIZACION FM
+WHERE FM.TIPO_USR=$P{TIPOUSR} AND
+FM.TIPOMOV=MOV.TIPOMOV)
+THEN TF.TIPO
+ELSE
+'0'
+END AS TIPOFICIO,
+CASE WHEN
+FA.ORDEN=(SELECT  MAX(FM.ORDEN - 1) AS MAXIMO
+FROM
+POA.FLUJO_AUTORIZACION FM
+WHERE FM.TIPO_USR=$P{TIPOUSR} AND
+FM.TIPOMOV=MOV.TIPOMOV)
+THEN FA.ORDEN
+ELSE
+0
+END AS MAXIMO,
+0 AS AGRUPA
+FROM
+POA.FLUJO_AUTORIZACION FA,
+POA.MOVOFICIOS MOV,
+POA.FLUJO_FIRMAS F,
+POA.BITMOVTOS B,
+POA.ESTATUS_MOV E,
+DGI.PARAMETROS P,
+DGI.TIPOFICIO TF
+WHERE
+
+MOV.TIPOMOV=FA.TIPOMOV AND
+FA.TIPO_USR=F.TIPO_USR AND
+F.ORDEN=FA.ORDEN AND
+FA.TIPO_USR=$P{TIPOUSR} AND
+TF.OFICIO=MOV.OFICIO AND
+TF.OFICIO=B.OFICIO(+) AND
+--TF.TIPO=B.TIPO_OFICIO(+) AND
+E.ESTATUS=FA.ESTATUS AND
+F.APP_LOGIN=B.APP_LOGIN AND
+F.TIPO_FLUJO=B.TIPO_FLUJO AND
+E.ESTATUS NOT IN('A') AND
+MOV.INVERSION='S'
+
+) BITACORA
+
+WHERE
+BITACORA.ORDEN=1
+) BITACORA_FIRMA1,
+(
+SELECT
+    OFICIO,
+    FECHAAUT,
+    APP_LOGIN,
+    DESCR
+    FROM
+
+(
+SELECT
+    MOV.OFICIO AS OFICIO,
+    MOV.FECPPTO AS FECPPTO,
+    0 AS NIVEL,
+    0 ORDEN,
+    0 TIPO_FLUJO ,
+    ''  AS TIPO_USR,
+    0  AS TIPO_FLUJO1,
+    ''  AS TIPO_USR1,
+    0  AS ORDEN1,
+    MOV.FECPPTO AS FECHAAUT,
+    MOV.APP_LOGIN,
+    'Envio a autorizacion' DESCR,
+    P.GOBIERNO,
+    P.SECRETARIA,
+    '' TIPOFICIO,
+    0 AS MAXIMO,
+    0 AS AGRUPA
+FROM POA.MOVOFICIOS MOV, DGI.PARAMETROS P
+
+UNION ALL
+/*EN BITACORA*/
+SELECT MOV.OFICIO,MOV.FECPPTO,FA.NIVEL,FA.ORDEN,FA.TIPO_FLUJO,FA.TIPO_USR,F.TIPO_FLUJO AS TIPO_FLUJO1,F.TIPO_USR AS TIPO_USR1,F.ORDEN AS ORDEN1,B.FECHAAUT AS FECHAAUT,B.APP_LOGIN,E.DESCR,P.GOBIERNO,P.SECRETARIA,
+CASE WHEN
+FA.ORDEN=(SELECT  MAX(FM.ORDEN - 1)
+FROM
+POA.FLUJO_AUTORIZACION FM
+WHERE FM.TIPO_USR=$P{TIPOUSR} AND
+FM.TIPOMOV=MOV.TIPOMOV)
+THEN TF.TIPO
+ELSE
+'0'
+END AS TIPOFICIO,
+CASE WHEN
+FA.ORDEN=(SELECT  MAX(FM.ORDEN - 1) AS MAXIMO
+FROM
+POA.FLUJO_AUTORIZACION FM
+WHERE FM.TIPO_USR=$P{TIPOUSR} AND
+FM.TIPOMOV=MOV.TIPOMOV)
+THEN FA.ORDEN
+ELSE
+0
+END AS MAXIMO,
+0 AS AGRUPA
+FROM
+POA.FLUJO_AUTORIZACION FA,
+POA.MOVOFICIOS MOV,
+POA.FLUJO_FIRMAS F,
+POA.BITMOVTOS B,
+POA.ESTATUS_MOV E,
+DGI.PARAMETROS P,
+DGI.TIPOFICIO TF
+WHERE
+
+MOV.TIPOMOV=FA.TIPOMOV AND
+FA.TIPO_USR=F.TIPO_USR AND
+F.ORDEN=FA.ORDEN AND
+FA.TIPO_USR=$P{TIPOUSR} AND
+TF.OFICIO=MOV.OFICIO AND
+TF.OFICIO=B.OFICIO(+) AND
+TF.TIPO=B.TIPO_OFICIO(+) AND
+E.ESTATUS=FA.ESTATUS AND
+F.APP_LOGIN=B.APP_LOGIN AND
+F.TIPO_FLUJO=B.TIPO_FLUJO AND
+E.ESTATUS NOT IN('A') AND
+MOV.INVERSION<>'S'
+
+UNION
+
+SELECT MOV.OFICIO,MOV.FECPPTO,FA.NIVEL,FA.ORDEN,FA.TIPO_FLUJO,FA.TIPO_USR,F.TIPO_FLUJO AS TIPO_FLUJO1,F.TIPO_USR AS TIPO_USR1,F.ORDEN AS ORDEN1,B.FECHAAUT AS FECHAAUT,B.APP_LOGIN,E.DESCR,P.GOBIERNO,P.SECRETARIA,
+CASE WHEN
+FA.ORDEN=(SELECT  MAX(FM.ORDEN - 1)
+FROM
+POA.FLUJO_AUTORIZACION FM
+WHERE FM.TIPO_USR=$P{TIPOUSR} AND
+FM.TIPOMOV=MOV.TIPOMOV)
+THEN TF.TIPO
+ELSE
+'0'
+END AS TIPOFICIO,
+CASE WHEN
+FA.ORDEN=(SELECT  MAX(FM.ORDEN - 1) AS MAXIMO
+FROM
+POA.FLUJO_AUTORIZACION FM
+WHERE FM.TIPO_USR=$P{TIPOUSR} AND
+FM.TIPOMOV=MOV.TIPOMOV)
+THEN FA.ORDEN
+ELSE
+0
+END AS MAXIMO,
+0 AS AGRUPA
+FROM
+POA.FLUJO_AUTORIZACION FA,
+POA.MOVOFICIOS MOV,
+POA.FLUJO_FIRMAS F,
+POA.BITMOVTOS B,
+POA.ESTATUS_MOV E,
+DGI.PARAMETROS P,
+DGI.TIPOFICIO TF
+WHERE
+MOV.TIPOMOV=FA.TIPOMOV AND
+FA.TIPO_USR=F.TIPO_USR AND
+F.ORDEN=FA.ORDEN AND
+FA.TIPO_USR=$P{TIPOUSR} AND
+TF.OFICIO=MOV.OFICIO AND
+TF.OFICIO=B.OFICIO(+) AND
+--TF.TIPO=B.TIPO_OFICIO(+) AND
+E.ESTATUS=FA.ESTATUS AND
+F.APP_LOGIN=B.APP_LOGIN AND
+F.TIPO_FLUJO=B.TIPO_FLUJO AND
+E.ESTATUS NOT IN('A') AND
+MOV.INVERSION='S'
+
+) BITACORA
+
+WHERE
+BITACORA.ORDEN=2
+) BITACORA_FIRMA2,
+(
+SELECT
+    OFICIO,
+    FECHAAUT,
+    APP_LOGIN,
+    DESCR
+    FROM
+
+(
+SELECT
+    MOV.OFICIO AS OFICIO,
+    MOV.FECPPTO AS FECPPTO,
+    0 AS NIVEL,
+    0 ORDEN,
+    0 TIPO_FLUJO ,
+    ''  AS TIPO_USR,
+    0  AS TIPO_FLUJO1,
+    ''  AS TIPO_USR1,
+    0  AS ORDEN1,
+    MOV.FECPPTO AS FECHAAUT,
+    MOV.APP_LOGIN,
+    'Envio a autorizacion' DESCR,
+    P.GOBIERNO,
+    P.SECRETARIA,
+    '' TIPOFICIO,
+    0 AS MAXIMO,
+    0 AS AGRUPA
+FROM POA.MOVOFICIOS MOV, DGI.PARAMETROS P
+
+UNION ALL
+/*EN BITACORA*/
+SELECT MOV.OFICIO,MOV.FECPPTO,FA.NIVEL,FA.ORDEN,FA.TIPO_FLUJO,FA.TIPO_USR,F.TIPO_FLUJO AS TIPO_FLUJO1,F.TIPO_USR AS TIPO_USR1,F.ORDEN AS ORDEN1,B.FECHAAUT AS FECHAAUT,B.APP_LOGIN,E.DESCR,P.GOBIERNO,P.SECRETARIA,
+CASE WHEN
+FA.ORDEN=(SELECT  MAX(FM.ORDEN - 1)
+FROM
+POA.FLUJO_AUTORIZACION FM
+WHERE FM.TIPO_USR=$P{TIPOUSR} AND
+FM.TIPOMOV=MOV.TIPOMOV)
+THEN TF.TIPO
+ELSE
+'0'
+END AS TIPOFICIO,
+CASE WHEN
+FA.ORDEN=(SELECT  MAX(FM.ORDEN - 1) AS MAXIMO
+FROM
+POA.FLUJO_AUTORIZACION FM
+WHERE FM.TIPO_USR=$P{TIPOUSR} AND
+FM.TIPOMOV=MOV.TIPOMOV)
+THEN FA.ORDEN
+ELSE
+0
+END AS MAXIMO,
+0 AS AGRUPA
+FROM
+POA.FLUJO_AUTORIZACION FA,
+POA.MOVOFICIOS MOV,
+POA.FLUJO_FIRMAS F,
+POA.BITMOVTOS B,
+POA.ESTATUS_MOV E,
+DGI.PARAMETROS P,
+DGI.TIPOFICIO TF
+WHERE
+MOV.TIPOMOV=FA.TIPOMOV AND
+FA.TIPO_USR=F.TIPO_USR AND
+F.ORDEN=FA.ORDEN AND
+FA.TIPO_USR=$P{TIPOUSR} AND
+TF.OFICIO=MOV.OFICIO AND
+TF.OFICIO=B.OFICIO(+) AND
+TF.TIPO=B.TIPO_OFICIO(+) AND
+E.ESTATUS=FA.ESTATUS AND
+F.APP_LOGIN=B.APP_LOGIN AND
+F.TIPO_FLUJO=B.TIPO_FLUJO AND
+E.ESTATUS NOT IN('A') AND
+MOV.INVERSION<>'S'
+
+UNION
+
+SELECT MOV.OFICIO,MOV.FECPPTO,FA.NIVEL,FA.ORDEN,FA.TIPO_FLUJO,FA.TIPO_USR,F.TIPO_FLUJO AS TIPO_FLUJO1,F.TIPO_USR AS TIPO_USR1,F.ORDEN AS ORDEN1,B.FECHAAUT AS FECHAAUT,B.APP_LOGIN,E.DESCR,P.GOBIERNO,P.SECRETARIA,
+CASE WHEN
+FA.ORDEN=(SELECT  MAX(FM.ORDEN - 1)
+FROM
+POA.FLUJO_AUTORIZACION FM
+WHERE FM.TIPO_USR=$P{TIPOUSR} AND
+FM.TIPOMOV=MOV.TIPOMOV)
+THEN TF.TIPO
+ELSE
+'0'
+END AS TIPOFICIO,
+CASE WHEN
+FA.ORDEN=(SELECT  MAX(FM.ORDEN - 1) AS MAXIMO
+FROM
+POA.FLUJO_AUTORIZACION FM
+WHERE FM.TIPO_USR=$P{TIPOUSR} AND
+FM.TIPOMOV=MOV.TIPOMOV)
+THEN FA.ORDEN
+ELSE
+0
+END AS MAXIMO,
+0 AS AGRUPA
+FROM
+POA.FLUJO_AUTORIZACION FA,
+POA.MOVOFICIOS MOV,
+POA.FLUJO_FIRMAS F,
+POA.BITMOVTOS B,
+POA.ESTATUS_MOV E,
+DGI.PARAMETROS P,
+DGI.TIPOFICIO TF
+WHERE
+
+MOV.TIPOMOV=FA.TIPOMOV AND
+FA.TIPO_USR=F.TIPO_USR AND
+F.ORDEN=FA.ORDEN AND
+FA.TIPO_USR=$P{TIPOUSR} AND
+TF.OFICIO=MOV.OFICIO AND
+TF.OFICIO=B.OFICIO(+) AND
+--TF.TIPO=B.TIPO_OFICIO(+) AND
+E.ESTATUS=FA.ESTATUS AND
+F.APP_LOGIN=B.APP_LOGIN AND
+F.TIPO_FLUJO=B.TIPO_FLUJO AND
+E.ESTATUS NOT IN('A') AND
+MOV.INVERSION='S'
+
+) BITACORA
+
+WHERE
+BITACORA.ORDEN=3
+) BITACORA_FIRMA3,
+(
+SELECT
+    OFICIO,
+    FECHAAUT,
+    APP_LOGIN,
+    DESCR
+    FROM
+
+(
+SELECT
+    MOV.OFICIO AS OFICIO,
+    MOV.FECPPTO AS FECPPTO,
+    0 AS NIVEL,
+    0 ORDEN,
+    0 TIPO_FLUJO ,
+    ''  AS TIPO_USR,
+    0  AS TIPO_FLUJO1,
+    ''  AS TIPO_USR1,
+    0  AS ORDEN1,
+    MOV.FECPPTO AS FECHAAUT,
+    MOV.APP_LOGIN,
+    'Envio a autorizacion' DESCR,
+    P.GOBIERNO,
+    P.SECRETARIA,
+    '' TIPOFICIO,
+    0 AS MAXIMO,
+    0 AS AGRUPA
+FROM POA.MOVOFICIOS MOV, DGI.PARAMETROS P
+
+UNION ALL
+/*EN BITACORA*/
+SELECT MOV.OFICIO,MOV.FECPPTO,FA.NIVEL,FA.ORDEN,FA.TIPO_FLUJO,FA.TIPO_USR,F.TIPO_FLUJO AS TIPO_FLUJO1,F.TIPO_USR AS TIPO_USR1,F.ORDEN AS ORDEN1,B.FECHAAUT AS FECHAAUT,B.APP_LOGIN,E.DESCR,P.GOBIERNO,P.SECRETARIA,
+CASE WHEN
+FA.ORDEN=(SELECT  MAX(FM.ORDEN - 1)
+FROM
+POA.FLUJO_AUTORIZACION FM
+WHERE FM.TIPO_USR=$P{TIPOUSR} AND
+FM.TIPOMOV=MOV.TIPOMOV)
+THEN TF.TIPO
+ELSE
+'0'
+END AS TIPOFICIO,
+CASE WHEN
+FA.ORDEN=(SELECT  MAX(FM.ORDEN - 1) AS MAXIMO
+FROM
+POA.FLUJO_AUTORIZACION FM
+WHERE FM.TIPO_USR=$P{TIPOUSR} AND
+FM.TIPOMOV=MOV.TIPOMOV)
+THEN FA.ORDEN
+ELSE
+0
+END AS MAXIMO,
+0 AS AGRUPA
+FROM
+POA.FLUJO_AUTORIZACION FA,
+POA.MOVOFICIOS MOV,
+POA.FLUJO_FIRMAS F,
+POA.BITMOVTOS B,
+POA.ESTATUS_MOV E,
+DGI.PARAMETROS P,
+DGI.TIPOFICIO TF
+WHERE
+
+MOV.TIPOMOV=FA.TIPOMOV AND
+FA.TIPO_USR=F.TIPO_USR AND
+F.ORDEN=FA.ORDEN AND
+FA.TIPO_USR=$P{TIPOUSR} AND
+TF.OFICIO=MOV.OFICIO AND
+TF.OFICIO=B.OFICIO(+) AND
+TF.TIPO=B.TIPO_OFICIO(+) AND
+E.ESTATUS=FA.ESTATUS AND
+F.APP_LOGIN=B.APP_LOGIN AND
+F.TIPO_FLUJO=B.TIPO_FLUJO AND
+E.ESTATUS NOT IN('A') AND
+MOV.INVERSION<>'S'
+
+UNION
+
+SELECT MOV.OFICIO,MOV.FECPPTO,FA.NIVEL,FA.ORDEN,FA.TIPO_FLUJO,FA.TIPO_USR,F.TIPO_FLUJO AS TIPO_FLUJO1,F.TIPO_USR AS TIPO_USR1,F.ORDEN AS ORDEN1,B.FECHAAUT AS FECHAAUT,B.APP_LOGIN,E.DESCR,P.GOBIERNO,P.SECRETARIA,
+CASE WHEN
+FA.ORDEN=(SELECT  MAX(FM.ORDEN - 1)
+FROM
+POA.FLUJO_AUTORIZACION FM
+WHERE FM.TIPO_USR=$P{TIPOUSR} AND
+FM.TIPOMOV=MOV.TIPOMOV)
+THEN TF.TIPO
+ELSE
+'0'
+END AS TIPOFICIO,
+CASE WHEN
+FA.ORDEN=(SELECT  MAX(FM.ORDEN - 1) AS MAXIMO
+FROM
+POA.FLUJO_AUTORIZACION FM
+WHERE FM.TIPO_USR=$P{TIPOUSR} AND
+FM.TIPOMOV=MOV.TIPOMOV)
+THEN FA.ORDEN
+ELSE
+0
+END AS MAXIMO,
+0 AS AGRUPA
+FROM
+POA.FLUJO_AUTORIZACION FA,
+POA.MOVOFICIOS MOV,
+POA.FLUJO_FIRMAS F,
+POA.BITMOVTOS B,
+POA.ESTATUS_MOV E,
+DGI.PARAMETROS P,
+DGI.TIPOFICIO TF
+WHERE
+
+MOV.TIPOMOV=FA.TIPOMOV AND
+FA.TIPO_USR=F.TIPO_USR AND
+F.ORDEN=FA.ORDEN AND
+FA.TIPO_USR=$P{TIPOUSR} AND
+TF.OFICIO=MOV.OFICIO AND
+TF.OFICIO=B.OFICIO(+) AND
+--TF.TIPO=B.TIPO_OFICIO(+) AND
+E.ESTATUS=FA.ESTATUS AND
+F.APP_LOGIN=B.APP_LOGIN AND
+F.TIPO_FLUJO=B.TIPO_FLUJO AND
+E.ESTATUS NOT IN('A') AND
+MOV.INVERSION='S'
+) BITACORA
+
+WHERE
+BITACORA.ORDEN=4
+) BITACORA_FIRMA4
+
+
+
+
+WHERE
+MOV0.OFICIO=BITACORA_FIRMA0.OFICIO(+)
+AND MOV0.OFICIO=BITACORA_FIRMA1.OFICIO(+)
+AND MOV0.OFICIO=BITACORA_FIRMA2.OFICIO(+)
+AND MOV0.OFICIO=BITACORA_FIRMA3.OFICIO(+)
+AND MOV0.OFICIO=BITACORA_FIRMA4.OFICIO(+)
+AND MOV0.OFICIO=IMPACPROG.OFICIO(+)
+AND MOV0.OFICIO=B.OFICIO
+AND TRIM(U.APP_LOGIN)=TRIM(MOV0.APP_LOGIN)
+AND MOV0.OFICIO=AFECTADOS.OFICIO
+AND AFECTADOS.OFICIO=CARATULA.C_OFICIO(+)
+AND AFECTADOS.RAMO=CARATULA.C_RAMO(+)
+AND AFECTADOS.YEAR=CARATULA.C_ANIO(+)
+AND MOV0.STATUS=STS.ESTATUS
+$P!{QUERY}]]>
+	</queryString>
+	<field name="OFICIO" class="java.math.BigDecimal"/>
+	<field name="TIPOMOV" class="java.lang.String"/>
+	<field name="FECPPTO" class="java.sql.Timestamp"/>
+	<field name="SECTOR" class="java.lang.String"/>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="RAMO_AFECTADO" class="java.lang.String"/>
+	<field name="LIGADO_A_CARATULA" class="java.lang.String"/>
+	<field name="STATUS" class="java.lang.String"/>
+	<field name="DESCR" class="java.lang.String"/>
+	<field name="INVERSION" class="java.lang.String"/>
+	<field name="PROG" class="java.lang.String"/>
+	<field name="FECHAELAB" class="java.sql.Timestamp"/>
+	<field name="FECHAAUT_FIRMA0" class="java.sql.Timestamp"/>
+	<field name="APPLOGIN_FIRMA0" class="java.lang.String"/>
+	<field name="FECHAAUT_FIRMA1" class="java.sql.Timestamp"/>
+	<field name="APPLOGIN_FIRMA1" class="java.lang.String"/>
+	<field name="FECHAAUT_FIRMA2" class="java.sql.Timestamp"/>
+	<field name="APPLOGIN_FIRMA2" class="java.lang.String"/>
+	<field name="FECHAAUT_FIRMA3" class="java.sql.Timestamp"/>
+	<field name="APPLOGIN_FIRMA3" class="java.lang.String"/>
+	<field name="FECHAAUT_FIRMA4" class="java.sql.Timestamp"/>
+	<field name="APPLOGIN_FIRMA4" class="java.lang.String"/>
+	<field name="DURACION_EJECUTIVOS" class="java.math.BigDecimal"/>
+	<field name="DURACION_2DAREVISION" class="java.math.BigDecimal"/>
+	<field name="DURACION_AUTPLANEACION" class="java.math.BigDecimal"/>
+	<field name="DURACION_AUTPPTO" class="java.math.BigDecimal"/>
+	<sortField name="OFICIO"/>
+	<pageHeader>
+		<band height="50">
+			<printWhenExpression><![CDATA[($V{PAGE_NUMBER}==1)]]></printWhenExpression>
+			<staticText>
+				<reportElement uuid="3d188fc0-63d1-43a0-a37c-ec9a41145941" x="0" y="0" width="110" height="50"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SECTOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d6f2e21a-749f-462f-aeeb-fe466294a231" x="110" y="0" width="100" height="50"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RAMO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="020ff5d7-a17a-4333-adcf-7a43eac35581" x="514" y="0" width="100" height="50"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[STATUS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2103e1ed-fcda-4b91-9711-7ba7851eefa2" x="614" y="0" width="100" height="50"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="323a4a0a-ac5b-473d-8e9c-fd6c1dc08e50" x="714" y="0" width="100" height="50"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INVERSION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="eb735c7b-75a4-4825-91fa-7f72437d3c7d" x="814" y="0" width="100" height="50"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PROG]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ae8c4a51-0007-4bda-b5ab-7ab975765228" x="914" y="0" width="100" height="50"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHAELAB]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ec6e2ab7-ab3a-4b02-9333-647748181c88" x="1014" y="0" width="111" height="50"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA DE ENVIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="92c7b20e-6692-4c9d-8a1a-d87fbe29c4cb" mode="Opaque" x="1125" y="0" width="207" height="36" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ejecutivos 1era Revision]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="17cd831b-eb86-4a0a-9bb7-cc9b6056e5a2" mode="Opaque" x="1332" y="0" width="414" height="36" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[2da rev planeación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="fef389da-ea21-4c1c-baaf-b391cd546923" x="1746" y="0" width="200" height="36"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ppto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0ab33b74-84e6-4185-ac02-c5ae50296fbe" x="210" y="0" width="100" height="50"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[OFICIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="05bc7126-cff0-4634-beb7-d2fe92cc175d" mode="Opaque" x="1125" y="36" width="100" height="14" backcolor="#FF9900"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[USUARIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d4f3126c-d5dc-418a-9c16-9d6f019fdcea" mode="Opaque" x="1225" y="36" width="107" height="14" backcolor="#FF9900"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FIRMA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ed0486c7-5204-4f1f-a14e-94543afb9743" mode="Opaque" x="1432" y="36" width="107" height="14" backcolor="#FFFF33"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FIRMA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5cda5338-1073-4350-b5f3-9ce83f3345f7" mode="Opaque" x="1332" y="36" width="100" height="14" backcolor="#FFFF33"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[USUARIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8ab55cf3-53b9-4adb-9970-73e8ffb0c603" mode="Opaque" x="1539" y="36" width="100" height="14" backcolor="#66CCFF"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[USUARIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="60d6ef1f-9e73-47a6-9a23-d3a8e4389929" mode="Opaque" x="1639" y="36" width="107" height="14" backcolor="#66CCFF"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FIRMA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0f10fb1a-1809-4c0a-9c44-003939d54dda" mode="Opaque" x="1846" y="36" width="100" height="14" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FIRMA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e7d57129-1426-4b35-9f5f-240e564b5434" mode="Opaque" x="1746" y="36" width="100" height="14" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[USUARIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9a9f7e4a-754a-4f18-9b0c-ae7fe5ba53d0" x="2300" y="36" width="100" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AUTORIZAR PPTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="dbcdb93f-c138-40b8-8e28-c6f67c53b574" mode="Opaque" x="1946" y="0" width="454" height="36" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Duración]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="02ef114a-28f5-47c9-883e-6199be14abe9" x="310" y="0" width="204" height="50"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TIPO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5b4c9c3c-9df2-4af0-a245-295ee3c11e48" mode="Opaque" x="1946" y="36" width="100" height="14" backcolor="#FF9900"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[EJECUTIVOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="658b2b19-69af-4829-ac59-ec83b2a04202" mode="Opaque" x="2046" y="36" width="100" height="14" backcolor="#FFFF33"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[2DA REVISION	]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c044b77d-ed7a-486b-874e-280c2382d992" mode="Opaque" x="2146" y="36" width="154" height="14" backcolor="#66CCFF"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AUTORIZAR PLANEACIÓN]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField>
+				<reportElement uuid="6dd6ff37-1807-4558-862a-5fbf7a33a86e" x="514" y="0" width="100" height="15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{STATUS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="0a0012b7-56dd-4d93-a41b-bdf977dd78ba" x="614" y="0" width="100" height="15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{DESCR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="2b6d1981-6e02-422e-b6fc-42bf646c1298" x="714" y="0" width="100" height="15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{INVERSION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="5e8e34c9-75b7-4a06-b400-71ec020b6db2" x="914" y="0" width="100" height="15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{FECHAELAB}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="05ec148d-6d16-4364-9555-efc8b4d157da" x="814" y="0" width="100" height="15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PROG}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="3dc16776-6597-4a13-9e83-8b25927e4c14" x="210" y="0" width="100" height="15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{OFICIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="b7d8e403-4ed1-4ce3-a130-c3d4e12f28c3" x="1014" y="0" width="111" height="15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{FECHAAUT_FIRMA0}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="365e3ee1-0247-4bc4-9ab8-81eb3eccf39a" x="1225" y="0" width="107" height="15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{FECHAAUT_FIRMA1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="e3eb5aa5-d9c1-466b-9d71-2b45b33d49fb" x="1125" y="0" width="100" height="15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{APPLOGIN_FIRMA1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="3f5a820a-a305-4144-9cc5-b94faed5f04e" x="1332" y="0" width="100" height="15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{APPLOGIN_FIRMA2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="58b7f101-e944-421b-be72-532a214ee321" x="1432" y="0" width="107" height="15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{FECHAAUT_FIRMA2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="dcad61ce-8bd9-4c24-893e-8656712caf3d" x="1639" y="0" width="107" height="15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{FECHAAUT_FIRMA3}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c7a9f140-24c2-496e-8c6e-cf33ed593862" x="1539" y="0" width="100" height="15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{APPLOGIN_FIRMA3}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="e487a533-c453-4941-96e0-3c2953fa956b" x="1746" y="0" width="100" height="15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{APPLOGIN_FIRMA4}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="57995fa3-07e9-4f10-b085-033938c5d161" x="1846" y="0" width="100" height="15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{FECHAAUT_FIRMA4}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="e5d53af0-ca40-423e-97d1-35170d5a3067" x="1946" y="0" width="100" height="15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{DURACION_EJECUTIVOS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="53b8f643-687c-41cb-8ebc-fb1f300b3353" x="2046" y="0" width="100" height="15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{DURACION_2DAREVISION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="cd426b01-86af-4b03-ad30-8d4189fa7f88" x="2146" y="0" width="154" height="15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{DURACION_AUTPLANEACION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="f8e7c0d6-84f1-4ec7-b303-868cc0b932a5" x="2300" y="0" width="100" height="15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{DURACION_AUTPPTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="22951179-995e-4494-a166-ffe27ed061b7" x="0" y="0" width="110" height="15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{SECTOR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="c82d8413-e00d-439e-b687-283b3ff0ccfe" x="110" y="0" width="100" height="15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{RAMO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="2af7ab99-1aef-4c85-ac6d-290cef10149d" x="310" y="0" width="204" height="15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{TIPOMOV}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

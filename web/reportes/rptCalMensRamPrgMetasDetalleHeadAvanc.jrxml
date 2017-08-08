@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptCalMensRamPrgMetasDetalleHeadAvanc" language="groovy" pageWidth="936" pageHeight="36" orientation="Landscape" columnWidth="936" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d6debe3c-c455-440d-a45c-88c85b532806">
+	<property name="ireport.zoom" value="1.6105100000000017"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<parameter name="YEAR" class="java.lang.Integer"/>
+	<parameter name="RAMO" class="java.lang.String"/>
+	<parameter name="PRG" class="java.lang.String"/>
+	<parameter name="DEPTO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PROY" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TIPO_PROY" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="META" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    $P{PRG},
+    NVL(EST.VALOR,0) AS VALOR,
+    ESTPER.PERIODO,
+    MET.META,
+    MET.DESCR META_DESCR,
+    MEDMET.DESCR MEDIDAMETA_DESCR,
+    MET.CALCULO,
+    NVL(AVANC.VALOR,0) AS AVANCE_VALOR,
+        (
+        SELECT
+            DECODE(MET.CALCULO,'AC',NVL(SUM(NVL(EST.VALOR,0)),0),DECODE(MET.CALCULO,'MI',MIN(EST.VALOR),MAX(EST.VALOR)))
+		    FROM
+                DGI.ESTIMACION EST
+		    WHERE
+                EST.META = $P{META} AND
+                EST.RAMO = $P{RAMO} AND
+			    EST.YEAR = $P{YEAR}
+    ) VALOR_MAX,
+    (SELECT
+    DECODE(MET.CALCULO,'AC',NVL(SUM(NVL(AVANC.VALOR,0)),0),DECODE(MET.CALCULO,'MI',MIN(AVANC.VALOR),MAX(AVANC.VALOR)))
+	FROM
+        DGI.AVANCE AVANC
+	WHERE
+        AVANC.META = $P{META} AND
+        AVANC.RAMO = $P{RAMO} AND
+	    AVANC.YEAR =  $P{YEAR}
+) VALOR_MAX_AVANCE
+    FROM
+        DGI.ESTIMACION EST,
+        S_POA_META MET,
+        DGI.AVANCE  AVANC,
+		S_POA_MEDIDA_META MEDMET,
+		DGI.ESTIMACION_PERIODO ESTPER
+    WHERE
+        EST.meta (+) = MET.meta AND
+        EST.ramo (+) = MET.ramo AND
+        EST.year (+) = MET.year AND
+        AVANC.meta(+) = EST.meta AND
+        AVANC.ramo(+) = EST.ramo AND
+        AVANC.year(+) = EST.year AND
+        AVANC.periodo(+) = EST.periodo AND
+		MET.CVE_MEDIDA = MEDMET.MEDIDA  AND
+		MET.YEAR = MEDMET.YEAR  AND
+        EST.PERIODO = ESTPER.PERIODO AND
+        MET.RAMO = $P{RAMO}  AND
+        MET.YEAR = $P{YEAR} AND
+        MET.META =  $P{META}
+    GROUP BY
+        EST.VALOR,
+		ESTPER.PERIODO,
+        MET.META,
+        MET.DESCR,
+        MEDMET.DESCR,
+        MET.CALCULO,
+        AVANC.VALOR
+    ORDER BY
+        ESTPER.PERIODO]]>
+	</queryString>
+	<field name=":1" class="java.lang.String"/>
+	<field name="VALOR" class="java.math.BigDecimal"/>
+	<field name="PERIODO" class="java.math.BigDecimal"/>
+	<field name="META" class="java.math.BigDecimal"/>
+	<field name="META_DESCR" class="java.lang.String"/>
+	<field name="MEDIDAMETA_DESCR" class="java.lang.String"/>
+	<field name="CALCULO" class="java.lang.String"/>
+	<field name="AVANCE_VALOR" class="java.math.BigDecimal"/>
+	<field name="VALOR_MAX" class="java.math.BigDecimal"/>
+	<field name="VALOR_MAX_AVANCE" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<summary>
+		<band height="18">
+			<crosstab>
+				<reportElement uuid="86ac2a25-ab83-416c-b4a2-e04386f9c0da" x="208" y="0" width="728" height="15"/>
+				<rowGroup name=":1" width="0">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{:1}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque"/>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="PERIODO" height="14">
+					<bucket class="java.math.BigDecimal">
+						<bucketExpression><![CDATA[$F{PERIODO}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<textField isBlankWhenNull="true">
+								<reportElement uuid="0c866f44-344a-4bce-a68a-ef36d5bd96ae" style="Crosstab Data Text" x="0" y="0" width="60" height="7"/>
+								<box>
+									<pen lineWidth="1.0"/>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="1.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="1.0"/>
+								</box>
+								<textElement>
+									<font size="5"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{PERIODO}]]></textFieldExpression>
+							</textField>
+							<staticText>
+								<reportElement uuid="e8837510-1759-4405-8619-7ca5db337483" style="Crosstab Data Text" x="0" y="7" width="30" height="7"/>
+								<box>
+									<pen lineWidth="1.0"/>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="1.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="1.0"/>
+								</box>
+								<textElement>
+									<font fontName="SansSerif" size="5"/>
+								</textElement>
+								<text><![CDATA[Prog.]]></text>
+							</staticText>
+							<staticText>
+								<reportElement uuid="e4817629-a1fb-4844-a8ec-e1d119d91e6d" style="Crosstab Data Text" x="30" y="7" width="30" height="7"/>
+								<box>
+									<pen lineWidth="1.0"/>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="1.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="1.0"/>
+								</box>
+								<textElement>
+									<font fontName="SansSerif" size="5"/>
+								</textElement>
+								<text><![CDATA[Real]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="VALORMeasure" class="java.lang.String" calculation="Count">
+					<measureExpression><![CDATA[$F{VALOR}]]></measureExpression>
+				</measure>
+				<measure name="VALORAVANCEMeasure" class="java.lang.String" calculation="Count">
+					<measureExpression><![CDATA[$F{AVANCE_VALOR}]]></measureExpression>
+				</measure>
+				<crosstabCell width="60" height="15">
+					<cellContents>
+						<textField isBlankWhenNull="true">
+							<reportElement uuid="ba436ae7-4919-4372-af03-cec9881f84ef" style="Crosstab Data Text" x="0" y="0" width="30" height="7"/>
+							<box>
+								<pen lineWidth="1.0"/>
+								<topPen lineWidth="1.0"/>
+								<leftPen lineWidth="1.0"/>
+								<bottomPen lineWidth="1.0"/>
+								<rightPen lineWidth="1.0"/>
+							</box>
+							<textElement>
+								<font size="5"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{VALORMeasure}]]></textFieldExpression>
+						</textField>
+						<textField isBlankWhenNull="true">
+							<reportElement uuid="85e82b75-18f5-494e-8d46-9f5b84c66dda" style="Crosstab Data Text" x="30" y="0" width="30" height="7"/>
+							<box>
+								<pen lineWidth="1.0"/>
+								<topPen lineWidth="1.0"/>
+								<leftPen lineWidth="1.0"/>
+								<bottomPen lineWidth="1.0"/>
+								<rightPen lineWidth="1.0"/>
+							</box>
+							<textElement>
+								<font size="5"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{VALORAVANCEMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="25" rowTotalGroup=":1">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<textField>
+							<reportElement uuid="82976e1c-5920-4e0a-a3f3-fece2d819266" style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement/>
+							<textFieldExpression><![CDATA[$V{VALORMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" columnTotalGroup="PERIODO">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<textField>
+							<reportElement uuid="36be7bb0-4540-478a-8936-582961424d9d" style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement/>
+							<textFieldExpression><![CDATA[$V{VALORMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell rowTotalGroup=":1" columnTotalGroup="PERIODO">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<textField>
+							<reportElement uuid="86d63bad-12ff-4fe3-a121-748df2af0195" style="Crosstab Data Text" x="0" y="0" width="50" height="25"/>
+							<textElement/>
+							<textFieldExpression><![CDATA[$V{VALORMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+			</crosstab>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="ab502980-fd1b-42f0-91bc-886852697a1f" x="159" y="0" width="21" height="15"/>
+				<textElement>
+					<font fontName="SansSerif" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VALOR_MAX}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="1320678b-9f13-476e-b2b7-3a5048178f5d" x="180" y="0" width="28" height="15"/>
+				<textElement>
+					<font fontName="SansSerif" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VALOR_MAX_AVANCE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

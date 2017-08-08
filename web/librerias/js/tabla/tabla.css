@@ -1,0 +1,165 @@
+/*
+    Document   : tabla
+    Created on : Dec 21, 2009, 3:25:13 PM
+    Author     : oquintero
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+
+.linea{
+    display:inline;
+}
+
+.tabla{
+    width:100%;
+    color: #000000;
+    table-layout:inherit;
+    border-collapse:collapse; 
+    box-shadow:0px 0px 7px rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.5);
+    background: #E6E6E6;
+    
+}
+
+
+.thead {
+    color: #666666;
+    text-decoration: none;
+    text-align:center;
+    width:100%;
+    font-family: "Lucida Sans", "Lucida Sans Unicode", Arial, Sans-Serif;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: bold;         
+    
+}
+
+.tfoot{
+    background-color:#E6E6E6;
+    border-collapse:collapse;
+    border-width:0px;
+    height:35px;
+}
+
+.content-title{
+    text-align:center;
+    width:100%;
+    font-family: "Lucida Sans", "Lucida Sans Unicode", Arial, Sans-Serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: bold;        
+
+}
+
+.content-search, #search-table, .msg-tabla{
+    font-size:12px;
+    font-family: Arial,Helvetica,sans-serif;
+}
+
+.search-focus{
+    border:1px #96BEE3 solid;
+    box-shadow:0px 0px 3px rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5);
+}
+
+.fila1{
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 10px;
+    background-color:#D4E7FF;
+    height:30px;
+}
+.fila2{
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 10px;
+    background-color:#B8DCFF;
+    height:30px;
+}
+
+
+.hover{
+    /*font-family: Arial,Helvetica,sans-serif;
+    font-size: 11px;
+    font-weight: bolder;*/
+    background-color:#CDE99E;
+    height:30px;
+    opacity: .70;
+    -moz-opacity: .70;
+    filter:alpha(opacity=70);
+    /*cursor: pointer;*/
+ }
+
+.order_asc{
+  background-image:url(imagenes/asc.png);
+  background-repeat:no-repeat;
+  background-position:right;
+
+}
+
+.order_desc{
+  background-image:url(imagenes/desc.png);
+  background-repeat:no-repeat;
+  background-position:right;
+
+}
+
+.order{
+  background-image:url(imagenes/updown.png);
+  background-repeat:no-repeat;
+  background-position:right;
+  padding-right:0px;
+}
+
+.nav-content{
+    font-family: Arial, Helvetica, sans-serif,Verdana;
+    font-size:10px;
+    float:left;
+    width:49%;
+    padding-left:2px;
+    padding-right:2px;
+    vertical-align:middle;
+}
+
+.nav_disable{
+    color:#878787;
+    background:#EBEBEB;
+    border:solid 1px #C9C9C9;
+}
+
+.nav_enable{
+    color:black;
+    border:solid 1px #000;
+}
+
+.nav_hover{
+    color:#59ACFF;
+    border:solid 1px #59ACFF;
+    cursor:pointer;
+    cursor:hand;
+}
+
+.msg-tabla{
+    text-align:center;
+    font-weight:bold;
+    color:#3C73AB;
+}
+
+#nav {
+    padding:2px;
+    height:20px;
+    margin-left:3px;
+    text-decoration:none;
+    border-radius:2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+}
+
+th{
+    padding: 6px 0
+}
+
+#numero{
+    text-align: right;
+}

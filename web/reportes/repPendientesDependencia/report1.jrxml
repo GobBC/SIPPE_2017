@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="200" pageHeight="13" columnWidth="200" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="16487168-ad2c-4e35-8cf5-2a71e9a71f41">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="OFICIO" class="java.math.BigDecimal"/>
+	<parameter name="TIPOUSR" class="java.lang.String"/>
+	<parameter name="TIPOFICIO" class="java.lang.String"/>
+	<parameter name="TIPOMOV" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+CASE E.ORDEN
+WHEN 1 THEN
+' '
+ELSE
+ E.DESCR
+END  AS DESCR,
+(TO_CHAR((SELECT MAX(FECHAAUT) FROM POA.BITMOVTOS WHERE OFICIO=$P{OFICIO}),'DD/MM/YYYY HH:MI')) AS FECHA_AUT
+
+FROM
+POA.ESTATUS_MOV E
+WHERE E.ORDEN IN((SELECT E.ORDEN-1 AS ORDEN FROM POA.MOVOFICIOS MOV,POA.ESTATUS_MOV E WHERE MOV.OFICIO=$P{OFICIO} AND MOV.TIPOMOV=$P{TIPOMOV} AND E.ESTATUS=MOV.STATUS))]]>
+	</queryString>
+	<field name="DESCR" class="java.lang.String"/>
+	<field name="FECHA_AUT" class="java.lang.String"/>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="55faa7da-5359-4209-9be8-b1dcd9a6719d" x="0" y="0" width="124" height="12"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="0bd9b603-1a60-4404-9cd8-fbc4c3a5b7e7" x="124" y="0" width="76" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_AUT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

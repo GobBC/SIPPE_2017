@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptAvancePoaTrimestreExcell" language="groovy" pageWidth="1900" pageHeight="612" columnWidth="1900" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="096f623c-513a-4dc9-aa14-47d59f19dea9">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="QUERY" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\desarrollo\\repositorio_local\\POA_13042016\\trunk\\web\\reportes\\MasivoTrimestre\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PERIODO" class="java.lang.Integer"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<parameter name="RPT_DIR" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[$P!{QUERY}
+ORDER BY RP.RAMO, RP.PRG]]>
+	</queryString>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="PRG" class="java.lang.String"/>
+	<pageHeader>
+		<band height="12">
+			<printWhenExpression><![CDATA[($V{PAGE_NUMBER}==1)]]></printWhenExpression>
+			<staticText>
+				<reportElement uuid="d7c66db5-e5d4-4272-991c-a07d642574f0" stretchType="RelativeToBandHeight" x="993" y="0" width="408" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[UNIDAD DE MEDIDA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="30259991-a003-4d2f-b723-c649d2fcc398" x="1698" y="0" width="100" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[PROG. TRIMESTRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3e2be803-0996-4bc8-9b2c-46ea3a9afd75" x="234" y="0" width="48" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[TRIMESTRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7706bf5e-329a-4d27-8317-7e580bccd49f" x="1798" y="0" width="100" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[REAL TRIMESTRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d87bbfe3-e073-4b8a-b2e1-05227c952b2e" stretchType="RelativeToBandHeight" x="316" y="0" width="677" height="12" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCION DE LA META	]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="002a92cc-6fbf-4ed6-8573-783f0ee082fb" x="1598" y="0" width="100" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[REAL ANUAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9531fc84-ef10-494e-ae16-ec481d71a4a4" x="1498" y="0" width="100" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[PROGRAMADO ANUAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="00bd1022-47ba-455a-ae6f-42d9c01469a7" x="0" y="0" width="44" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[RAMO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ff41368c-68a9-4e32-a509-17ce389ba368" x="110" y="0" width="62" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[DEPTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4b1eb687-99ad-4ea6-989e-ffd39c999aae" x="172" y="0" width="62" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[PROY]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="06427527-e375-42ea-89f2-fa9aeb56bfba" x="44" y="0" width="66" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[PROGRAMA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="feb9c212-409e-4e22-a1ac-6ba31bcd0f74" x="282" y="0" width="34" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[META]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e1b7dbc4-7f42-4f0f-beee-c9a8088a8175" x="1401" y="0" width="97" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[LINEA ]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="2" splitType="Stretch">
+			<subreport>
+				<reportElement uuid="e47339d8-65fa-467f-a451-fd72c76517b0" x="0" y="0" width="1200" height="0"/>
+				<subreportParameter name="PRG">
+					<subreportParameterExpression><![CDATA[$F{PRG}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="YEAR">
+					<subreportParameterExpression><![CDATA[$P{YEAR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RAMO">
+					<subreportParameterExpression><![CDATA[$F{RAMO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="PERIODO">
+					<subreportParameterExpression><![CDATA[$P{PERIODO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="RPT_DIR">
+					<subreportParameterExpression><![CDATA[$P{RPT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{RPT_DIR} + "rptAvancePoaTrimestreExcellsub.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

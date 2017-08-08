@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rptImpactoProgramatico" language="groovy" pageWidth="30" pageHeight="200" columnWidth="30" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="002549ab-2c89-4984-8213-52db2540d4f3">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="ESTATUS" class="java.lang.String"/>
+	<parameter name="OFICIO" class="java.lang.Long"/>
+	<parameter name="TIPOFICIO" class="java.lang.String"/>
+	<parameter name="RPT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\desarrollo\\repositorio_local\\POA_13042016\\trunk\\POA\\web\\reportes\\repAmpTrans\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TIPO" class="java.lang.String"/>
+	<parameter name="YEAR" class="java.lang.String"/>
+	<parameter name="RAMO" class="java.lang.String"/>
+	<parameter name="DEPTO" class="java.lang.String"/>
+	<parameter name="PRG" class="java.lang.String"/>
+	<parameter name="TIPO_PROY" class="java.lang.String"/>
+	<parameter name="PROY" class="java.math.BigDecimal"/>
+	<parameter name="META" class="java.math.BigDecimal"/>
+	<parameter name="ACCION" class="java.math.BigDecimal"/>
+	<queryString>
+		<![CDATA[SELECT
+	DECODE(SIGN(SUM(IMPACPROG.CONT)),1,'SI','NO') REL_IMP_PROG
+FROM
+	(
+		SELECT
+			nvl(count(ROWNUM),0) CONT
+		FROM
+			POA.MOVOFICIOS_ACCION MOVACC,
+			S_POA_META META
+		WHERE
+			MOVACC.YEAR = $P{YEAR} AND
+			MOVACC.RAMO = $P{RAMO} AND
+			MOVACC.PRG = $P{PRG} AND
+			MOVACC.DEPTO =$P{DEPTO} AND
+                               MOVACC.OFICIO=$P{OFICIO} AND
+			META.TIPO_PROY = $P{TIPO_PROY} AND
+			META.PROY = $P{PROY} AND
+			MOVACC.META =$P{META} AND
+			MOVACC.ACCION = $P{ACCION} AND
+			META.YEAR = MOVACC.YEAR AND
+			META.RAMO = MOVACC.RAMO AND
+			META.PRG = MOVACC.PRG AND
+			META.META = MOVACC.META
+
+		UNION ALL
+
+		SELECT
+			nvl(count(ROWNUM),0) CONT
+		FROM
+			POA.MOVOFICIOS_META MOVMET,
+			S_POA_META META
+		WHERE
+			MOVMET.YEAR = $P{YEAR} AND
+			MOVMET.RAMO = $P{RAMO} AND
+			MOVMET.PRG = $P{PRG} AND
+			MOVMET.DEPTO = $P{DEPTO} AND
+                               MOVMET.OFICIO=$P{OFICIO} AND
+			META.TIPO_PROY =$P{TIPO_PROY} AND
+			META.PROY =$P{PROY} AND
+			MOVMET.META =$P{META} AND
+			META.YEAR = MOVMET.YEAR AND
+			META.RAMO = MOVMET.RAMO AND
+			META.PRG = MOVMET.PRG AND
+			META.META = MOVMET.META
+
+		UNION ALL
+
+		SELECT
+			nvl(count(ROWNUM),0) CONT
+		FROM
+			POA.MOVOFICIOS_ESTIMACION MOVEST,
+			S_POA_META META
+		WHERE
+			MOVEST.YEAR = $P{YEAR} AND
+			MOVEST.RAMO = $P{RAMO} AND
+                               MOVEST.OFICIO=$P{OFICIO} AND
+			META.TIPO_PROY = $P{TIPO_PROY} AND
+			META.PROY = $P{PROY} AND
+			MOVEST.META = $P{META} AND
+			META.YEAR = MOVEST.YEAR AND
+			META.RAMO = MOVEST.RAMO AND
+			META.META = MOVEST.META
+
+		UNION ALL
+
+		SELECT
+			nvl(count(ROWNUM),0) CONT
+		FROM
+			POA.MOVOFICIOS_ACCION_ESTIMACION MOVACCEST,
+			S_POA_META META
+		WHERE
+			MOVACCEST.YEAR = $P{YEAR} AND
+			MOVACCEST.RAMO = $P{RAMO} AND
+                               MOVACCEST.OFICIO=$P{OFICIO} AND
+			META.TIPO_PROY = $P{TIPO_PROY} AND
+			META.PROY =$P{PROY} AND
+			MOVACCEST.META =$P{META} AND
+			MOVACCEST.ACCION =$P{ACCION} AND
+			META.YEAR = MOVACCEST.YEAR AND
+			META.RAMO = MOVACCEST.RAMO AND
+			META.META = MOVACCEST.META
+	) IMPACPROG]]>
+	</queryString>
+	<field name="REL_IMP_PROG" class="java.lang.String"/>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField>
+				<reportElement uuid="727ae764-3021-480f-8032-ed19c2b08599" x="0" y="0" width="20" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REL_IMP_PROG}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
