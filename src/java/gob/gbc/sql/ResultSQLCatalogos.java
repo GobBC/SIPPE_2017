@@ -1804,13 +1804,16 @@ public class ResultSQLCatalogos extends ResultSQLMedio {
                         pstmt.setString(2, mir.getRamo());
                         pstmt.setString(3, mir.getPrograma());
                         pstmt.setInt(4, mir.getDimension());
+//                        pstmt.setString(5, mir.getYear());
+//                        pstmt.setString(6, mir.getRamo());
+//                        pstmt.setString(7, mir.getPrograma());
+//                        pstmt.setInt(8, mir.getDimension());
 
                         rsResult = pstmt.executeQuery();
                         
                         if(rsResult != null){
                             while(rsResult.next()){
                                 indicador = new Indicador();
-                                //indicador.setIndicadorId(rsResult.getString("CLAVE_INDICADOR"));
                                 indicador.setIndicadorSEI(rsResult.getString("CLAVE_INDICADOR"));
                                 indicador.setIndicadores(rsResult.getString("NOMBRE_INDICADOR"));
                                 indicadorList.add(indicador);
@@ -1847,7 +1850,6 @@ public class ResultSQLCatalogos extends ResultSQLMedio {
                         pstmt.setString(1, indicador.getYear());
                         pstmt.setString(2, indicador.getRamo());
                         pstmt.setString(3, indicador.getPrograma());
-                        //pstmt.setString(4, indicador.getIndicadorId());
                         pstmt.setString(4, indicador.getIndicadorSEI());
 
                         rsResult = pstmt.executeQuery();
@@ -2114,7 +2116,7 @@ public class ResultSQLCatalogos extends ResultSQLMedio {
                         pstmt.setString(1, year);
                         pstmt.setString(2, ramo);
                         pstmt.setString(3, programa);
-                        pstmt.setString(4, observacion);
+                        pstmt.setString(4, observacion.toUpperCase());
 
                         if (pstmt.executeUpdate() > 0) {
                             res = true;

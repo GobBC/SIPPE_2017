@@ -41,7 +41,9 @@
     boolean bValidarRechazar = false;
     boolean bEditarMIR = false;
     int estatusMIR = -1;   
-
+    int etapaMIR = estatusMIR-1;
+    MIR mir = new MIR();
+     
     if(session.getAttribute("tipoDependencia") != null && session.getAttribute("tipoDependeica") != ""){
         tipoDependencia = (String) session.getAttribute("tipoDependencia");
     }    
@@ -82,9 +84,11 @@
         if (utileria.existeParametro("accion", request) && (estatusSiguiente > 0 || Integer.parseInt(request.getParameter("accion")) == 4)) {
 
             iAccion = Integer.parseInt(request.getParameter("accion"));
+            mir.setStrYear(String.valueOf(year));
+            mir.setRamo(selRamo);
+            mir.setPrg(selPrograma);
             
-            if (iAccion == 1) {
-                
+            if (iAccion == 1) {                
                     res = result.validaComponenteActividadMIR(year,selRamo,selPrograma);
                     if(res){
                         res = result.validaPropositoFinProblemaMIR(year,selRamo,selPrograma);
@@ -100,31 +104,26 @@
                                 res = result.actualizarEstatusMIR(year,selRamo,selPrograma,estatusSiguiente);
                                 if (!res) {
                                     errorMsg = "No se pudo Enviar el MIR. ";
-                                }else{
+                                } else {
                                     if (!result.guardar()) {
                                         errorMsg = "No se pudo Guardar el MIR. ";
-                                    }
-                                            
+                                    }                                            
                                 }
-                            }else{
+                            } else {
                                 res = false;
                                 errorMsg = resultado.getMensaje();
                             }
-                        }
-                        else{
+                        } else {
                             errorMsg = "No es posible enviar la MIR. Revise que el Propósito, Fin y Problema hayan sido capturados. ";
                         }
-                    }else{
+                    } else {
                         int intCantMinComponente = Integer.parseInt(result.getValorParametros("CANT_MIN_COMPONENTES"));
                         int intCantMinActividad = Integer.parseInt(result.getValorParametros("CANT_MIN_ACTIVIDADES"));
                         errorMsg = "No es posible enviar la MIR. Revise que existan " + intCantMinComponente + " o más Componentes "
                                 + "y en cada uno " + intCantMinActividad + " o mas Actividades. ";
                     }
-                    accion ="enviado";
-                
-            }
-            else if (iAccion == 2) {
-                
+                    accion ="enviado";                
+            } else if (iAccion == 2) {                
                     res = result.actualizarEstatusMIR(year,selRamo,selPrograma,estatusSiguiente);
                     if (!res) {
                         errorMsg = "No se pudo Validar la MIR. ";
@@ -132,11 +131,8 @@
                     if (!result.guardar()) {
                         errorMsg = "No se pudo Guardar el MIR. ";
                     }
-                    accion = "validado";
-                
-            }
-            else if (iAccion == 3) {
-                
+                    accion = "validado";                
+            } else if (iAccion == 3) {                
                     res = result.actualizarEstatusMIR(year,selRamo,selPrograma,estatusSiguiente);
                     if(res){
                         res = result.registraObsRechazoMIR(year,selRamo,selPrograma,observacion);
@@ -146,68 +142,61 @@
                         if (!result.guardar()) {
                             errorMsg = "No se pudo Guardar el cambio. ";
                         }
-                    }
-                    else{
+                    } else {
                         errorMsg = "No se pudo Rechazar la MIR. ";
                     }
-                    accion ="rechazado";                   
-                
-            }
-            else if(iAccion == 4){
-                
+                    accion ="rechazado";                                 
+            } else if(iAccion == 4) {                
                     resultSQL.setStrServer(request.getHeader("host"));
                     resultSQL.setStrUbicacion(getServletContext().getRealPath(""));
-                    resultSQL.resultSQLConecta(tipoDependencia); 
-
-                    estatusMIR = result.obtenerEstatusMIR(String.valueOf(year), selRamo, selPrograma);  
-
+                    resultSQL.resultSQLConecta(tipoDependencia);       
+                    
+                    mir = result.getMIREstatusEtapa(mir);                           
+                    estatusMIR = mir.getEstatus();  
+                    etapaMIR = mir.getEtapa();
+                    
                     if(estatusMIR >= 4){
                         estatusSigEnvia = EnumEstatusMIR.ENVIADA_POS.ordinal();
                         estatusSigValida = EnumEstatusMIR.VALIDADA_POS.ordinal();
                         estatusSigRechaza = EnumEstatusMIR.RECHAZADA_POS.ordinal();
                     } 
-
                     if (result.muestraBotonEnviarMIR(estatusMIR)) {
                         bEnviar = true;
-                    }
+                    }                    
                     if (rol.equals(resultSQL.getResultSQLGetRolesPrg()) && result.muestraBotonValidarRechazarMIR(estatusMIR)) {
                         bValidarRechazar = true;
                     }
-
                     if(estatusMIR == EnumEstatusMIR.RECHAZADA.ordinal() || estatusMIR == EnumEstatusMIR.RECHAZADA_POS.ordinal()){
                         obsRechazo = result.getObsRechazoMIR(String.valueOf(year), selRamo, selPrograma);
                     }
                     if(result.editarMIR(estatusMIR, rol, resultSQL.getResultSQLGetRolesPrg())){
                         bEditarMIR = true;
-                    }
-                
+                    }                
             }
-        }
-        else{
+        } else {
             errorMsg = "Datos incorrectos para la solicitud";
-        }
-        
+        }       
         if(iAccion != 4){
             strResultado = new JSONObject()
-                      .put("exito", res)
-                      .put("mensaje", errorMsg != "" ? errorMsg : "Se ha " + accion + " la MIR correctamente." ).toString();
+              .put("exito", res)
+              .put("mensaje", errorMsg != "" ? errorMsg : "Se ha " + accion + " la MIR correctamente." ).toString();
         } else {
             strResultado = new JSONObject()
-                      .put("bEditarMIR", bEditarMIR)
-                      .put("estatusSigEnvia", estatusSigEnvia)
-                      .put("estatusSigRechaza", estatusSigRechaza)
-                      .put("estatusSigValida", estatusSigValida)
-                      .put("bEnviar", bEnviar)
-                      .put("bValidarRechazar", bValidarRechazar)
-                      .put("obsRechazo", obsRechazo)
-                      .toString();
+              .put("etapaMIR", etapaMIR)
+              .put("estatusMIR", estatusMIR)
+              .put("bEditarMIR", bEditarMIR)
+              .put("estatusSigEnvia", estatusSigEnvia)
+              .put("estatusSigRechaza", estatusSigRechaza)
+              .put("estatusSigValida", estatusSigValida)
+              .put("bEnviar", bEnviar)
+              .put("bValidarRechazar", bValidarRechazar)
+              .put("obsRechazo", obsRechazo)
+              .toString();
         }
-        
-
     } catch (Exception ex) {
         strResultado = new JSONObject()
-                  .put("exito", false)
-                  .put("mensaje", "Ocurrio un error, favor de intentarlo mas tarde.").toString();
+              .put("exito", false)
+              .put("mensaje", "Ocurrio un error, favor de intentarlo mas tarde.").toString();
         Bitacora bitacora = new Bitacora();
         bitacora.setStrServer(request.getHeader("host"));
         bitacora.setStrUbicacion(getServletContext().getRealPath(""));
@@ -223,6 +212,5 @@
         }
        out.print(strResultado);
     }
-
 %>
 

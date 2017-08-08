@@ -132,6 +132,8 @@
     <input type="hidden" id="estatusSigEnvia" name="estatusSigEnvia" /> 
     <input type="hidden" id="estatusSigRechaza" name="estatusSigRechaza" /> 
     <input type="hidden" id="estatusSigValida" name="estatusSigValida" /> 
+    <input type="hidden" id="context" value="<%=request.getContextPath()%>" />
+    <input type="hidden" id="servlet" value="/Componente" />
 </form>
 <div style="width: 100%;margin:0px auto;display: inline-block;" class="center-div">  
     <div class="filters col-md-12">
@@ -172,13 +174,13 @@
             <%@include file="/Framework/GobBC/Controles/kendoDropDown.jsp" %>
         </div>
     </div>
-        <div>
-            CAPTURA:<span id="etapaMIR"></span> ESTATUS:<span id="estatusMIR"></span>
-        </div>    
-    <div id="obsRechazo" class="filters col-md-12" style="display: none">
+    <div class="col-md-12 margin-zero padding-zero" >
+        CAPTURA: <span id="etapaMIR"></span> ESTATUS: <span id="estatusMIR" class="status-text"></span> <span id="enEdicionMIR"></span>
+    </div>    
+    <div id="obsRechazo" class="alert alert-warning col-md-12" style="display: none">
     </div>
     <div id="divFinProposito" class="col-md-12 margin-zero padding-zero oculto">
-        <%  readContextPath = request.getContextPath() + "/Indicador";
+        <%      readContextPath = request.getContextPath() + "/Indicador";
             grid = new KendoGrid();
             grid.setName("gridFinProposito");
             grid.setEditFormUrl(" ");
@@ -350,7 +352,7 @@
             data = new HashMap<String, Object>();
             data.put("finProposito", "#=finProposito#");
         %>
-         <%@include file="/Framework/GobBC/Controles/kendoGridInLine.jsp" %>    
+        <%@include file="/Framework/GobBC/Controles/kendoGridInLine.jsp" %>    
     </div>
     <div id="divComponenteActividad" class="col-md-12 margin-zero padding-zero">
         <%  readContextPath = request.getContextPath() + "/Componente";
@@ -366,7 +368,6 @@
             grid.setAddFunction("addRowInLine(this)");
             grid.setDeleteFunction("validaRequisitosBorrar");
             grid.setOnEdit("onEditInline");
-            //grid.setDeleteFunction("deleteRowInLine");
             grid.setParameterMap("parameterMapComponente");
             grid.setDeleteRow(true);
             grid.setPrintRow(false);
@@ -528,9 +529,7 @@
             field.setName("normativo");
             field.setValidationRequired(true);
             grid.fields.add(field);
-        %>
-
-        <%
+            
             data = new HashMap<String, Object>();
             data.put("masterId", "#=componente#");
         %>
@@ -547,7 +546,6 @@
             grid.setDeleteUrl(readContextPath + "/DeleteRecords");
             grid.setAddFunction("addRowInLine(this)");
             grid.setDeleteFunction("validaRequisitosBorrar");
-            //grid.setDeleteFunction("deleteRowInLine");
             grid.setParameterMap("parameterMapActividad");
             grid.setDeleteRow(true);
             grid.setPrintRow(false);
@@ -671,7 +669,6 @@
             field = new KendoGridSchemaModelField();
             field.setName("indicadores");
             field.setEditable(true);
-//            field.setValidationRequired(false);
             grid.fields.add(field);
 
             columna = new KendoGridColumn();
@@ -685,7 +682,6 @@
             field = new KendoGridSchemaModelField();
             field.setName("medios");
             field.setEditable(true);
-//            field.setValidationRequired(false);
             grid.fields.add(field);
 
             columna = new KendoGridColumn();
@@ -699,7 +695,6 @@
             field = new KendoGridSchemaModelField();
             field.setName("supuestos");
             field.setEditable(true);
-//            field.setValidationRequired(false);
             grid.fields.add(field);
             
             columna = new KendoGridColumn();
@@ -734,8 +729,6 @@
 </div>             
 <div id="mensaje"></div>
 <div id="dialog-valida" title="Confirmación"></div>
-<input type="hidden" id="context" value="<%=request.getContextPath()%>" />
-<input type="hidden" id="servlet" value="/Componente" />
 <div id="dialog-rechazo" title="Motivo del Rechazo"></div>
 <%
 } catch (Exception ex) {

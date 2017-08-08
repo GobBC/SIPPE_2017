@@ -163,12 +163,9 @@ public class QuerysBDCatalogos extends QueryBDMedio {
                 "        M.STATUS \n" +
                 "    FROM  \n" +
                 "        POA.MIR M, \n" +
-                "        POA.MIR_ESTATUS ME,    \n" +
-                "        S_POA_PROGRAMA P\n" +
+                "        POA.MIR_ESTATUS ME    \n" +
                 "    WHERE\n" +
-                "        P.YEAR = M.YEAR\n" +
-                "        AND P.PRG = M.PRG\n" +
-                "        AND M.RAMO IN (\n" +
+                "        M.RAMO IN (\n" +
                 "                        SELECT \n" +
                 "                            RAMO \n" +
                 "                        FROM \n" +
@@ -209,7 +206,7 @@ public class QuerysBDCatalogos extends QueryBDMedio {
     public String getSqlEstatusEtapaMIR() {
         String strQuery = ""; 
         strQuery = " SELECT MIR.STATUS, E.ETAPA,"
-                + "    CASE WHEN P.FIN_PRG > 1 THEN 0 ELSE 1 END AS politicaPublica "
+                + "    CASE WHEN P.FIN_PRG = 1 THEN 1 ELSE 0 END AS politicaPublica "
                 + "  FROM POA.MIR MIR,"
                 + "     POA.MIR_ESTATUS E,"
                 + "     S_POA_PROGRAMA P "
@@ -218,7 +215,7 @@ public class QuerysBDCatalogos extends QueryBDMedio {
         return strQuery;
     }
       
-   public String getSQLConsultaFinProposito(){
+    public String getSQLConsultaFinProposito(){
        return "SELECT \n" +
                 "    RP.YEAR,\n" +
                 "    RP.RAMO,\n" +
@@ -287,7 +284,7 @@ public class QuerysBDCatalogos extends QueryBDMedio {
                 + "  M.FECHA_REGISTRO AS fechaRegistro, "
                 + "  CASE WHEN TO_NUMBER(M.STATUS) > 4 THEN '4' ELSE M.STATUS END AS statusIniDescr,"
                 + "  CASE WHEN TO_NUMBER(M.STATUS) > 4 THEN M.STATUS ELSE '' END AS statusPosDescr,"
-                + "  CASE WHEN P.FIN_PRG > 1 THEN 0 ELSE 1 END AS politicaPublica, "
+                + "  CASE WHEN P.FIN_PRG = 1 THEN 1 ELSE 0 END AS politicaPublica, "
                 + "  ROW_NUMBER() OVER (ORDER BY %s) rn ";
         
         strFrom += " POA.MIR M, S_POA_PROGRAMA P, DGI.RAMOS R, POA.VW_ACC_USR_RAMO USU  ";
@@ -322,7 +319,7 @@ public class QuerysBDCatalogos extends QueryBDMedio {
               strWhere += " AND ( TO_CHAR(M.MIR) LIKE '%" + options.getSearch().toUpperCase() + "%' OR UPPER(R.RAMO||' - '||R.DESCR) LIKE '%" + options.getSearch().toUpperCase() + "%' OR UPPER(P.PRG||' - '||P.DESCR) LIKE '%" + options.getSearch().toUpperCase() + "%' )"; 
         }
 
-        strIntSelect = String.format(strIntSelect, " M.FECHA_REGISTRO ASC");
+        strIntSelect = String.format(strIntSelect, " M.RAMO ASC");
         
         if (options.getSort() != null) {
             if (options.getSort().size() > 0) {
@@ -336,7 +333,7 @@ public class QuerysBDCatalogos extends QueryBDMedio {
                     x++;
                 }
             } else {
-                strOrder = " ORDER BY fechaRegistro ASC\n";
+                strOrder = " ORDER BY RAMO ASC, PRG ASC\n";
             }
         }
         
@@ -582,8 +579,7 @@ public class QuerysBDCatalogos extends QueryBDMedio {
     }
         // </editor-fold>
     
-    // <editor-fold defaultstate="collapsed" desc="INDICADOR">     
-    
+    // <editor-fold defaultstate="collapsed" desc="INDICADOR">         
     public String getInformacionIndicador(){
         return "SELECT \n" +
                 "    MI.NOMBRE_INDICADOR,\n" +
@@ -708,7 +704,21 @@ public class QuerysBDCatalogos extends QueryBDMedio {
                 "    SIG.YEAR = ? \n" +
                 "    AND SIG.RAMO = ? \n" +
                 "    AND SIG.PROG = ? \n" +
-                "    AND SIG.DIMENSION_ID = ? ";
+                "    AND SIG.DIMENSION_ID = ? \n"
+                //PARA EXCLUIR LOS INDICADORES QUE YA ESTAN EN USO, PERO ENTONCES NO SE VE EL VALOR SELECCIONADO EN EL COMBO, PLOP
+//                + "     AND SIG.CLAVE_INDICADOR NOT IN ( \n"
+//                + "             SELECT \n"
+//                + "                 MI.INDICADOR_SEI \n"
+//                + "             FROM \n"
+//                + "                 POA.MIR_INDICADOR MI \n"
+//                + "             WHERE \n"
+//                + "                 MI.YEAR = ? \n"
+//                + "                 AND MI.RAMO = ? \n"
+//                + "                 AND MI.PRG = ? \n"
+//                + "                 AND MI.DIMENSION = ? \n"
+//                + "                 AND (MI.INDICADOR_SEI IS NOT NULL OR MI.INDICADOR_SEI != '') \n"
+//                + "         ) \n"
+                + " ";
     }
     // </editor-fold>
     // </editor-fold>    
@@ -744,7 +754,7 @@ public class QuerysBDCatalogos extends QueryBDMedio {
         String strQuery = "";
         strQuery = " SELECT PROPOSITO, FIN, PROBLEMA_FOCAL "
                 + "    FROM POA.RAMO_PROGRAMA "
-                + "    WHERE YEAR = ? AND RAMO = ? AND PRG = ?  ";
+                + "    WHERE YEAR = ? AND RAMO = ? AND PRG = ?  "; 
         return strQuery;
     }
     public String getSQLRegistraObsRechazoMIR(){

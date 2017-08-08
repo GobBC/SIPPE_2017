@@ -463,29 +463,86 @@ function cargaDatosInicioAjax() {
                 $("#estatusSigEnvia").val(obj.estatusSigEnvia);
                 $("#estatusSigRechaza").val(obj.estatusSigRechaza);
                 $("#estatusSigValida").val(obj.estatusSigValida);
+                
                 if(obj.bEnviar){
                     $("#btnEnviarAutorizar").show();
-                }
-                else{
+                } else {
                     $("#btnEnviarAutorizar").hide();
                 }
+                
                 if(obj.bValidarRechazar){
                     $("#btnRechazar").show();
                     $("#btnAceptar").show();
-                }
-                else{
+                } else {
                     $("#btnRechazar").hide();
                     $("#btnAceptar").hide();
                 }
+                
                 if(obj.obsRechazo != ""){
                     $("#obsRechazo").show();
-                    $("#obsRechazo").html("<label style='color:#c91a1a'>"+obj.obsRechazo+"</label>");
+                    $("#obsRechazo").html("<strong>MOTIVO DEL RECHAZO: </strong> "+obj.obsRechazo);
                 }
+                var etapaMIR = $("#etapaMIR");
+                switch(obj.etapaMIR) {
+                    case 1: etapaMIR.html("<strong>INICIAL </strong>");
+                        break;
+                    case 2: etapaMIR.html("<strong>POSTERIOR </strong>");
+                        break;
+                    case 3: etapaMIR.html("<strong>FINALIZADA </strong>");
+                        break;
+                    case 4: etapaMIR.html("<strong>CERRADA</strong>");
+                        break;
+                }
+                
+                var estatus = $("#estatusMIR");
+                var enEdicionMIR = $("#enEdicionMIR");
+                switch(obj.estatusMIR) {
+                    case 1: estatus.html("BORRADOR");
+                            estatus.addClass("estatus-borrador");
+                            enEdicionMIR.html("<i class='fa fa-unlock' aria-hidden='true'></i>");
+                        break;
+                    case 2: estatus.removeClass("estatus-borrador");
+                            estatus.removeClass("estatus-rechazado");
+                            estatus.html("ENVIADA");                            
+                            estatus.addClass("estatus-enviado");
+                            enEdicionMIR.html("<i class='fa fa-lock' aria-hidden='true'></i>");
+                        break;
+                    case 3: estatus.removeClass("estatus-enviado");
+                            estatus.html("RECHAZADA");                            
+                            estatus.addClass("estatus-rechazado");
+                            enEdicionMIR.html("<i class='fa fa-unlock' aria-hidden='true'></i>");
+                        break;
+                    case 4: estatus.removeClass("estatus-enviado");
+                            estatus.html("BORRADOR");                            
+                            estatus.addClass("estatus-borrador");
+                            enEdicionMIR.html("<i class='fa fa-unlock' aria-hidden='true'></i>");
+                        break;
+                    case 5: estatus.removeClass("estatus-borrador");
+                            estatus.removeClass("estatus-rechazado");
+                            estatus.html("ENVIADA");                            
+                            estatus.addClass("estatus-enviado");
+                            enEdicionMIR.html("<i class='fa fa-lock' aria-hidden='true'></i>");
+                        break;
+                    case 6: estatus.removeClass("estatus-enviado");
+                            estatus.html("RECHAZADA");                            
+                            estatus.addClass("estatus-rechazado");
+                            enEdicionMIR.html("<i class='fa fa-unlock' aria-hidden='true'></i>");
+                        break;
+                    case 7: estatus.removeClass("estatus-enviado");
+                            estatus.html("VALIDADA");                            
+                            estatus.addClass("estatus-validado");
+                            enEdicionMIR.html("<i class='fa fa-lock' aria-hidden='true'></i>");
+                        break;
+                }
+
                 if(obj.bEditarMIR){
                     $("#componenteGrid").removeClass('bloquearEdicion');
+                    $("#gridFinProposito").removeClass('bloquearEdicion');                    
                 } else {
                     $("#componenteGrid").addClass('bloquearEdicion');
+                    $("#gridFinProposito").addClass('bloquearEdicion');
                 }
+                
                 if(parseInt(obj.estatusSigEnvia)>4){
                     $("#divFinProposito").removeClass('oculto');
                 } else {
@@ -496,57 +553,46 @@ function cargaDatosInicioAjax() {
     });                
 }
 
-//function indicadorDropDownEditor(container, options) {
-//    $('<input data-text-field="indicador" data-value-field="indicadorId" data-bind="value:' + options.field + '"/>')
-//    .appendTo(container)
-//    .kendoDropDownList({
-//        valuePrimitive : true,
-//        dataTextField: "indicadorId",
-//        dataValueField: "indicadorId",
-//        optionLabel: "Seleciona un indicador",
-//        noDataTemplate: 'No hay indicadores asiagnados',
-//        change : getInformacionIndicador ,
-//        dataSource: {
-//            schema: { data: 'Data', total: 'Total'}, 
-//            transport: {
-//                read :{
-//                    url : $('#context').val() + "/Indicador/ConsultarIndicadores",
-//                    dataType : 'json',
-//                    data : {
-//                        ramo : $("#selRamo").val(),
-//                        programa : $("#selPrograma").val()
-//                    }
-//                }
-//            }
-//        }
-//    });
-//}
-
 function indicadorDropDownEditor(container, options) {
-    $('<input data-text-field="indicadores" data-value-field="indicadorSEI" data-bind="value:' + options.field + '"/>')
-    .appendTo(container)
-    .kendoDropDownList({
-        valuePrimitive : true,
-        dataTextField: "indicadorSEI",
-        dataValueField: "indicadorSEI",
-        optionLabel: "Seleciona un indicador",
-        noDataTemplate: 'No hay indicadores asiagnados',
-        change : getInformacionIndicador,
-        dataSource: {
-            schema: { data: 'Data', total: 'Total'}, 
-            transport: {
-                read :{
-                    url : $('#context').val() + "/Indicador/ConsultarIndicadores",
-                    dataType : 'json',
-                    data : {
-                        ramo : $("#selRamo").val(),
-                        programa : $("#selPrograma").val(),
-                        dimension: options.model.dimension
+    var soloLectura = false;   
+    var labelText = "";
+    //CAPTURA DE INDICADORES, IF(ETAPA == 1 || (ETAPA>1 && ROL!= NOR && (ESTATUS = 5 || ESTATUS == 7)))
+    if(options.field == "indicadorSEI"){
+        if(options.model.etapa == "1" || options.model.etapa == "" || ( parseInt(options.model.etapa) > 1 && options.model.normativo != "true" && (options.model.estatus == "5" || options.model.estatus == "7"))) {
+            soloLectura = true;
+            labelText = options.model.supuestos;
+        }
+    }
+    
+    if(soloLectura){
+         labelText = labelText == undefined ? "" : labelText;
+        $('<label name="' + options.field + '" data-bind="value: ' + options.field + '" style="width: ' + (container.width() - 8)  + 'px; font-size: 11px; font-weight: 200; color: #333;  !important" maxlength="150">'+labelText+'</label>').appendTo(container);
+    } else {   
+        $('<input data-text-field="indicadores" data-value-field="indicadorSEI" data-bind="value:' + options.field + '"/>')
+        .appendTo(container)
+        .kendoDropDownList({
+            valuePrimitive : true,
+            dataTextField: "indicadorSEI",
+            dataValueField: "indicadorSEI",
+            optionLabel: "Seleciona un indicador",
+            noDataTemplate: 'No hay indicadores asiagnados',
+            change : getInformacionIndicador,
+            dataSource: {
+                schema: { data: 'Data', total: 'Total'}, 
+                transport: {
+                    read :{
+                        url : $('#context').val() + "/Indicador/ConsultarIndicadores",
+                        dataType : 'json',
+                        data : {
+                            ramo : $("#selRamo").val(),
+                            programa : $("#selPrograma").val(),
+                            dimension: options.model.dimension
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    }
 }
 
 function getInformacionIndicador(){
@@ -588,7 +634,7 @@ function textEditorMIR(container, options) {
             options.model.etapa == "" || 
             (parseInt(options.model.etapa) > 1 && options.model.normativo != "true" && (options.model.estatus == "5" || options.model.estatus == "7")) || 
             (parseInt(options.model.etapa) > 1 && options.model.politicaPublica == "true") || 
-            options.model.indicadorSEI != "" ) {
+            (options.model.indicadorSEI != "" && options.model.indicadorSEI != undefined)) {
             soloLectura = true;
             labelText = options.field == "indicadores" ? options.model.indicadores : options.model.medios ;
             
